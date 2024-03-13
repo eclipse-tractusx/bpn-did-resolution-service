@@ -1,0 +1,33 @@
+[metadata]
+format.version = "1.1"
+
+[versions]
+edc = "0.5.0"
+nimbus = "9.37.3"
+restAssured = "5.4.0"
+
+[libraries]
+edc-core-jetty = { module = "org.eclipse.edc:jetty-core", version.ref = "edc" }
+edc-core-jersey = { module = "org.eclipse.edc:jersey-core", version.ref = "edc" }
+
+edc-boot = { module = "org.eclipse.edc:boot", version.ref = "edc" }
+edc-spi-core = { module = "org.eclipse.edc:core-spi", version.ref = "edc" }
+edc-spi-web = { module = "org.eclipse.edc:web-spi", version.ref = "edc" }
+edc-connector-core = { module = "org.eclipse.edc:connector-core", version.ref = "edc" }
+#edc-spi-identity-trust = { module = "org.eclipse.edc:identity-trust-spi", version.ref = "edc" }
+edc-spi-jwt = { module = "org.eclipse.edc:jwt-spi", version.ref = "edc" }
+edc-spi-auth = { module = "org.eclipse.edc:auth-spi", version.ref = "edc" }
+edc-auth-tokenbased = { module = "org.eclipse.edc:auth-tokenbased", version.ref = "edc" }
+edc-vault-filesystem = { module = "org.eclipse.edc:vault-filesystem", version.ref = "edc" }
+edc-junit = { module = "org.eclipse.edc:junit", version.ref = "edc" }
+
+# Third party libs
+nimbus-jwt = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "nimbus" }
+restAssured = { module = "io.rest-assured:rest-assured", version.ref = "restAssured" }
+
+[plugins]
+shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
+
+[bundles]
+# TODO: "edc-vault-filesystem" - remove dependency on org.eclipse.edc.vault.filesystem.JskPrivateKeyResolverExtension
+bdrs-boot = ["edc-core-jetty", "edc-core-jersey", "edc-boot", "edc-spi-auth", "edc-auth-tokenbased"]
