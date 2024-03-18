@@ -5,6 +5,7 @@ format.version = "1.1"
 edc = "0.5.0"
 nimbus = "9.37.3"
 restAssured = "5.4.0"
+jupiter = "5.4.0"
 
 [libraries]
 edc-core-jetty = { module = "org.eclipse.edc:jetty-core", version.ref = "edc" }
@@ -24,6 +25,7 @@ edc-junit = { module = "org.eclipse.edc:junit", version.ref = "edc" }
 # Third party libs
 nimbus-jwt = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "nimbus" }
 restAssured = { module = "io.rest-assured:rest-assured", version.ref = "restAssured" }
+junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "jupiter" }
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }

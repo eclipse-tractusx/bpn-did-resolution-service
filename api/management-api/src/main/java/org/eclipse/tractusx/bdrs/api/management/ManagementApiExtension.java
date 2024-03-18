@@ -57,7 +57,6 @@ public class ManagementApiExtension implements ServiceExtension {
 
     @Override
     public void initialize(ServiceExtensionContext context) {
-        webServer.addPortMapping(CONTEXT_NAME, PORT, PATH);
         webService.registerResource(CONTEXT_NAME, new ManagementApiController(store));
         webService.registerResource(CONTEXT_NAME, new AuthenticationRequestFilter(authService));
     }
