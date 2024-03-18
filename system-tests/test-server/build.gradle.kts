@@ -19,35 +19,28 @@
  *
  */
 
-// this is needed to have access to snapshot builds of plugins
-pluginManagement {
-    repositories {
-        mavenLocal()
-        maven {
-            url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-        }
-        mavenCentral()
-        gradlePluginPortal()
-    }
+plugins {
+    id("application")
+    alias(libs.plugins.shadow)
 }
 
-dependencyResolutionManagement {
-
-    repositories {
-        maven {
-            url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
-        }
-        mavenCentral()
-        mavenLocal()
-    }
+dependencies {
+    api(libs.bundles.bdrs.boot)
+    api(project(":core:core-services"))
+    api(project(":api:directory-api"))
+    api(project(":api:management-api"))
 }
 
-rootProject.name = "tractusx-bdrs"
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    exclude("**/pom.properties", "**/pom.xm")
+    mergeServiceFiles()
+    archiveFileName.set("${project.name}.jar")
+}
 
-include(":spi:core-spi")
-include(":core:core-services")
-include(":api:directory-api")
-include(":api:management-api")
-include(":runtimes:server")
-include(":system-tests:test-server")
-include(":system-tests:test-directory")
+application {
+    mainClass.set("org.eclipse.edc.boot.system.runtime.BaseRuntime")
+}
+
+edcBuild {
+    publish.set(false)
+}
