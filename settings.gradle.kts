@@ -49,5 +49,10 @@ include(":core:core-services")
 include(":api:directory-api")
 include(":api:management-api")
 include(":runtimes:server")
+
+// extension modules
+include(":extensions:store:sql:did-entry-store-sql")
+
+// test modules
 include(":system-tests:test-server")
 include(":system-tests:test-directory")

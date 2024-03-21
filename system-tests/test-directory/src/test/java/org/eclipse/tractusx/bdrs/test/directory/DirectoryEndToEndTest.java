@@ -16,6 +16,7 @@ package org.eclipse.tractusx.bdrs.test.directory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.specification.RequestSpecification;
+import org.eclipse.edc.junit.annotations.EndToEndTest;
 import org.eclipse.edc.junit.extensions.EdcRuntimeExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,9 +39,10 @@ import static org.eclipse.edc.junit.testfixtures.TestUtils.getFreePort;
 /**
  * Performs end-to-end testing of the BPN Directory.
  */
-public class E2EDirectoryTest {
-    private static final URI apiEndpoint = URI.create("http://localhost:" + getFreePort() + "/api");
-    private static final URI managementEndpoint = URI.create("http://localhost:" + getFreePort() + "/management/v1");
+@EndToEndTest
+public class DirectoryEndToEndTest {
+    private static final URI API_ENDPOINT = URI.create("http://localhost:" + getFreePort() + "/api");
+    private static final URI MANAGEMENT_ENDPOINT = URI.create("http://localhost:" + getFreePort() + "/management/v1");
     private static final String BPN_DIRECTORY = "bpn-directory";
 
     private static final String AUTH_KEY = "1234";
@@ -57,9 +59,9 @@ public class E2EDirectoryTest {
             new EdcRuntimeExtension(
                     ":system-tests:test-server",
                     "bdrs",
-                    Map.of("web.http.port", String.valueOf(apiEndpoint.getPort()),
-                            "web.http.management.port", String.valueOf(managementEndpoint.getPort()),
-                            "web.http.management.path", String.valueOf(managementEndpoint.getPath()),
+                    Map.of("web.http.port", String.valueOf(API_ENDPOINT.getPort()),
+                            "web.http.management.port", String.valueOf(MANAGEMENT_ENDPOINT.getPort()),
+                            "web.http.management.path", String.valueOf(MANAGEMENT_ENDPOINT.getPath()),
                             "edc.api.auth.key", AUTH_KEY)
             );
 
@@ -130,20 +132,20 @@ public class E2EDirectoryTest {
                 .when()
                 .get(BPN_DIRECTORY)
                 .then()
-                .statusCode(200).
-                extract()
+                .statusCode(200)
+                .extract()
                 .response()
                 .asByteArray());
     }
 
 
     private RequestSpecification apiRequest() {
-        return given().baseUri(apiEndpoint.toString())
+        return given().baseUri(API_ENDPOINT.toString())
                 .headers(Map.of());
     }
 
     private RequestSpecification managementRequest() {
-        return given().baseUri(managementEndpoint.toString())
+        return given().baseUri(MANAGEMENT_ENDPOINT.toString())
                 .headers(Map.of("x-api-key", AUTH_KEY))
                 .contentType(JSON);
     }
