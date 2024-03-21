@@ -48,7 +48,7 @@ include(":spi:core-spi")
 include(":core:core-services")
 include(":api:directory-api")
 include(":api:management-api")
-include(":runtimes:server")
+include(":runtimes:bdrs-server")
 
 // extension modules
 include(":extensions:store:sql:did-entry-store-sql")

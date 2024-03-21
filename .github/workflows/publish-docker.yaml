@@ -20,7 +20,7 @@
 
 
 ---
-name: "Create Docker images"
+name: "Manually publish Docker images to DockerHub"
 
 on:
   workflow_dispatch:
@@ -40,16 +40,13 @@ concurrency:
 
 jobs:
   create-docker-image:
-    name: "Create Docker Images for the ControlPlane"
+    name: "Create Docker Images for the BDRS-Server"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        variant: [ { dir: edc-controlplane, img: edc-runtime-memory },
-                   { dir: edc-controlplane, img: edc-controlplane-postgresql-hashicorp-vault },
-                   { dir: edc-controlplane, img: edc-controlplane-postgresql-azure-vault },
-                   { dir: edc-dataplane,    img: edc-dataplane-azure-vault },
-                   { dir: edc-dataplane,    img: edc-dataplane-hashicorp-vault } ]
+        variant: [ { dir: runtimes, img: bdrs-server } ]
+
     permissions:
       contents: write
       packages: write
