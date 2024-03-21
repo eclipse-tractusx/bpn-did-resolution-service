@@ -16,6 +16,7 @@ package org.eclipse.tractusx.bdrs.test.directory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.specification.RequestSpecification;
+import org.eclipse.edc.junit.annotations.EndToEndTest;
 import org.eclipse.edc.junit.extensions.EdcRuntimeExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,7 @@ import static org.eclipse.edc.junit.testfixtures.TestUtils.getFreePort;
 /**
  * Performs end-to-end testing of the BPN Directory.
  */
+@EndToEndTest
 public class E2EDirectoryTest {
     private static final URI apiEndpoint = URI.create("http://localhost:" + getFreePort() + "/api");
     private static final URI managementEndpoint = URI.create("http://localhost:" + getFreePort() + "/management/v1");
