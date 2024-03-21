@@ -21,6 +21,7 @@
 
 plugins {
     `java-library`
+    id("io.swagger.core.v3.swagger-gradle-plugin")
 }
 
 dependencies {
@@ -34,3 +35,8 @@ dependencies {
     testImplementation(testFixtures(libs.edc.core.jersey))
 }
 
+edcBuild {
+    swagger {
+        apiGroup.set("management")
+    }
+}
