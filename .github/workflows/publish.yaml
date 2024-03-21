@@ -96,6 +96,7 @@ jobs:
     needs: [ secret-presence ]
 
     # do not run on PR branches, do not run on releases
+    # disabled for now
     if: |
       needs.secret-presence.outputs.HAS_OSSRH && github.event_name != 'pull_request' && github.ref != 'refs/heads/releases'
     steps:
@@ -115,6 +116,9 @@ jobs:
           OSSRH_PASSWORD: ${{ secrets.ORG_OSSRH_PASSWORD }}
           OSSRH_USER: ${{ secrets.ORG_OSSRH_USERNAME }}
         run: |-
+          echo "::warning file=.github/workflows/publish.yaml line=120 title=Publishing to Maven is disabled::Publishing to MavenCentral/OSSRH is disabled for now"
+          exit 0
+          
           VERSION=$(./gradlew properties -q | grep "version:" | awk '{print $2}')
           cmd=""
           if [[ $VERSION != *-SNAPSHOT ]]
