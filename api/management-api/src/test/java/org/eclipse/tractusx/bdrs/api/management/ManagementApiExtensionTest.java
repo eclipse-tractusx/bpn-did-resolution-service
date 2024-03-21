@@ -14,6 +14,7 @@
 
 package org.eclipse.tractusx.bdrs.api.management;
 
+import org.eclipse.edc.api.auth.spi.AuthenticationRequestFilter;
 import org.eclipse.edc.junit.extensions.DependencyInjectionExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
 import org.eclipse.edc.web.spi.WebServer;
@@ -23,8 +24,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.eclipse.tractusx.bdrs.api.management.ManagementApiExtension.CONTEXT_NAME;
-import static org.eclipse.tractusx.bdrs.api.management.ManagementApiExtension.PATH;
-import static org.eclipse.tractusx.bdrs.api.management.ManagementApiExtension.PORT;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
@@ -33,23 +32,20 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(DependencyInjectionExtension.class)
 class ManagementApiExtensionTest {
 
-    private WebServer webServer;
-    private WebService webService;
+    private final WebServer webServer = mock();
+    private final WebService webService = mock();
 
     @Test
     void verifyBoot(ManagementApiExtension extension, ServiceExtensionContext context) {
         extension.initialize(context);
 
-        verify(webServer).addPortMapping(CONTEXT_NAME, PORT, PATH);
         verify(webService).registerResource(eq(CONTEXT_NAME), isA(ManagementApiController.class));
+        verify(webService).registerResource(eq(CONTEXT_NAME), isA(AuthenticationRequestFilter.class));
     }
 
     @BeforeEach
     void setUp(ServiceExtensionContext context) {
-        webServer = mock(WebServer.class);
         context.registerService(WebServer.class, webServer);
-
-        webService = mock(WebService.class);
         context.registerService(WebService.class, webService);
     }
 

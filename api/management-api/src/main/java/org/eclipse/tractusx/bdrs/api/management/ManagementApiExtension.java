@@ -35,8 +35,6 @@ import static org.eclipse.tractusx.bdrs.api.management.ManagementApiExtension.NA
 public class ManagementApiExtension implements ServiceExtension {
     public static final String NAME = "Management API";
     static final String CONTEXT_NAME = "management";
-    static final String PATH = "/management/v1";
-    static final int PORT = 8282;
 
     @Inject
     private DidEntryStore store;
