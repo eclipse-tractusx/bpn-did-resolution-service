@@ -61,8 +61,6 @@ jobs:
           [ ! -z "${{ secrets.ORG_GPG_PRIVATE_KEY }}" ] &&
           [ ! -z "${{ secrets.ORG_OSSRH_USERNAME }}" ] &&
           [ ! -z "${{ secrets.ORG_OSSRH_PASSWORD }}" ]  && echo "HAS_OSSRH=true" >> $GITHUB_OUTPUT
-          [ ! -z "${{ secrets.SWAGGERHUB_API_KEY }}" ]  &&
-          [ ! -z "${{ secrets.SWAGGERHUB_USER }}" ]  && echo "HAS_SWAGGER=true" >> $GITHUB_OUTPUT
           exit 0
 
   build-docker-images:
@@ -74,11 +72,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        variant: [ { dir: edc-controlplane, img: edc-runtime-memory },
-                   { dir: edc-controlplane, img: edc-controlplane-postgresql-hashicorp-vault },
-                   { dir: edc-controlplane, img: edc-controlplane-postgresql-azure-vault },
-                   { dir: edc-dataplane,    img: edc-dataplane-azure-vault },
-                   { dir: edc-dataplane,    img: edc-dataplane-hashicorp-vault } ]
+        variant: [ { dir: runtimes, img: server } ]
     permissions:
       contents: write
     steps:
@@ -129,12 +123,3 @@ jobs:
           fi
           echo "Publishing Version $VERSION to Sonatype"
           ./gradlew publishToSonatype ${cmd} --no-parallel -Pversion=$VERSION -Psigning.gnupg.executable=gpg -Psigning.gnupg.passphrase="${{ secrets.ORG_GPG_PASSPHRASE }}"
-
-  publish-to-swaggerhub:
-    name: "Publish OpenAPI spec to Swaggerhub"
-    permissions:
-      contents: read
-    needs: [ secret-presence ]
-    if: needs.secret-presence.outputs.HAS_SWAGGER
-    uses: ./.github/workflows/publish-openapi.yaml
-    secrets: inherit
