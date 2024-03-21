@@ -6,10 +6,25 @@ ARG JVM_ARGS=""
 ARG JAR
 ARG ADDITIONAL_FILES
 
+ARG APP_USER=docker
+ARG APP_UID=10100
+
+RUN addgroup --system "$APP_USER"
+
+RUN adduser \
+     --shell /sbin/nologin \
+     --disabled-password \
+     --gecos "" \
+     --ingroup "$APP_USER" \
+     --no-create-home \
+     --uid "$APP_UID" \
+     "$APP_USER"
+
+USER "$APP_USER"
+
 RUN apk --no-cache add curl
 
 WORKDIR /app
-
 
 COPY ${JAR} server.jar
 COPY ${ADDITIONAL_FILES} ./
