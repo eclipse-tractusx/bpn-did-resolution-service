@@ -35,7 +35,7 @@ dependencies {
 
 edcBuild {
     swagger {
-        apiGroup.set("directory")
+        apiGroup.set("directory-api")
     }
 }
 
