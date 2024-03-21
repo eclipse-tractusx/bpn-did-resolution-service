@@ -26,6 +26,7 @@ plugins {
 
 dependencies {
     runtimeOnly(libs.bundles.bdrs.boot)
+    runtimeOnly(libs.edc.api.observability)
     runtimeOnly(project(":core:core-services"))
     runtimeOnly(project(":api:directory-api"))
     runtimeOnly(project(":api:management-api"))

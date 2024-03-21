@@ -20,9 +20,11 @@ RUN adduser \
      --uid "$APP_UID" \
      "$APP_USER"
 
-USER "$APP_USER"
+# run "apk add" first, because user "docker" is not allowed to do that
 
 RUN apk --no-cache add curl
+
+USER "$APP_USER"
 
 WORKDIR /app
 
