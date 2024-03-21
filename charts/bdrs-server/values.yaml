@@ -49,9 +49,9 @@ server:
     # -- Whether to enable kubernetes [liveness-probe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
     enabled: true
     # -- seconds to wait before performing the first liveness check
-    initialDelaySeconds: 30
-    # -- this fields specifies that kubernetes should perform a liveness check every 10 seconds
-    periodSeconds: 10
+    initialDelaySeconds: 5
+    # -- this fields specifies that kubernetes should perform a liveness check every 5 seconds
+    periodSeconds: 5
     # -- number of seconds after which the probe times out
     timeoutSeconds: 5
     # -- when a probe fails kubernetes will try 6 times before giving up
@@ -62,9 +62,9 @@ server:
     # -- Whether to enable kubernetes [readiness-probes](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/)
     enabled: true
     # -- seconds to wait before performing the first readiness check
-    initialDelaySeconds: 30
-    # -- this fields specifies that kubernetes should perform a readiness check every 10 seconds
-    periodSeconds: 10
+    initialDelaySeconds: 5
+    # -- this fields specifies that kubernetes should perform a readiness check every 5 seconds
+    periodSeconds: 5
     # -- number of seconds after which the probe times out
     timeoutSeconds: 5
     # -- when a probe fails kubernetes will try 6 times before giving up

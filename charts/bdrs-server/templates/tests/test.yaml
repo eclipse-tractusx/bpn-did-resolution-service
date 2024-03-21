@@ -32,10 +32,10 @@ metadata:
     "helm.sh/hook-delete-policy": {{ .Values.tests.hookDeletePolicy }}
 spec:
   containers:
-{{/*    - name: readiness*/}}
-{{/*      image: curlimages/curl*/}}
-{{/*      command: [ 'curl', '--fail' ]*/}}
-{{/*      args: [ '{{- printf "http://%s-runtime:%v%s/check/readiness" (include "bdrs.fullname" $ ) $.Values.server.endpoints.default.port $.Values.server.endpoints.default.path -}}' ]*/}}
+    - name: readiness
+      image: curlimages/curl
+      command: [ 'curl', '--fail' ]
+      args: [ '{{- printf "http://%s:%v%s/check/readiness" (include "bdrs.fullname" $ ) $.Values.server.endpoints.default.port $.Values.server.endpoints.default.path -}}' ]
     {{/* Try getting a BPN/DID mapping via the management API   */}}
     - name: bdrs-management-api
       image: curlimages/curl

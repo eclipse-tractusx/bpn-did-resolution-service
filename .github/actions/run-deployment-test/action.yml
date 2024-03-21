@@ -41,7 +41,8 @@ inputs:
     description: "The directory that contains the docker file, e.g. edc-controlplane/edc-runtime-memory"
 
   values_file:
-    required: true
+    #    required: true
+    required: false
     description: "A yaml file that contains the values for the test installation. will be modified!"
 
 runs:
@@ -76,11 +77,11 @@ runs:
     ###################################################
     # Install the test infrastructure
     ###################################################
-    - name: "Generate test credentials"
-      shell: bash
-      run: |-
-        sh -c "edc-tests/deployment/src/main/resources/prepare-test.sh \
-               ${{ inputs.values_file }}"
+    #    - name: "Generate test credentials"
+    #      shell: bash
+    #      run: |-
+    #        sh -c "edc-tests/deployment/src/main/resources/prepare-test.sh \
+    #               ${{ inputs.values_file }}"
 
     - name: Install Runtime
       shell: bash
