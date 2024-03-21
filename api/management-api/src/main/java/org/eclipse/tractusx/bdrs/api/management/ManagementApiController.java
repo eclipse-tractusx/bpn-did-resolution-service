@@ -41,6 +41,7 @@ public class ManagementApiController implements ManagementApi {
         this.store = store;
     }
 
+    @Override
     @Path("/bpn-directory")
     @GET
     public Response getData() {
@@ -49,18 +50,21 @@ public class ManagementApiController implements ManagementApi {
                 .build();
     }
 
+    @Override
     @Path("/bpn-directory")
     @POST
     public void save(BpnMapping mapping) {
         store.save(new DidEntry(mapping.bpn(), mapping.did()));
     }
 
+    @Override
     @Path("/bpn-directory")
     @PUT
     public void update(BpnMapping mapping) {
         store.update(new DidEntry(mapping.bpn(), mapping.did()));
     }
 
+    @Override
     @Path("/bpn-directory/{bpn}")
     @DELETE
     public void delete(@PathParam("bpn") String bpn) {

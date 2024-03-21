@@ -14,7 +14,6 @@
 
 package org.eclipse.tractusx.bdrs.api.directory;
 
-import org.eclipse.edc.runtime.metamodel.annotation.BaseExtension;
 import org.eclipse.edc.runtime.metamodel.annotation.Extension;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.spi.system.ServiceExtension;
@@ -27,7 +26,6 @@ import static org.eclipse.tractusx.bdrs.api.directory.DirectoryApiExtension.NAME
 /**
  * Loads resources for the BPN Directory API.
  */
-@BaseExtension
 @Extension(NAME)
 public class DirectoryApiExtension implements ServiceExtension {
     public static final String NAME = "BPN Directory API";

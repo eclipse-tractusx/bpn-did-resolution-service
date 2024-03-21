@@ -52,6 +52,16 @@ allprojects {
             // override default dependency versions here
             metaModel.set(metaModelVersion)
         }
+        swagger {
+            title.set((project.findProperty("apiTitle") ?: "Tractus-X BDRS Server REST API") as String)
+            description =
+                (project.findProperty("apiDescription")
+                    ?: "Tractus-X REST APIs - merged by OpenApiMerger") as String
+            outputFilename.set(project.name)
+            outputDirectory.set(file("${rootProject.projectDir.path}/resources/openapi/yaml"))
+            resourcePackages = setOf("org.eclipse.tractusx.bdrs")
+        }
+
     }
 
     // EdcRuntimeExtension uses this to determine the runtime classpath of the module to run.
@@ -65,7 +75,7 @@ allprojects {
 subprojects {
     afterEvaluate {
         if (project.plugins.hasPlugin("com.github.johnrengelman.shadow") &&
-                file("${project.projectDir}/src/main/docker/Dockerfile").exists()
+            file("${project.projectDir}/src/main/docker/Dockerfile").exists()
         ) {
 
             // this task copies some legal docs into the build folder, so we can easily copy them into the docker images
@@ -100,8 +110,8 @@ subprojects {
             }
             // make sure  always runs after "dockerize" and after "copyOtel"
             dockerTask
-                    .dependsOn(tasks.named(ShadowJavaPlugin.SHADOW_JAR_TASK_NAME))
-                    .dependsOn(copyLegalDocs)
+                .dependsOn(tasks.named(ShadowJavaPlugin.SHADOW_JAR_TASK_NAME))
+                .dependsOn(copyLegalDocs)
         }
     }
 }

@@ -36,6 +36,7 @@ public class DirectoryApiController implements DirectoryApi {
         this.store = store;
     }
 
+    @Override
     @Path("/bpn-directory")
     @GET
     public Response getData() {
