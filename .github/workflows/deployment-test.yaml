@@ -49,50 +49,33 @@ jobs:
           path: /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs
           key: ${{ runner.os }}-io.containerd.snapshotter.v1.overlayfs
 
-  test-bdrs-server-memory:
-    runs-on: ubuntu-latest
-    needs: test-prepare
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/run-deployment-test
-        name: "Run deployment test using KinD and Helm"
-        with:
-          imagename: bdrs-server-memory
-          rootDir: runtimes/bdrs-server-memory
-          helm_command: |-
-            helm install bdrs-server charts/bdrs-server-memory \
-            --set server.image.pullPolicy="Never" \
-            --set server.image.tag="latest" \
-            --set server.image.repository="bdrs-server-memory" \
-            --set fullnameOverride="bdrs-server" \
-            --wait-for-jobs --timeout=120s --dependency-update
-            
-            # wait for the pod to become ready
-            kubectl rollout status deployment bdrs-server
-            
-            # execute the helm test
-            helm test bdrs-server
-
   test-bdrs-server:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [
+          { chart: charts/bdrs-server-memory, name: bdrs-server-memory },
+          { chart: charts/bdrs-server, name: bdrs-server }
+        ]
     needs: test-prepare
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/run-deployment-test
         name: "Run deployment test using KinD and Helm"
         with:
-          imagename: bdrs-server
-          rootDir: runtimes/bdrs-server
+          imagename: ${{ matrix.variant.name }}
+          rootDir: runtimes/${{ matrix.variant.name }}
           helm_command: |-
-            helm install bdrs-server charts/bdrs-server \
+            helm install ${{ matrix.variant.name }} ${{ matrix.runtime.chart }} \
             --set server.image.pullPolicy="Never" \
             --set server.image.tag="latest" \
-            --set server.image.repository="bdrs-server" \
+            --set server.image.repository="${{ matrix.variant.name }}" \
             --set fullnameOverride="bdrs-server" \
             --wait-for-jobs --timeout=120s --dependency-update
-
+            
             # wait for the pod to become ready
-            kubectl rollout status deployment bdrs-server
-
+            kubectl rollout status deployment ${{ matrix.variant.name }}
+            
             # execute the helm test
-            helm test bdrs-server
+            helm test ${{ matrix.variant.name }}
