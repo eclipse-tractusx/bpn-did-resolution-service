@@ -26,5 +26,6 @@ plugins {
 dependencies {
     implementation(libs.edc.spi.core)
     implementation(project(":spi:core-spi"))
+    testImplementation(testFixtures(project(":spi:core-spi")))
 }
 
