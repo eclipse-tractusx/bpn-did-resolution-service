@@ -36,8 +36,23 @@ public class PostgresDialectStatements implements DidEntryStoreStatements {
     }
 
     @Override
+    public String getLatestVersionStatement() {
+        return "SELECT * FROM %s;".formatted(getMetadataTable());
+    }
+
+    @Override
     public String getInsertMultipleStatement(List<DidEntry> entries) {
         var str = entries.stream().map(e -> "(?, ?)").collect(Collectors.joining(","));
         return "INSERT INTO %s (%s, %s) VALUES %s;".formatted(getDidEntryTableName(), getBpnColumn(), getDidColumn(), str);
+    }
+
+    @Override
+    public String updateLatestVersionTemplate() {
+        return "UPDATE %s SET %s = ?;".formatted(getMetadataTable(), getVersionColumn());
+    }
+
+    @Override
+    public String getMetadataTable() {
+        return "edc_did_entry_metadata";
     }
 }

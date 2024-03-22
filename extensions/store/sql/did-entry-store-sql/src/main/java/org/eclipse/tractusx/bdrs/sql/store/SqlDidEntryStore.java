@@ -31,6 +31,7 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
     private final DidEntryStoreStatements statements;
     private final AtomicReference<byte[]> cache = new AtomicReference<>();
     private final Monitor monitor;
+    private int latestVersion = 0;
 
     public SqlDidEntryStore(DataSourceRegistry dataSourceRegistry,
                             String dataSourceName,
@@ -85,6 +86,7 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
                     queryExecutor.execute(connection, stmt, params);
                 });
 
+                updateLatestVersion(connection);
                 invalidateCache();
             } catch (SQLException e) {
                 throw new EdcPersistenceException(e);
@@ -111,6 +113,7 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
                 if (findByBpn(connection, bpn) != null) {
                     var stmt = statements.getDeleteByBpnTemplate();
                     queryExecutor.execute(connection, stmt, bpn);
+                    updateLatestVersion(connection);
                     invalidateCache();
                 }
             } catch (SQLException e) {
@@ -120,8 +123,25 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
     }
 
     public void updateCache() {
-        monitor.debug("Update cache from database");
-        transactionContext.execute(this::invalidateCache);
+        monitor.debug("Checking if cache is out-of-date");
+        transactionContext.execute(() -> {
+            var dbVersion = getLatestVersion();
+            if (dbVersion > latestVersion) {
+                monitor.debug("Local version is %s, database version is %d, will update cache".formatted(latestVersion, dbVersion));
+                invalidateCache();
+                latestVersion = dbVersion;
+            }
+        });
+    }
+
+    private int getLatestVersion() {
+        try (var connection = getConnection()) {
+            var stmt = statements.getLatestVersionStatement();
+            var list = queryExecutor.query(connection, true, r -> r.getInt(statements.getVersionColumn()), stmt);
+            return list.findFirst().orElse(latestVersion);
+        } catch (SQLException e) {
+            throw new EdcPersistenceException(e);
+        }
     }
 
     /**
@@ -147,6 +167,13 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
         } else {
             insert(connection, entry);
         }
+        updateLatestVersion(connection);
+    }
+
+    private void updateLatestVersion(Connection connection) {
+        latestVersion = getLatestVersion() + 1;
+        var stmt = statements.updateLatestVersionTemplate();
+        queryExecutor.execute(connection, stmt, latestVersion);
     }
 
     /**

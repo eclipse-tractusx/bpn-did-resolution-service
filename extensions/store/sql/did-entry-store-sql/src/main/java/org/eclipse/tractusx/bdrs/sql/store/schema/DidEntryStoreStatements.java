@@ -26,5 +26,16 @@ public interface DidEntryStoreStatements extends SqlStatements {
 
     String findByBpnTemplate();
 
+    String getLatestVersionStatement();
+
     String getInsertMultipleStatement(List<DidEntry> entries);
+
+    default String getVersionColumn() {
+        return "version";
+    }
+
+    String updateLatestVersionTemplate();
+
+
+    String getMetadataTable();
 }
