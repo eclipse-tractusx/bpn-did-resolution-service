@@ -31,6 +31,12 @@ helm install my-release tractusx-edc/bdrs-server --version 0.0.1 \
 
 * <https://github.com/eclipse-tractusx/bpn-did-resolution-service/tree/main/charts/bdrs-server>
 
+## Requirements
+
+| Repository | Name | Version |
+|------------|------|---------|
+| https://charts.bitnami.com/bitnami | postgresql(postgresql) | 12.11.2 |
+
 ## Values
 
 | Key | Type | Default | Description |
@@ -39,7 +45,14 @@ helm install my-release tractusx-edc/bdrs-server --version 0.0.1 \
 | customLabels | object | `{}` | To add some custom labels |
 | fullnameOverride | string | `""` |  |
 | imagePullSecrets | list | `[]` | Existing image pull secret to use to [obtain the container image from private registries](https://kubernetes.io/docs/concepts/containers/images/#using-a-private-registry) |
+| install.postgresql | bool | `true` |  |
 | nameOverride | string | `""` |  |
+| postgresql.auth.database | string | `"bdrs"` |  |
+| postgresql.auth.password | string | `"password"` |  |
+| postgresql.auth.username | string | `"postgres"` |  |
+| postgresql.jdbcUrl | string | `"jdbc:postgresql://{{ .Release.Name }}-postgresql:5432/bdrs"` |  |
+| postgresql.primary.persistence.enabled | bool | `false` |  |
+| postgresql.readReplicas.persistence.enabled | bool | `false` |  |
 | server.affinity | object | `{}` |  |
 | server.autoscaling.enabled | bool | `false` | Enables [horizontal pod autoscaling](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) |
 | server.autoscaling.maxReplicas | int | `100` | Maximum replicas if resource consumption exceeds resource threshholds |
