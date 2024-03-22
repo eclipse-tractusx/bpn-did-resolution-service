@@ -5,7 +5,7 @@ import org.eclipse.tractusx.bdrs.spi.store.DidEntry;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BaseSqlDialectStatements implements DidEntryStoreStatements {
+public class PostgresDialectStatements implements DidEntryStoreStatements {
     @Override
     public String getDeleteByBpnTemplate() {
         return executeStatement()

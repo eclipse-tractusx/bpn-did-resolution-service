@@ -42,11 +42,14 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
         this.mapper = objectMapper;
         this.statements = statements;
 
-        invalidateCache();
+        // cannot invalidate the cache here, because the data source may not yet be initialized
     }
 
     @Override
     public byte[] entries() {
+        if (cache.get() == null) {
+            invalidateCache();
+        }
         return cache.get();
     }
 

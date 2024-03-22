@@ -27,7 +27,12 @@ plugins {
 dependencies {
     runtimeOnly(libs.bundles.bdrs.boot)
     runtimeOnly(libs.edc.api.observability)
+    runtimeOnly(libs.edc.transaction.local)
+    runtimeOnly(libs.edc.sql.pool)
+    runtimeOnly(libs.postgres)
+
     runtimeOnly(project(":core:core-services"))
+    runtimeOnly(project(":extensions:store:sql:did-entry-store-sql"))
     runtimeOnly(project(":api:directory-api"))
     runtimeOnly(project(":api:management-api"))
 }

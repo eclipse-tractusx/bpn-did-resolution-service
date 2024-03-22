@@ -6,8 +6,8 @@ import org.eclipse.edc.sql.QueryExecutor;
 import org.eclipse.edc.sql.testfixtures.PostgresqlStoreSetupExtension;
 import org.eclipse.tractusx.bdrs.spi.store.DidEntryStore;
 import org.eclipse.tractusx.bdrs.spi.store.DidEntryStoreTestBase;
-import org.eclipse.tractusx.bdrs.sql.store.schema.BaseSqlDialectStatements;
 import org.eclipse.tractusx.bdrs.sql.store.schema.DidEntryStoreStatements;
+import org.eclipse.tractusx.bdrs.sql.store.schema.PostgresDialectStatements;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +20,7 @@ import java.nio.file.Paths;
 @ExtendWith(PostgresqlStoreSetupExtension.class)
 class SqlDidEntryStoreTest extends DidEntryStoreTestBase {
 
-    private final DidEntryStoreStatements statements = new BaseSqlDialectStatements();
+    private final DidEntryStoreStatements statements = new PostgresDialectStatements();
 
     private SqlDidEntryStore didEntryStore;
 
@@ -29,7 +29,7 @@ class SqlDidEntryStoreTest extends DidEntryStoreTestBase {
 
         var schema = Files.readString(Paths.get("./docs/schema.sql"));
         extension.runQuery(schema);
-        
+
         didEntryStore = new SqlDidEntryStore(extension.getDataSourceRegistry(), extension.getDatasourceName(),
                 extension.getTransactionContext(), new ObjectMapper(), queryExecutor, statements);
     }

@@ -30,6 +30,12 @@ dependencies {
     implementation(project(":spi:core-spi"))
     implementation(libs.edc.core.sql) // needed for SqlStatements
 
+    implementation(libs.flyway.core)
+    // starting from flyway 10, they've moved to a more modular structure,
+    // so we need to add PG support explicitly
+    // https://documentation.red-gate.com/flyway/release-notes-and-older-versions/release-notes-for-flyway-engine
+    runtimeOnly(libs.flyway.database.postgres)
+
     testImplementation(libs.edc.junit)
     testImplementation(testFixtures(project(":spi:core-spi")))
     testImplementation(testFixtures(libs.edc.core.sql))

@@ -13,3 +13,4 @@
 #
 
 org.eclipse.tractusx.bdrs.sql.store.SqlDidEntryStoreExtension
+org.eclipse.tractusx.bdrs.sql.migration.DidEntryPostgresMigrationExtension
