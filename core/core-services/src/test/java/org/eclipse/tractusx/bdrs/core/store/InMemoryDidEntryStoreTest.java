@@ -18,7 +18,7 @@ import org.eclipse.tractusx.bdrs.spi.store.DidEntryStore;
 import org.eclipse.tractusx.bdrs.spi.store.DidEntryStoreTestBase;
 
 class InMemoryDidEntryStoreTest extends DidEntryStoreTestBase {
-    private final InMemoryDidEntryStore store= new InMemoryDidEntryStore(mapper);
+    private final InMemoryDidEntryStore store = new InMemoryDidEntryStore(mapper);
 
     @Override
     protected DidEntryStore getStore() {
