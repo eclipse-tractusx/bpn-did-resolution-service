@@ -25,6 +25,13 @@ plugins {
 
 dependencies {
     implementation(libs.edc.spi.core)
+    implementation(libs.edc.spi.transaction)
+    implementation(libs.edc.spi.transaction.datasource)
     implementation(project(":spi:core-spi"))
+    implementation(libs.edc.core.sql) // needed for SqlStatements
+
+    testImplementation(libs.edc.junit)
+    testImplementation(testFixtures(project(":spi:core-spi")))
+    testImplementation(testFixtures(libs.edc.core.sql))
 }
 
