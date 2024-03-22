@@ -2,6 +2,7 @@ package org.eclipse.tractusx.bdrs.sql.store;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.edc.spi.EdcException;
+import org.eclipse.edc.spi.monitor.Monitor;
 import org.eclipse.edc.spi.persistence.EdcPersistenceException;
 import org.eclipse.edc.sql.QueryExecutor;
 import org.eclipse.edc.sql.store.AbstractSqlStore;
@@ -21,8 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
@@ -31,18 +30,19 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
     private final ObjectMapper mapper;
     private final DidEntryStoreStatements statements;
     private final AtomicReference<byte[]> cache = new AtomicReference<>();
-    private final ReadWriteLock lock = new ReentrantReadWriteLock(true);
+    private final Monitor monitor;
 
     public SqlDidEntryStore(DataSourceRegistry dataSourceRegistry,
                             String dataSourceName,
                             TransactionContext transactionContext,
                             ObjectMapper objectMapper,
-                            QueryExecutor queryExecutor, DidEntryStoreStatements statements) {
+                            QueryExecutor queryExecutor, DidEntryStoreStatements statements, Monitor monitor) {
         super(dataSourceRegistry, dataSourceName, transactionContext, objectMapper, queryExecutor);
         this.mapper = objectMapper;
         this.statements = statements;
 
         // cannot invalidate the cache here, because the data source may not yet be initialized
+        this.monitor = monitor;
     }
 
     @Override
@@ -117,6 +117,11 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
                 throw new EdcPersistenceException(e);
             }
         });
+    }
+
+    public void updateCache() {
+        monitor.debug("Update cache from database");
+        transactionContext.execute(this::invalidateCache);
     }
 
     /**

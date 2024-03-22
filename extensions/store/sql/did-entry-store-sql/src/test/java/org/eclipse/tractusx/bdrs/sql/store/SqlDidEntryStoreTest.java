@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import static org.mockito.Mockito.mock;
+
 @ComponentTest
 @ExtendWith(PostgresqlStoreSetupExtension.class)
 class SqlDidEntryStoreTest extends DidEntryStoreTestBase {
@@ -31,7 +33,7 @@ class SqlDidEntryStoreTest extends DidEntryStoreTestBase {
         extension.runQuery(schema);
 
         didEntryStore = new SqlDidEntryStore(extension.getDataSourceRegistry(), extension.getDatasourceName(),
-                extension.getTransactionContext(), new ObjectMapper(), queryExecutor, statements);
+                extension.getTransactionContext(), new ObjectMapper(), queryExecutor, statements, mock());
     }
 
     @AfterEach
