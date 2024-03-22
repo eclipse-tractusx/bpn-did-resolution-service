@@ -72,3 +72,27 @@ jobs:
             
             # execute the helm test
             helm test bdrs-server
+
+  test-bdrs-server:
+    runs-on: ubuntu-latest
+    needs: test-prepare
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/run-deployment-test
+        name: "Run deployment test using KinD and Helm"
+        with:
+          imagename: bdrs-server
+          rootDir: runtimes/bdrs-server
+          helm_command: |-
+            helm install bdrs-server charts/bdrs-server \
+            --set server.image.pullPolicy="Never" \
+            --set server.image.tag="latest" \
+            --set server.image.repository="bdrs-server" \
+            --set fullnameOverride="bdrs-server" \
+            --wait-for-jobs --timeout=120s --dependency-update
+
+            # wait for the pod to become ready
+            kubectl rollout status deployment bdrs-server
+
+            # execute the helm test
+            helm test bdrs-server
