@@ -49,7 +49,7 @@ jobs:
           path: /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs
           key: ${{ runner.os }}-io.containerd.snapshotter.v1.overlayfs
 
-  test-in-memory:
+  test-bdrs-server:
     runs-on: ubuntu-latest
     needs: test-prepare
     steps:
@@ -57,42 +57,18 @@ jobs:
       - uses: ./.github/actions/run-deployment-test
         name: "Run deployment test using KinD and Helm"
         with:
-          imagename: edc-runtime-memory
-          rootDir: edc-controlplane/edc-runtime-memory
-          values_file: edc-tests/deployment/src/main/resources/helm/tractusx-connector-memory-test.yaml
+          imagename: bdrs-server
+          rootDir: runtimes/bdrs-server
           helm_command: |-
-            helm install tx-inmem charts/tractusx-connector-memory \
-            -f edc-tests/deployment/src/main/resources/helm/tractusx-connector-memory-test.yaml \
-            --set vault.secrets="client-secret:$(cat client.secret)" \
+            helm install bdrs-server charts/bdrs-server \
+            --set server.image.pullPolicy="Never" \
+            --set server.image.tag="latest" \
+            --set server.image.repository="bdrs-server" \
+            --set fullnameOverride="bdrs-server" \
             --wait-for-jobs --timeout=120s --dependency-update
             
             # wait for the pod to become ready
-            kubectl rollout status deployment tx-inmem
+            kubectl rollout status deployment bdrs-server
             
             # execute the helm test
-            helm test tx-inmem
-
-  test-postgres:
-    runs-on: ubuntu-latest
-    needs: test-prepare
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - uses: ./.github/actions/run-deployment-test
-        name: "Run deployment test using KinD and Helm"
-        with:
-          imagename: "edc-controlplane-postgresql-hashicorp-vault edc-dataplane-hashicorp-vault"
-          rootDir: "."
-          values_file: edc-tests/deployment/src/main/resources/helm/tractusx-connector-test.yaml
-          helm_command: |-
-            helm install tx-prod charts/tractusx-connector \
-            -f edc-tests/deployment/src/main/resources/helm/tractusx-connector-test.yaml \
-            --dependency-update \
-            --wait-for-jobs --timeout=120s    
-
-            # wait for the pod to become ready
-            kubectl rollout status deployment tx-prod-controlplane
-            kubectl rollout status deployment tx-prod-dataplane
-
-            # execute the helm test
-            helm test tx-prod
+            helm test bdrs-server

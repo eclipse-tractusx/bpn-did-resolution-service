@@ -48,10 +48,9 @@ jobs:
     uses: ./.github/workflows/verify.yaml
     secrets: inherit
 
-  # deactivated until we have helm charts
-  #  deployment-test:
-  #    uses: ./.github/workflows/deployment-test.yaml
-  #    secrets: inherit
+  deployment-test:
+    uses: ./.github/workflows/deployment-test.yaml
+    secrets: inherit
 
   # deactivated until we have helm charts
   #  upgradeability-test:
@@ -63,7 +62,7 @@ jobs:
   summary:
     needs:
       - verify
-    #      - deployment-test
+      - deployment-test
     runs-on: ubuntu-latest
     steps:
       - name: 'Master test job'
