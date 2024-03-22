@@ -68,7 +68,12 @@ public class InMemoryDidEntryStore implements DidEntryStore {
     @Override
     public void save(Stream<DidEntry> entries) {
         writeLock(() -> {
-            entries.forEach(entry -> backingStore.put(entry.bpn(), entry.did()));
+            entries.forEach(entry -> {
+                if (backingStore.containsKey(entry.bpn())) {
+                    throw new EdcException("Already exists: " + entry.bpn());
+                }
+                backingStore.put(entry.bpn(), entry.did());
+            });
             updateCache();
         });
     }

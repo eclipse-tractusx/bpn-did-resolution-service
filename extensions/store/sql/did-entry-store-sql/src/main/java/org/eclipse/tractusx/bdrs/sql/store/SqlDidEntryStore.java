@@ -75,7 +75,7 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
                 entryList.forEach(chunk -> {
                     var stmt = statements.getInsertMultipleStatement(chunk);
 
-                    var params = chunk.stream().map(e -> List.of(e.did(), e.bpn()))
+                    var params = chunk.stream().map(e -> List.of(e.bpn(), e.did()))
                             .flatMap(List::stream)
                             .toArray();
 
