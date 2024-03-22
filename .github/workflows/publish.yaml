@@ -72,7 +72,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        variant: [ { dir: runtimes, img: bdrs-server } ]
+        variant: [
+          { dir: runtimes, img: bdrs-server },
+          { dir: runtimes, img: bdrs-server-memory }
+        ]
     permissions:
       contents: write
     steps:

@@ -49,6 +49,7 @@ include(":core:core-services")
 include(":api:directory-api")
 include(":api:management-api")
 include(":runtimes:bdrs-server")
+include(":runtimes:bdrs-server-memory")
 
 // extension modules
 include(":extensions:store:sql:sql-lib")

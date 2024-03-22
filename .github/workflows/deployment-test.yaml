@@ -49,7 +49,7 @@ jobs:
           path: /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs
           key: ${{ runner.os }}-io.containerd.snapshotter.v1.overlayfs
 
-  test-bdrs-server:
+  test-bdrs-server-memory:
     runs-on: ubuntu-latest
     needs: test-prepare
     steps:
@@ -57,13 +57,13 @@ jobs:
       - uses: ./.github/actions/run-deployment-test
         name: "Run deployment test using KinD and Helm"
         with:
-          imagename: bdrs-server
-          rootDir: runtimes/bdrs-server
+          imagename: bdrs-server-memory
+          rootDir: runtimes/bdrs-server-memory
           helm_command: |-
-            helm install bdrs-server charts/bdrs-server \
+            helm install bdrs-server charts/bdrs-server-memory \
             --set server.image.pullPolicy="Never" \
             --set server.image.tag="latest" \
-            --set server.image.repository="bdrs-server" \
+            --set server.image.repository="bdrs-server-memory" \
             --set fullnameOverride="bdrs-server" \
             --wait-for-jobs --timeout=120s --dependency-update
             
