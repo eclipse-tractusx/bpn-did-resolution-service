@@ -51,6 +51,7 @@ include(":api:management-api")
 include(":runtimes:bdrs-server")
 
 // extension modules
+include(":extensions:store:sql:sql-lib")
 include(":extensions:store:sql:did-entry-store-sql")
 
 // test modules
