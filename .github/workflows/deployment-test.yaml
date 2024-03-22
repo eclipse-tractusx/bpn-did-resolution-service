@@ -50,28 +50,29 @@ jobs:
           key: ${{ runner.os }}-io.containerd.snapshotter.v1.overlayfs
 
   test-bdrs-server:
+    name: "Run deployment tests for all charts"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         variant: [
           { chart: charts/bdrs-server-memory, name: bdrs-server-memory },
-          { chart: charts/bdrs-server, name: bdrs-server }
+          { chart: charts/bdrs-server,        name: bdrs-server }
         ]
     needs: test-prepare
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/run-deployment-test
-        name: "Run deployment test using KinD and Helm"
+        name: "deploy ${{ matrix.variant.chart }}"
         with:
           imagename: ${{ matrix.variant.name }}
           rootDir: runtimes/${{ matrix.variant.name }}
           helm_command: |-
-            helm install ${{ matrix.variant.name }} ${{ matrix.runtime.chart }} \
+            helm install ${{ matrix.variant.name }} ${{ matrix.variant.chart }} \
             --set server.image.pullPolicy="Never" \
             --set server.image.tag="latest" \
             --set server.image.repository="${{ matrix.variant.name }}" \
-            --set fullnameOverride="bdrs-server" \
+            --set fullnameOverride="${{ matrix.variant.name }}" \
             --wait-for-jobs --timeout=120s --dependency-update
             
             # wait for the pod to become ready
