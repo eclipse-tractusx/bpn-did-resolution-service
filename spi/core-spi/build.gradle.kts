@@ -21,8 +21,13 @@
 
 plugins {
     `java-library`
+    `java-test-fixtures`
 }
 
 dependencies {
+    testFixturesImplementation(libs.edc.junit)
+    testFixturesImplementation(libs.junit.jupiter.api)
+    testFixturesImplementation(libs.junit.jupiter.params)
+    testFixturesImplementation(libs.assertj)
 }
 

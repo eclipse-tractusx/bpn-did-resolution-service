@@ -2,10 +2,14 @@
 format.version = "1.1"
 
 [versions]
-edc = "0.5.1"
+assertj = "3.25.3"
+edc = "0.5.2-SNAPSHOT"
 nimbus = "9.37.3"
 restAssured = "5.4.0"
 jupiter = "5.10.2"
+postgres = "42.7.2"
+flyway = "10.8.1"
+
 
 [libraries]
 edc-core-jetty = { module = "org.eclipse.edc:jetty-core", version.ref = "edc" }
@@ -14,6 +18,8 @@ edc-core-jersey = { module = "org.eclipse.edc:jersey-core", version.ref = "edc" 
 edc-boot = { module = "org.eclipse.edc:boot", version.ref = "edc" }
 edc-spi-core = { module = "org.eclipse.edc:core-spi", version.ref = "edc" }
 edc-spi-web = { module = "org.eclipse.edc:web-spi", version.ref = "edc" }
+edc-spi-transaction = { module = "org.eclipse.edc:transaction-spi", version.ref = "edc" }
+edc-spi-transaction-datasource = { module = "org.eclipse.edc:transaction-datasource-spi", version.ref = "edc" }
 edc-connector-core = { module = "org.eclipse.edc:connector-core", version.ref = "edc" }
 #edc-spi-identity-trust = { module = "org.eclipse.edc:identity-trust-spi", version.ref = "edc" }
 edc-spi-jwt = { module = "org.eclipse.edc:jwt-spi", version.ref = "edc" }
@@ -22,11 +28,19 @@ edc-auth-tokenbased = { module = "org.eclipse.edc:auth-tokenbased", version.ref 
 edc-vault-filesystem = { module = "org.eclipse.edc:vault-filesystem", version.ref = "edc" }
 edc-junit = { module = "org.eclipse.edc:junit", version.ref = "edc" }
 edc-api-observability = { module = "org.eclipse.edc:api-observability", version.ref = "edc" }
+edc-core-sql = { module = "org.eclipse.edc:sql-core", version.ref = "edc" }
+edc-transaction-local = { module = "org.eclipse.edc:transaction-local", version.ref = "edc" }
+edc-sql-pool = { module = "org.eclipse.edc:sql-pool-apache-commons", version.ref = "edc" }
 
 # Third party libs
+assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
 nimbus-jwt = { module = "com.nimbusds:nimbus-jose-jwt", version.ref = "nimbus" }
 restAssured = { module = "io.rest-assured:rest-assured", version.ref = "restAssured" }
 junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "jupiter" }
+junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "jupiter" }
+postgres = { module = "org.postgresql:postgresql", version.ref = "postgres" }
+flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
+flyway-database-postgres = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }

@@ -101,10 +101,7 @@ public class BdrsCoreExtension implements ServiceExtension {
 
     @Provider(isDefault = true)
     public DidEntryStore defaultDidEntryStore() {
-        var store = new InMemoryDidEntryStore(typeManager.getMapper());
-        // var stream = IntStream.range(0, 20000).mapToObj((i) -> new DidEntry(randomUUID().toString(), randomUUID().toString()));
-        // store.save(stream);
-        return store;
+        return new InMemoryDidEntryStore(typeManager.getMapper());
     }
 
     @Provider(isDefault = true)

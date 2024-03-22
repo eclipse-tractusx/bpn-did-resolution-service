@@ -34,7 +34,7 @@ import static io.restassured.config.DecoderConfig.ContentDecoder.DEFLATE;
 import static io.restassured.config.DecoderConfig.decoderConfig;
 import static io.restassured.http.ContentType.JSON;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.eclipse.edc.junit.testfixtures.TestUtils.getFreePort;
+import static org.eclipse.edc.util.io.Ports.getFreePort;
 
 /**
  * Performs end-to-end testing of the BPN Directory.

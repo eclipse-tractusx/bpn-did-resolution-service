@@ -23,6 +23,10 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+
+install:
+  postgresql: true
+
 fullnameOverride: ""
 nameOverride: ""
 # -- Existing image pull secret to use to [obtain the container image from private registries](https://kubernetes.io/docs/concepts/containers/images/#using-a-private-registry)
@@ -266,3 +270,16 @@ serviceAccount:
 tests:
   # -- Configure the hook-delete-policy for Helm tests
   hookDeletePolicy: before-hook-creation,hook-succeeded
+
+postgresql:
+  jdbcUrl: "jdbc:postgresql://{{ .Release.Name }}-postgresql:5432/bdrs"
+  primary:
+    persistence:
+      enabled: false
+  readReplicas:
+    persistence:
+      enabled: false
+  auth:
+    database: "bdrs"
+    username: "postgres"
+    password: "password"
