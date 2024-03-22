@@ -48,7 +48,7 @@ public class PostgresDialectStatements implements DidEntryStoreStatements {
 
     @Override
     public String updateLatestVersionTemplate() {
-        return "UPDATE %s SET %s = ?;".formatted(getMetadataTable(), getVersionColumn());
+        return "UPDATE %s SET %s = ?, %s = ?;".formatted(getMetadataTable(), getVersionColumn(), getUpdatedAtColumn());
     }
 
     @Override

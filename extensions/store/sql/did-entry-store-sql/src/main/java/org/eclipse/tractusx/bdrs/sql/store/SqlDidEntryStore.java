@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -173,7 +175,7 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
     private void updateLatestVersion(Connection connection) {
         latestVersion = getLatestVersion() + 1;
         var stmt = statements.updateLatestVersionTemplate();
-        queryExecutor.execute(connection, stmt, latestVersion);
+        queryExecutor.execute(connection, stmt, latestVersion, Timestamp.from(Instant.now()));
     }
 
     /**

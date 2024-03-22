@@ -6,10 +6,11 @@ CREATE TABLE IF NOT EXISTS edc_did_entries
 
 CREATE TABLE IF NOT EXISTS edc_did_entry_metadata
 (
-    version    INT    NOT NULL DEFAULT 0
+    version    INT    NOT NULL DEFAULT 0,
+    updated_at TIMESTAMP NOT NULL DEFAULT now()
 );
 
 -- insert "version=0" if not exists:
 INSERT INTO edc_did_entry_metadata (version)
-SELECT 0
+SELECT (0)
 WHERE NOT EXISTS (SELECT * FROM edc_did_entry_metadata)

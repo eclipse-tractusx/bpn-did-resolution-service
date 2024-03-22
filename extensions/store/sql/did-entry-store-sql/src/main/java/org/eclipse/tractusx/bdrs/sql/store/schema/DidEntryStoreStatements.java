@@ -18,6 +18,10 @@ public interface DidEntryStoreStatements extends SqlStatements {
         return "did";
     }
 
+    default String getUpdatedAtColumn() {
+        return "updated_at";
+    }
+
     String getDeleteByBpnTemplate();
 
     String getInsertTemplate();
