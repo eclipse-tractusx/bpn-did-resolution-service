@@ -17,6 +17,12 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
@@ -24,6 +30,8 @@ import java.util.zip.GZIPOutputStream;
 public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore {
     private final ObjectMapper mapper;
     private final DidEntryStoreStatements statements;
+    private final AtomicReference<byte[]> cache = new AtomicReference<>();
+    private final ReadWriteLock lock = new ReentrantReadWriteLock(true);
 
     public SqlDidEntryStore(DataSourceRegistry dataSourceRegistry,
                             String dataSourceName,
@@ -33,27 +41,13 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
         super(dataSourceRegistry, dataSourceName, transactionContext, objectMapper, queryExecutor);
         this.mapper = objectMapper;
         this.statements = statements;
+
+        invalidateCache();
     }
 
     @Override
     public byte[] entries() {
-        return transactionContext.execute(() -> {
-            try (var connection = getConnection()) {
-
-                var result = queryExecutor.query(connection, true, this::mapDidEntry, "SELECT * FROM %s".formatted(statements.getDidEntryTableName()))
-                        .collect(Collectors.toMap(DidEntry::bpn, DidEntry::did));
-                var bas = new ByteArrayOutputStream();
-                try (var gzip = new GZIPOutputStream(bas)) {
-                    gzip.write(mapper.writeValueAsBytes(result));
-                } catch (IOException e) {
-                    throw new EdcException(e);
-                }
-                return bas.toByteArray();
-
-            } catch (SQLException e) {
-                throw new EdcPersistenceException(e);
-            }
-        });
+        return cache.get();
     }
 
     @Override
@@ -61,6 +55,7 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
         transactionContext.execute(() -> {
             try (var connection = getConnection()) {
                 upsert(connection, entry);
+                invalidateCache();
             } catch (SQLException e) {
                 throw new EdcPersistenceException(e);
             }
@@ -71,7 +66,23 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
     public void save(Stream<DidEntry> entries) {
         transactionContext.execute(() -> {
             try (var connection = getConnection()) {
-                entries.forEach(e -> upsert(connection, e));
+
+                //do a batch insert. only 65.535 params are supported in one batch, so we segment
+                var chunkSize = 32_000;
+
+                var entryList = chunked(entries.toList(), chunkSize);
+
+                entryList.forEach(chunk -> {
+                    var stmt = statements.getInsertMultipleStatement(chunk);
+
+                    var params = chunk.stream().map(e -> List.of(e.did(), e.bpn()))
+                            .flatMap(List::stream)
+                            .toArray();
+
+                    queryExecutor.execute(connection, stmt, params);
+                });
+
+                invalidateCache();
             } catch (SQLException e) {
                 throw new EdcPersistenceException(e);
             }
@@ -83,6 +94,7 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
         transactionContext.execute(() -> {
             try (var connection = getConnection()) {
                 upsert(connection, entry);
+                invalidateCache();
             } catch (SQLException e) {
                 throw new EdcPersistenceException(e);
             }
@@ -96,11 +108,25 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
                 if (findByBpn(connection, bpn) != null) {
                     var stmt = statements.getDeleteByBpnTemplate();
                     queryExecutor.execute(connection, stmt, bpn);
+                    invalidateCache();
                 }
             } catch (SQLException e) {
                 throw new EdcPersistenceException(e);
             }
         });
+    }
+
+    /**
+     * Partitions the list in to smaller sub-lists, each containing {@code chunkSize} elements
+     * Algorithm borrowed from <a href="https://davidvlijmincx.com/posts/split_a_list_in_java/">here</a>
+     */
+    private List<List<DidEntry>> chunked(List<DidEntry> list, int chunkSize) {
+        var counter = new AtomicInteger();
+        var mapOfChunks = list.stream()
+                .collect(Collectors.groupingBy(it -> counter.getAndIncrement() / chunkSize));
+        // Create a list containing the lists of chunks
+        return new ArrayList<>(mapOfChunks.values());
+
     }
 
     /**
@@ -146,5 +172,27 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
     private void update(Connection connection, DidEntry entry) {
         var stmt = statements.getUpdateTemplate();
         queryExecutor.execute(connection, stmt, entry.bpn(), entry.did(), entry.bpn());
+    }
+
+    /**
+     * loads ALL entries from the database and puts them in a local cache.
+     * This method is NOT transactional, and may only be called inside a transaction!
+     */
+    private void invalidateCache() {
+        try (var connection = getConnection()) {
+
+            var result = queryExecutor.query(connection, true, this::mapDidEntry, "SELECT * FROM %s".formatted(statements.getDidEntryTableName()))
+                    .collect(Collectors.toMap(DidEntry::bpn, DidEntry::did));
+            var bas = new ByteArrayOutputStream();
+            try (var gzip = new GZIPOutputStream(bas)) {
+                gzip.write(mapper.writeValueAsBytes(result));
+            } catch (IOException e) {
+                throw new EdcException(e);
+            }
+            cache.set(bas.toByteArray());
+
+        } catch (SQLException e) {
+            throw new EdcPersistenceException(e);
+        }
     }
 }

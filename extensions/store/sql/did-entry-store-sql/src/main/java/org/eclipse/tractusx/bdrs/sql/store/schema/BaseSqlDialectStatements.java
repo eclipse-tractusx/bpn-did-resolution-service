@@ -1,5 +1,10 @@
 package org.eclipse.tractusx.bdrs.sql.store.schema;
 
+import org.eclipse.tractusx.bdrs.spi.store.DidEntry;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class BaseSqlDialectStatements implements DidEntryStoreStatements {
     @Override
     public String getDeleteByBpnTemplate() {
@@ -28,5 +33,11 @@ public class BaseSqlDialectStatements implements DidEntryStoreStatements {
     @Override
     public String findByBpnTemplate() {
         return "SELECT * FROM %s WHERE %s = ?".formatted(getDidEntryTableName(), getBpnColumn());
+    }
+
+    @Override
+    public String getInsertMultipleStatement(List<DidEntry> entries) {
+        var str = entries.stream().map(e -> "(?, ?)").collect(Collectors.joining(","));
+        return "INSERT INTO %s (%s, %s) VALUES %s;".formatted(getDidEntryTableName(), getBpnColumn(), getDidColumn(), str);
     }
 }

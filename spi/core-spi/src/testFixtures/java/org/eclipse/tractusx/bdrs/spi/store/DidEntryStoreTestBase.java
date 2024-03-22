@@ -3,10 +3,13 @@ package org.eclipse.tractusx.bdrs.spi.store;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.edc.junit.annotations.PostgresqlIntegrationTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Map;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 
@@ -96,7 +99,6 @@ public abstract class DidEntryStoreTestBase {
         assertThat(entries).isEmpty();
     }
 
-
     @Test
     void remove_whenNotExists() {
         assertThatNoException().isThrownBy(() -> getStore().delete(BPN));
@@ -107,6 +109,18 @@ public abstract class DidEntryStoreTestBase {
         assertThat(entries).isEmpty();
     }
 
+    @ParameterizedTest
+    @ValueSource(ints = { 1000, 10_000, 30_000, 50_000, 100_000 })
+    void saveAndGetManyEntries(int size) {
+        var allEntries = IntStream.range(0, size)
+                .mapToObj(i -> new DidEntry("bpn" + i, "did:web:participant" + i))
+                .toList();
+
+        getStore().save(allEntries.stream());
+
+        var loadedEntries = deserialize(getStore().entries());
+        assertThat(loadedEntries).hasSize(size);
+    }
 
     protected abstract DidEntryStore getStore();
 

@@ -27,10 +27,11 @@ class SqlDidEntryStoreTest extends DidEntryStoreTestBase {
     @BeforeEach
     void setUp(PostgresqlStoreSetupExtension extension, QueryExecutor queryExecutor) throws IOException {
 
-        didEntryStore = new SqlDidEntryStore(extension.getDataSourceRegistry(), extension.getDatasourceName(),
-                extension.getTransactionContext(), new ObjectMapper(), queryExecutor, statements);
         var schema = Files.readString(Paths.get("./docs/schema.sql"));
         extension.runQuery(schema);
+        
+        didEntryStore = new SqlDidEntryStore(extension.getDataSourceRegistry(), extension.getDatasourceName(),
+                extension.getTransactionContext(), new ObjectMapper(), queryExecutor, statements);
     }
 
     @AfterEach
