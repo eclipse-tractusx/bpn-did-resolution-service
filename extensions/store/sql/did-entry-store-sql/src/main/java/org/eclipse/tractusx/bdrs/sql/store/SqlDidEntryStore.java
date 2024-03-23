@@ -127,23 +127,23 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
     public void updateCache() {
         monitor.debug("Checking if cache is out-of-date");
         transactionContext.execute(() -> {
-            var dbVersion = getLatestVersion();
-            if (dbVersion > latestVersion) {
-                monitor.debug("Local version is %s, database version is %d, will update cache".formatted(latestVersion, dbVersion));
-                invalidateCache();
-                latestVersion = dbVersion;
+            try (var connection = getConnection()) {
+                var dbVersion = getLatestVersion(connection);
+                if (dbVersion > latestVersion) {
+                    monitor.debug("Local version is %s, database version is %d, will update cache".formatted(latestVersion, dbVersion));
+                    invalidateCache();
+                    latestVersion = dbVersion;
+                }
+            } catch (SQLException e) {
+                throw new EdcPersistenceException(e);
             }
         });
     }
 
-    private int getLatestVersion() {
-        try (var connection = getConnection()) {
-            var stmt = statements.getLatestVersionStatement();
-            var list = queryExecutor.query(connection, true, r -> r.getInt(statements.getVersionColumn()), stmt);
-            return list.findFirst().orElse(latestVersion);
-        } catch (SQLException e) {
-            throw new EdcPersistenceException(e);
-        }
+    private int getLatestVersion(Connection connection) {
+        var stmt = statements.getLatestVersionStatement();
+        var list = queryExecutor.query(connection, true, r -> r.getInt(statements.getVersionColumn()), stmt);
+        return list.findFirst().orElse(latestVersion);
     }
 
     /**
@@ -173,7 +173,7 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
     }
 
     private void updateLatestVersion(Connection connection) {
-        latestVersion = getLatestVersion() + 1;
+        latestVersion = getLatestVersion(connection) + 1;
         var stmt = statements.updateLatestVersionTemplate();
         queryExecutor.execute(connection, stmt, latestVersion, Timestamp.from(Instant.now()));
     }
