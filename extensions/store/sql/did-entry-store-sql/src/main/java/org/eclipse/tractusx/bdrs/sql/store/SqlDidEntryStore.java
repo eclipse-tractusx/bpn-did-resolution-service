@@ -124,6 +124,13 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
         });
     }
 
+    /**
+     * This method performs a cache update by first checking if the database has new data available, and if it does, reloads the
+     * internal cache with values from the database.
+     * As a means of change detection, the {@code version} field is used.
+     * <p>
+     * This method is transactional.
+     */
     public void updateCache() {
         monitor.debug("Checking if cache is out-of-date");
         transactionContext.execute(() -> {
@@ -140,6 +147,9 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
         });
     }
 
+    /**
+     * obtains the latest version information of the did entry list from the database. If no such entry exists, the locally held {@code latestVersion} is returned.
+     */
     private int getLatestVersion(Connection connection) {
         var stmt = statements.getLatestVersionStatement();
         var list = queryExecutor.query(connection, true, r -> r.getInt(statements.getVersionColumn()), stmt);
@@ -172,6 +182,9 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
         updateLatestVersion(connection);
     }
 
+    /**
+     * Obtains the latest version from the database, increments it by 1 and writes it back to the database
+     */
     private void updateLatestVersion(Connection connection) {
         latestVersion = getLatestVersion(connection) + 1;
         var stmt = statements.updateLatestVersionTemplate();
