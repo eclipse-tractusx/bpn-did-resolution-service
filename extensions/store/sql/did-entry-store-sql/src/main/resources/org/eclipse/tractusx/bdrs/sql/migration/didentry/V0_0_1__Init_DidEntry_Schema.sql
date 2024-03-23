@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS edc_did_entries
 CREATE TABLE IF NOT EXISTS edc_did_entry_metadata
 (
     version    INT    NOT NULL DEFAULT 0,
-    updated_at TIMESTAMP NOT NULL DEFAULT now()
+    updated_at BIGINT NOT NULL DEFAULT (EXTRACT(EPOCH FROM NOW()))
 );
 
 -- insert "version=0" if not exists:
