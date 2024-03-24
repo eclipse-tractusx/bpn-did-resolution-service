@@ -14,14 +14,29 @@ import org.eclipse.tractusx.bdrs.spi.store.DidEntryStore;
 import org.eclipse.tractusx.bdrs.sql.store.schema.DidEntryStoreStatements;
 import org.eclipse.tractusx.bdrs.sql.store.schema.PostgresDialectStatements;
 
+import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
 import static org.eclipse.tractusx.bdrs.sql.store.SqlDidEntryStoreExtension.NAME;
 
 @Extension(value = NAME)
 public class SqlDidEntryStoreExtension implements ServiceExtension {
     public static final String NAME = "SQL DID Entry Store extension";
 
+    public static final int DEFAULT_PERIOD_SEC = 60;
+
     @Setting(required = true)
     public static final String DATASOURCE_SETTING_NAME = "edc.datasource.didentry.name";
+
+    @Setting(required = false, value = "Initial delay in seconds before the periodic checking of the database starts. Defaults to a random interval [1..3] sec")
+    public static final String INITIAL_DELAY_PROPERTY = "edc.bdrs.didentry.store.cache.initialdelay";
+
+    @Setting(value = "Period in seconds at which the database is polled for updated entries. Defaults to " + DEFAULT_PERIOD_SEC + " sec.")
+    public static final String PERIOD_PROPERTY = "edc.bdrs.didentry.store.cache.period";
+    public static final String MONITOR_PREFIX = "SQL DidEntry Store";
+
 
     @Inject
     private DataSourceRegistry dataSourceRegistry;
@@ -37,16 +52,49 @@ public class SqlDidEntryStoreExtension implements ServiceExtension {
 
     @Inject(required = false)
     private DidEntryStoreStatements dialect;
+    private SqlDidEntryStore store;
+    private ScheduledFuture<?> periodicFuture;
+    private ServiceExtensionContext context;
 
     @Override
     public String name() {
         return NAME;
     }
 
+    @Override
+    public void initialize(ServiceExtensionContext context) {
+        this.context = context;
+    }
+
+    @Override
+    public void start() {
+        long initialDelay = context.getConfig().getInteger(INITIAL_DELAY_PROPERTY, randomDelay());
+        long period = context.getConfig().getInteger(PERIOD_PROPERTY, DEFAULT_PERIOD_SEC);
+        context.getMonitor().withPrefix(MONITOR_PREFIX)
+                .debug("Schedule periodic cache update every %d seconds, starting in %d seconds".formatted(period, initialDelay));
+        var executor = Executors.newSingleThreadScheduledExecutor();
+        periodicFuture = executor.scheduleAtFixedRate(() -> store.updateCache(), initialDelay, period, TimeUnit.SECONDS);
+    }
+
+    @Override
+    public void shutdown() {
+        if (periodicFuture != null && !periodicFuture.isCancelled()) {
+            periodicFuture.cancel(true);
+        }
+    }
+
     @Provider
     public DidEntryStore createSqlDidEntryStore(ServiceExtensionContext context) {
-        var dataSourceName = context.getConfig().getString(DATASOURCE_SETTING_NAME, DataSourceRegistry.DEFAULT_DATASOURCE);
-        return new SqlDidEntryStore(dataSourceRegistry, dataSourceName, transactionContext, typeManager.getMapper(), queryExecutor, getDialect());
+        if (store == null) {
+            var dataSourceName = context.getConfig().getString(DATASOURCE_SETTING_NAME, DataSourceRegistry.DEFAULT_DATASOURCE);
+            store = new SqlDidEntryStore(dataSourceRegistry, dataSourceName, transactionContext, typeManager.getMapper(), queryExecutor, getDialect(),
+                    context.getMonitor().withPrefix(MONITOR_PREFIX));
+        }
+        return store;
+    }
+
+    private int randomDelay() {
+        return 1 + new Random().nextInt(4);
     }
 
     private DidEntryStoreStatements getDialect() {

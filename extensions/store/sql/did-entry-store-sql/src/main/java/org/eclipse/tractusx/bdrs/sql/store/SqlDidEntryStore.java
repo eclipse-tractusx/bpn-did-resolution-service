@@ -2,6 +2,7 @@ package org.eclipse.tractusx.bdrs.sql.store;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.edc.spi.EdcException;
+import org.eclipse.edc.spi.monitor.Monitor;
 import org.eclipse.edc.spi.persistence.EdcPersistenceException;
 import org.eclipse.edc.sql.QueryExecutor;
 import org.eclipse.edc.sql.store.AbstractSqlStore;
@@ -17,12 +18,11 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
@@ -31,18 +31,20 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
     private final ObjectMapper mapper;
     private final DidEntryStoreStatements statements;
     private final AtomicReference<byte[]> cache = new AtomicReference<>();
-    private final ReadWriteLock lock = new ReentrantReadWriteLock(true);
+    private final Monitor monitor;
+    private int latestVersion = 0;
 
     public SqlDidEntryStore(DataSourceRegistry dataSourceRegistry,
                             String dataSourceName,
                             TransactionContext transactionContext,
                             ObjectMapper objectMapper,
-                            QueryExecutor queryExecutor, DidEntryStoreStatements statements) {
+                            QueryExecutor queryExecutor, DidEntryStoreStatements statements, Monitor monitor) {
         super(dataSourceRegistry, dataSourceName, transactionContext, objectMapper, queryExecutor);
         this.mapper = objectMapper;
         this.statements = statements;
 
         // cannot invalidate the cache here, because the data source may not yet be initialized
+        this.monitor = monitor;
     }
 
     @Override
@@ -85,6 +87,7 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
                     queryExecutor.execute(connection, stmt, params);
                 });
 
+                updateLatestVersion(connection);
                 invalidateCache();
             } catch (SQLException e) {
                 throw new EdcPersistenceException(e);
@@ -111,12 +114,45 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
                 if (findByBpn(connection, bpn) != null) {
                     var stmt = statements.getDeleteByBpnTemplate();
                     queryExecutor.execute(connection, stmt, bpn);
+                    updateLatestVersion(connection);
                     invalidateCache();
                 }
             } catch (SQLException e) {
                 throw new EdcPersistenceException(e);
             }
         });
+    }
+
+    /**
+     * This method performs a cache update by first checking if the database has new data available, and if it does, reloads the
+     * internal cache with values from the database.
+     * As a means of change detection, the {@code version} field is used.
+     * <p>
+     * This method is transactional.
+     */
+    public void updateCache() {
+        monitor.debug("Checking if cache is out-of-date");
+        transactionContext.execute(() -> {
+            try (var connection = getConnection()) {
+                var dbVersion = getLatestVersion(connection);
+                if (dbVersion > latestVersion) {
+                    monitor.debug("Local version is %s, database version is %d, will update cache".formatted(latestVersion, dbVersion));
+                    invalidateCache();
+                    latestVersion = dbVersion;
+                }
+            } catch (SQLException e) {
+                throw new EdcPersistenceException(e);
+            }
+        });
+    }
+
+    /**
+     * obtains the latest version information of the did entry list from the database. If no such entry exists, the locally held {@code latestVersion} is returned.
+     */
+    private int getLatestVersion(Connection connection) {
+        var stmt = statements.getLatestVersionStatement();
+        var list = queryExecutor.query(connection, true, r -> r.getInt(statements.getVersionColumn()), stmt);
+        return list.findFirst().orElse(latestVersion);
     }
 
     /**
@@ -142,6 +178,16 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
         } else {
             insert(connection, entry);
         }
+        updateLatestVersion(connection);
+    }
+
+    /**
+     * Obtains the latest version from the database, increments it by 1 and writes it back to the database
+     */
+    private void updateLatestVersion(Connection connection) {
+        latestVersion = getLatestVersion(connection) + 1;
+        var stmt = statements.updateLatestVersionTemplate();
+        queryExecutor.execute(connection, stmt, latestVersion, Instant.now().toEpochMilli());
     }
 
     /**

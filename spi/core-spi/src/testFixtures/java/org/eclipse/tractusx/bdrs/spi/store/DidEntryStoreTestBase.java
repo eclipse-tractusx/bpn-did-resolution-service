@@ -1,7 +1,6 @@
 package org.eclipse.tractusx.bdrs.spi.store;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.eclipse.edc.junit.annotations.PostgresqlIntegrationTest;
 import org.eclipse.edc.spi.EdcException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,7 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@PostgresqlIntegrationTest
 public abstract class DidEntryStoreTestBase {
     private static final String BPN = "BPN12345";
     private static final String BPN2 = "BPN67890";
