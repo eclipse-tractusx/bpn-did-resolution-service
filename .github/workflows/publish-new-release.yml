@@ -247,6 +247,4 @@ jobs:
       contents: read
     needs: [ release-version ]
     uses: ./.github/workflows/publish-openapi.yaml
-    with:
-      downstream-version: ${{ needs.release-version.outputs.RELEASE_VERSION }}
     secrets: inherit
