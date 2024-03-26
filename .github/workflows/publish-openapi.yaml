@@ -6,7 +6,10 @@ on:
     branches:
       - main
 
-permissions: write-all
+permissions:
+  contents: write
+  packages: write
+  pages: write
 
 jobs:
   publish:
