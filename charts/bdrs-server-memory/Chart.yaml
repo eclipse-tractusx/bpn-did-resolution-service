@@ -20,8 +20,8 @@
 
 ---
 apiVersion: v2
-name: bdrs-server
-description: A Helm chart for the Tractus-X BPN-DID Resolution Service
+name: bdrs-server-memory
+description: A Helm chart for the Tractus-X BPN-DID Resolution Service (only in-memory persistence)
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives

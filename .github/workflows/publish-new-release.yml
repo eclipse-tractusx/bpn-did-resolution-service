@@ -64,7 +64,8 @@ jobs:
     permissions:
       contents: read
       packages: write
-    if: github.event.pull_request.merged == true && needs.release-version.outputs.RELEASE_VERSION
+    # this job is disabled because we don't have maven releases yet
+    if: github.event.pull_request.merged == true && needs.release-version.outputs.RELEASE_VERSION && false
     steps:
       - name: Export RELEASE_VERSION env
         run: |

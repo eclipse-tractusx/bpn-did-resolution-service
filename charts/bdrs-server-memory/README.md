@@ -1,10 +1,13 @@
-# bdrs-server
+# bdrs-server-memory
 
 ![Version: 0.0.1](https://img.shields.io/badge/Version-0.0.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.0.1](https://img.shields.io/badge/AppVersion-0.0.1-informational?style=flat-square)
 
-A Helm chart for the Tractus-X BPN-DID Resolution Service
+A Helm chart for the Tractus-X BPN-DID Resolution Service (only in-memory persistence)
 
 **Homepage:** <https://github.com/eclipse-tractusx/bpn-did-resolution-service/tree/main/charts/bdrs-server>
+
+**Please note that this chart only uses in-memory persistence and is therefor not suited for clustered or production deployments.
+Consider the `bdrs-server` chart for production use cases!**
 
 # Configure the chart
 
