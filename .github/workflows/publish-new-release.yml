@@ -96,16 +96,16 @@ jobs:
     needs: [ release-version ]
     permissions:
       contents: write
+      packages: write
     if: github.event.pull_request.merged == true && needs.release-version.outputs.RELEASE_VERSION
 
     strategy:
       fail-fast: false
       matrix:
-        variant: [ { dir: edc-controlplane, img: edc-runtime-memory },
-                   { dir: edc-controlplane, img: edc-controlplane-postgresql-hashicorp-vault },
-                   { dir: edc-controlplane, img: edc-controlplane-postgresql-azure-vault },
-                   { dir: edc-dataplane,    img: edc-dataplane-azure-vault },
-                   { dir: edc-dataplane,    img: edc-dataplane-hashicorp-vault } ]
+        variant: [
+          { dir: runtimes, img: bdrs-server },
+          { dir: runtimes, img: bdrs-server-memory },
+        ]
 
     steps:
       - uses: actions/checkout@v4
@@ -168,7 +168,8 @@ jobs:
   # Release: GitHub tag & release; Merges back releases into main; Starts a new development cycle;
   github-release:
     name: Publish new github release
-    needs: [ release-version, maven-release, docker-release, helm-release ]
+    #    needs: [ release-version, maven-release, docker-release, helm-release ]
+    needs: [ release-version, docker-release, helm-release ]
     runs-on: ubuntu-latest
     permissions:
       contents: write
