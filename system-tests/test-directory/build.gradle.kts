@@ -20,7 +20,5 @@ dependencies {
     testImplementation(libs.edc.junit)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.restAssured)
-
-    testCompileOnly(project(":system-tests:test-server"))
 }
 
