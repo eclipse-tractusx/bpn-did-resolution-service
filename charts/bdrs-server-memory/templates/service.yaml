@@ -40,7 +40,7 @@ spec:
       protocol: TCP
       name: management
     - port: {{ .Values.server.endpoints.directory.port }}
-      targetPort: public
+      targetPort: directory
       protocol: TCP
       name: directory
   selector:

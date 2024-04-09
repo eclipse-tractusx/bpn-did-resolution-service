@@ -75,21 +75,11 @@ helm install my-release tractusx-edc/bdrs-server --version 0.0.2 \
 | server.ingresses[0].certManager.issuer | string | `""` | If preset enables certificate generation via cert-manager namespace scoped issuer |
 | server.ingresses[0].className | string | `""` | Defines the [ingress class](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class)  to use |
 | server.ingresses[0].enabled | bool | `false` |  |
-| server.ingresses[0].endpoints | list | `["protocol","public"]` | EDC endpoints exposed by this ingress resource |
+| server.ingresses[0].endpoints | list | `["directory"]` | EDC endpoints exposed by this ingress resource |
 | server.ingresses[0].hostname | string | `"bdrs-server.local"` | The hostname to be used to precisely map incoming traffic onto the underlying network service |
 | server.ingresses[0].tls | object | `{"enabled":false,"secretName":""}` | TLS [tls class](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls) applied to the ingress resource |
 | server.ingresses[0].tls.enabled | bool | `false` | Enables TLS on the ingress resource |
 | server.ingresses[0].tls.secretName | string | `""` | If present overwrites the default secret name |
-| server.ingresses[1].annotations | object | `{}` | Additional ingress annotations to add |
-| server.ingresses[1].certManager.clusterIssuer | string | `""` | If preset enables certificate generation via cert-manager cluster-wide issuer |
-| server.ingresses[1].certManager.issuer | string | `""` | If preset enables certificate generation via cert-manager namespace scoped issuer |
-| server.ingresses[1].className | string | `""` | Defines the [ingress class](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class)  to use |
-| server.ingresses[1].enabled | bool | `false` |  |
-| server.ingresses[1].endpoints | list | `["management","control"]` | EDC endpoints exposed by this ingress resource |
-| server.ingresses[1].hostname | string | `"edc-control.intranet"` | The hostname to be used to precisely map incoming traffic onto the underlying network service |
-| server.ingresses[1].tls | object | `{"enabled":false,"secretName":""}` | TLS [tls class](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls) applied to the ingress resource |
-| server.ingresses[1].tls.enabled | bool | `false` | Enables TLS on the ingress resource |
-| server.ingresses[1].tls.secretName | string | `""` | If present overwrites the default secret name |
 | server.initContainers | list | `[]` |  |
 | server.limits.cpu | float | `1.5` |  |
 | server.limits.memory | string | `"512Mi"` |  |

@@ -43,6 +43,7 @@ import static org.eclipse.edc.util.io.Ports.getFreePort;
 public class DirectoryEndToEndTest {
     private static final URI API_ENDPOINT = URI.create("http://localhost:" + getFreePort() + "/api");
     private static final URI MANAGEMENT_ENDPOINT = URI.create("http://localhost:" + getFreePort() + "/management/v1");
+    private static final URI DIRECTORY_ENDPOINT = URI.create("http://localhost:" + getFreePort() + "/directory/v1");
     private static final String BPN_DIRECTORY = "bpn-directory";
 
     private static final String AUTH_KEY = "1234";
@@ -62,6 +63,8 @@ public class DirectoryEndToEndTest {
                     Map.of("web.http.port", String.valueOf(API_ENDPOINT.getPort()),
                             "web.http.management.port", String.valueOf(MANAGEMENT_ENDPOINT.getPort()),
                             "web.http.management.path", String.valueOf(MANAGEMENT_ENDPOINT.getPath()),
+                            "web.http.directory.port", String.valueOf(DIRECTORY_ENDPOINT.getPort()),
+                            "web.http.directory.path", String.valueOf(DIRECTORY_ENDPOINT.getPath()),
                             "edc.api.auth.key", AUTH_KEY)
             );
 
@@ -140,7 +143,7 @@ public class DirectoryEndToEndTest {
 
 
     private RequestSpecification apiRequest() {
-        return given().baseUri(API_ENDPOINT.toString())
+        return given().baseUri(DIRECTORY_ENDPOINT.toString())
                 .headers(Map.of());
     }
 

@@ -1,6 +1,5 @@
 #################################################################################
-#  Copyright (c) 2023 Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
-#  Copyright (c) 2021,2023 Contributors to the Eclipse Foundation
+#  Copyright (c) 2024 Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
 #
 #  See the NOTICE file(s) distributed with this work for additional
 #  information regarding copyright ownership.
@@ -19,7 +18,6 @@
 #################################################################################
 
 ---
-# Default values for eclipse-dataspace-connector.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -169,32 +167,7 @@ server:
       annotations: {}
       # -- EDC endpoints exposed by this ingress resource
       endpoints:
-        - protocol
-        - public
-      # -- Defines the [ingress class](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class)  to use
-      className: ""
-      # -- TLS [tls class](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls) applied to the ingress resource
-      tls:
-        # -- Enables TLS on the ingress resource
-        enabled: false
-        # -- If present overwrites the default secret name
-        secretName: ""
-      ## Adds [cert-manager](https://cert-manager.io/docs/) annotations to the ingress resource
-      certManager:
-        # -- If preset enables certificate generation via cert-manager namespace scoped issuer
-        issuer: ""
-        # -- If preset enables certificate generation via cert-manager cluster-wide issuer
-        clusterIssuer: ""
-    ## Private / Intranet facing Ingress
-    - enabled: false
-      # -- The hostname to be used to precisely map incoming traffic onto the underlying network service
-      hostname: "edc-control.intranet"
-      # -- Additional ingress annotations to add
-      annotations: {}
-      # -- EDC endpoints exposed by this ingress resource
-      endpoints:
-        - management
-        - control
+        - directory
       # -- Defines the [ingress class](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class)  to use
       className: ""
       # -- TLS [tls class](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls) applied to the ingress resource
