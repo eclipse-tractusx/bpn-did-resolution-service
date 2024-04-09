@@ -16,6 +16,7 @@ package org.eclipse.tractusx.bdrs.api.directory;
 
 import org.eclipse.edc.runtime.metamodel.annotation.Extension;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
+import org.eclipse.edc.runtime.metamodel.annotation.Setting;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
 import org.eclipse.edc.web.spi.WebService;
@@ -30,6 +31,11 @@ import static org.eclipse.tractusx.bdrs.api.directory.DirectoryApiExtension.NAME
 public class DirectoryApiExtension implements ServiceExtension {
     public static final String NAME = "BPN Directory API";
 
+    @Setting(value = "Port for the Directory API", required = true)
+    public static final String MGMT_API_PORT = "web.http.directory.port";
+    @Setting(value = "Path for the Management API", required = true)
+    public static final String MGMT_API_PATH = "web.http.directory.path";
+    static final String CONTEXT_NAME = "directory";
     @Inject
     private DidEntryStore store;
 
@@ -43,7 +49,7 @@ public class DirectoryApiExtension implements ServiceExtension {
 
     @Override
     public void initialize(ServiceExtensionContext context) {
-        webService.registerResource(new DirectoryApiController(store));
+        webService.registerResource(CONTEXT_NAME, new DirectoryApiController(store));
     }
 
 }

@@ -67,12 +67,14 @@ jobs:
         with:
           imagename: ${{ matrix.variant.name }}
           rootDir: runtimes/${{ matrix.variant.name }}
+          cluster-config: "system-tests/helm/kind.config.yaml"
           helm_command: |-
             helm install ${{ matrix.variant.name }} ${{ matrix.variant.chart }} \
             --set server.image.pullPolicy="Never" \
             --set server.image.tag="latest" \
             --set server.image.repository="${{ matrix.variant.name }}" \
             --set fullnameOverride="${{ matrix.variant.name }}" \
+            -f system-tests/helm/values-test.yaml \
             --wait-for-jobs --timeout=120s --dependency-update
             
             # wait for the pod to become ready
@@ -80,3 +82,6 @@ jobs:
             
             # execute the helm test
             helm test ${{ matrix.variant.name }}
+
+            # verify ingress is available
+            curl --fail -X GET -k https://localhost/api/directory/bpn-directory -H "content-type: application/json" --output -
