@@ -77,8 +77,9 @@ public class CredentialBasedAuthenticationService implements AuthenticationServi
      */
     private boolean isValidJwt(String token) {
         var parts = token.split("\\.");
-        if (parts.length != 3) // The JWT is composed of three parts
+        if (parts.length != 3) { // The JWT is composed of three parts
             return false;
+        }
         var decoder = Base64.getUrlDecoder();
         return canParse(decoder.decode(parts[0])) && canParse(decoder.decode(parts[1]));
     }

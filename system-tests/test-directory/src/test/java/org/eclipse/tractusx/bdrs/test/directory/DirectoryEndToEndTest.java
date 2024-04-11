@@ -67,7 +67,9 @@ public class DirectoryEndToEndTest {
     private static final String BPN_DIRECTORY = "bpn-directory";
 
     private static final String AUTH_KEY = "1234";
-    final @RegisterExtension
+    private static final String BPN1 = "BPN12345";
+    private static final String DID1 = "did:web:localhost/foo";
+    @RegisterExtension
     protected static EdcRuntimeExtension runtime = new EdcRuntimeExtension(
             ":system-tests:test-server",
             "BDRS Server",
@@ -79,10 +81,6 @@ public class DirectoryEndToEndTest {
                     "edc.iam.trusted-issuer.test.id", "did:web:some-issuer",
                     "edc.api.auth.key", AUTH_KEY)
     );
-    private static final String BPN1 = "BPN12345";
-    private static final String DID1 = "did:web:localhost/foo";
-
-
     private final String issuerId = "did:web:some-issuer";
     private final String holderId = "did:web:bdrs-client";
     private ECKey vcIssuerKey;
