@@ -83,5 +83,9 @@ jobs:
             # execute the helm test
             helm test ${{ matrix.variant.name }}
 
-            # verify ingress is available
-            curl --fail -X GET -k https://localhost/api/directory/bpn-directory -H "content-type: application/json" --output -
+            # verify ingress is available. expect 401, because we don't have a valid VP/VC (MembershipCred)
+            code=$(curl -X GET -IL -sw "%{http_code}" -k https://localhost/api/directory/bpn-directory -H "content-type: application/json" -o /dev/null)
+            if [ "$code" -ne "401" ]; then
+              echo "BDRS Directory API not ready, status = $code"
+              exit 1;
+            fi
