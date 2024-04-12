@@ -14,15 +14,25 @@ flyway = "10.11.0"
 [libraries]
 edc-core-jetty = { module = "org.eclipse.edc:jetty-core", version.ref = "edc" }
 edc-core-jersey = { module = "org.eclipse.edc:jersey-core", version.ref = "edc" }
+edc-core-did = { module = "org.eclipse.edc:identity-did-core", version.ref = "edc" }
 
 edc-boot = { module = "org.eclipse.edc:boot", version.ref = "edc" }
+edc-vc-jwt = { module = "org.eclipse.edc:jwt-verifiable-credentials", version.ref = "edc" }
+edc-vc = { module = "org.eclipse.edc:verifiable-credentials", version.ref = "edc" }
+edc-identitytrust-service = { module = "org.eclipse.edc:identity-trust-service", version.ref = "edc" }
+edc-identitytrust-issuers = { module = "org.eclipse.edc:identity-trust-issuers-configuration", version.ref = "edc" }
+edc-identitytrust-transform = { module = "org.eclipse.edc:identity-trust-transform", version.ref = "edc" }
+edc-identitydidweb = { module = "org.eclipse.edc:identity-did-web", version.ref = "edc" }
 edc-spi-core = { module = "org.eclipse.edc:core-spi", version.ref = "edc" }
+edc-spi-did = { module = "org.eclipse.edc:identity-did-spi", version.ref = "edc" }
 edc-spi-web = { module = "org.eclipse.edc:web-spi", version.ref = "edc" }
 edc-spi-transaction = { module = "org.eclipse.edc:transaction-spi", version.ref = "edc" }
 edc-spi-transaction-datasource = { module = "org.eclipse.edc:transaction-datasource-spi", version.ref = "edc" }
 edc-connector-core = { module = "org.eclipse.edc:connector-core", version.ref = "edc" }
-#edc-spi-identity-trust = { module = "org.eclipse.edc:identity-trust-spi", version.ref = "edc" }
 edc-spi-jwt = { module = "org.eclipse.edc:jwt-spi", version.ref = "edc" }
+edc-spi-token = { module = "org.eclipse.edc:token-spi", version.ref = "edc" }
+edc-spi-identitytrust = { module = "org.eclipse.edc:identity-trust-spi", version.ref = "edc" }
+edc-spi-vc = { module = "org.eclipse.edc:verifiable-credentials-spi", version.ref = "edc" }
 edc-spi-auth = { module = "org.eclipse.edc:auth-spi", version.ref = "edc" }
 edc-auth-tokenbased = { module = "org.eclipse.edc:auth-tokenbased", version.ref = "edc" }
 edc-vault-filesystem = { module = "org.eclipse.edc:vault-filesystem", version.ref = "edc" }
@@ -31,6 +41,11 @@ edc-api-observability = { module = "org.eclipse.edc:api-observability", version.
 edc-core-sql = { module = "org.eclipse.edc:sql-core", version.ref = "edc" }
 edc-transaction-local = { module = "org.eclipse.edc:transaction-local", version.ref = "edc" }
 edc-sql-pool = { module = "org.eclipse.edc:sql-pool-apache-commons", version.ref = "edc" }
+
+edc-lib-keys = { module = "org.eclipse.edc:keys-lib", version.ref = "edc" }
+edc-lib-transform = { module = "org.eclipse.edc:transform-lib", version.ref = "edc" }
+edc-lib-jsonld = { module = "org.eclipse.edc:json-ld-lib", version.ref = "edc" }
+edc-lib-http = { module = "org.eclipse.edc:http-lib", version.ref = "edc" }
 
 # Third party libs
 assertj = { module = "org.assertj:assertj-core", version.ref = "assertj" }
@@ -48,9 +63,9 @@ shadow = { id = "com.github.johnrengelman.shadow", version = "8.1.1" }
 [bundles]
 # TODO: "edc-vault-filesystem" - remove dependency on org.eclipse.edc.vault.filesystem.JskPrivateKeyResolverExtension
 bdrs-boot = [
-  "edc-core-jetty",
-  "edc-core-jersey",
-  "edc-boot",
-  "edc-spi-auth",
-  "edc-auth-tokenbased",
+    "edc-core-jetty",
+    "edc-core-jersey",
+    "edc-boot",
+    "edc-spi-auth",
+    "edc-auth-tokenbased",
 ]

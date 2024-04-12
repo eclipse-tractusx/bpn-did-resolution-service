@@ -48,6 +48,7 @@ include(":spi:core-spi")
 include(":core:core-services")
 include(":api:directory-api")
 include(":api:management-api")
+include(":api:authentication")
 include(":runtimes:bdrs-server")
 include(":runtimes:bdrs-server-memory")
 
