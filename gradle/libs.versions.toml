@@ -3,7 +3,7 @@ format.version = "1.1"
 
 [versions]
 assertj = "3.25.3"
-edc = "0.6.1-SNAPSHOT"
+edc = "0.6.1"
 nimbus = "9.37.3"
 restAssured = "5.4.0"
 jupiter = "5.10.2"
@@ -45,6 +45,7 @@ edc-sql-pool = { module = "org.eclipse.edc:sql-pool-apache-commons", version.ref
 edc-lib-keys = { module = "org.eclipse.edc:keys-lib", version.ref = "edc" }
 edc-lib-transform = { module = "org.eclipse.edc:transform-lib", version.ref = "edc" }
 edc-lib-jsonld = { module = "org.eclipse.edc:json-ld-lib", version.ref = "edc" }
+edc-lib-json = { module = "org.eclipse.edc:json-lib", version.ref = "edc" }
 edc-lib-http = { module = "org.eclipse.edc:http-lib", version.ref = "edc" }
 
 # Third party libs

@@ -21,6 +21,7 @@
 
 package org.eclipse.tractusx.bdrs.core;
 
+import org.eclipse.edc.json.JacksonTypeManager;
 import org.eclipse.edc.runtime.metamodel.annotation.BaseExtension;
 import org.eclipse.edc.runtime.metamodel.annotation.Extension;
 import org.eclipse.edc.runtime.metamodel.annotation.Provider;
@@ -94,7 +95,7 @@ public class BdrsCoreExtension implements ServiceExtension {
     @Provider
     public TypeManager typeManager() {
         if (typeManager == null) {
-            typeManager = new TypeManager();
+            typeManager = new JacksonTypeManager();
         }
         return typeManager;
     }
