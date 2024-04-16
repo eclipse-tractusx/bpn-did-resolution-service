@@ -183,7 +183,7 @@ server:
       # -- The hostname to be used to precisely map incoming traffic onto the underlying network service
       hostname: "bdrs-server.mgmt.local"
       # -- Additional ingress annotations to add
-      annotations: { }
+      annotations: {}
       # -- EDC endpoints exposed by this ingress resource
       endpoints:
         - management
