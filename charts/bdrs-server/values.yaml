@@ -162,12 +162,35 @@ server:
     ## Public / Internet facing Ingress
     - enabled: false
       # -- The hostname to be used to precisely map incoming traffic onto the underlying network service
-      hostname: "bdrs-server.local"
+      hostname: "bdrs-server.directory.local"
       # -- Additional ingress annotations to add
       annotations: {}
       # -- EDC endpoints exposed by this ingress resource
       endpoints:
         - directory
+      # -- Defines the [ingress class](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class)  to use
+      className: ""
+      # -- TLS [tls class](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls) applied to the ingress resource
+      tls:
+        # -- Enables TLS on the ingress resource
+        enabled: false
+        # -- If present overwrites the default secret name
+        secretName: ""
+      ## Adds [cert-manager](https://cert-manager.io/docs/) annotations to the ingress resource
+      certManager:
+        # -- If preset enables certificate generation via cert-manager namespace scoped issuer
+        issuer: ""
+        # -- If preset enables certificate generation via cert-manager cluster-wide issuer
+        clusterIssuer: ""
+    ## Ingress for the Management API, should not be internet facing
+    - enabled: false
+      # -- The hostname to be used to precisely map incoming traffic onto the underlying network service
+      hostname: "bdrs-server.mgmt.local"
+      # -- Additional ingress annotations to add
+      annotations: {}
+      # -- EDC endpoints exposed by this ingress resource
+      endpoints:
+        - management
       # -- Defines the [ingress class](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class)  to use
       className: ""
       # -- TLS [tls class](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls) applied to the ingress resource

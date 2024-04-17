@@ -89,3 +89,7 @@ jobs:
               echo "BDRS Directory API not ready, status = $code"
               exit 1;
             fi
+            
+            # verify management API is reachable as well. 
+            # in production scenarios, the Managment API should NEVER be on the same ingress as the public API
+            curl -X GET --fail -k -L http://localhost/api/management/bpn-directory -H "content-type: application/json" -H "x-api-key: password" -o -

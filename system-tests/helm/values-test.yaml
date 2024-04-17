@@ -24,6 +24,7 @@ server:
       hostname: "localhost"
       endpoints:
         - directory
+        - management
       className: "nginx"
       tls:
         enabled: true
