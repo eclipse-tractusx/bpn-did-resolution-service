@@ -84,3 +84,14 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Determine secret name.
+*/}}
+{{- define "bdrs.secretName" -}}
+{{- if .Values.existingSecret -}}
+{{- .Values.existingSecret }}
+{{- else -}}
+{{- include "bdrs.fullname" . -}}
+{{- end -}}
+{{- end -}}
