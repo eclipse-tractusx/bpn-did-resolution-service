@@ -279,6 +279,5 @@ postgresql:
       enabled: false
   auth:
     database: "bdrs"
-    username: "postgres"
+    username: "bdrs"
     password: "password"
-    existingSecret: "{{ .Release.Name }}-bdrs-postgresql"
