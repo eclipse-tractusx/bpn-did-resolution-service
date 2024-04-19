@@ -49,7 +49,7 @@ helm install my-release tractusx-edc/bdrs-server --version 0.0.2 \
 | nameOverride | string | `""` |  |
 | postgresql.auth.database | string | `"bdrs"` |  |
 | postgresql.auth.password | string | `"password"` |  |
-| postgresql.auth.username | string | `"postgres"` |  |
+| postgresql.auth.username | string | `"bdrs"` |  |
 | postgresql.jdbcUrl | string | `"jdbc:postgresql://{{ .Release.Name }}-postgresql:5432/bdrs"` |  |
 | postgresql.primary.persistence.enabled | bool | `false` |  |
 | postgresql.readReplicas.persistence.enabled | bool | `false` |  |
