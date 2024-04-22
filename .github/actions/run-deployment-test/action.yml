@@ -95,7 +95,8 @@ runs:
         helm install vault hashicorp/vault \
           -f system-tests/helm/values-vault-test.yaml \
           --wait -for-jobs --timeout=120s --dependency-update
-
+        
+        kubectl wait --for=jsonpath='{.status.phase}'=Running pod/vault-0
 
     - name: Install Runtime
       shell: bash
