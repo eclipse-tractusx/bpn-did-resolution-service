@@ -97,7 +97,8 @@ runs:
           -f system-tests/helm/values-vault-test.yaml \
           --wait -for-jobs --timeout=120s --dependency-update
         
-        kubectl wait --for=jsonpath='{.status.phase}'=Running pod/vault-0
+        echo "Wait for Vault pod to become ready"
+        kubectl wait --for=condition=Ready pod/vault-0
 
     - name: Install Runtime
       shell: bash
