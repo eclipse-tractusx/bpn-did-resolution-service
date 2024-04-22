@@ -86,17 +86,6 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
-Determine secret name.
-*/}}
-{{- define "bdrs.secretName" -}}
-{{- if .Values.server.endpoints.management.existingSecret -}}
-{{- .Values.existingSecret }}
-{{- else -}}
-{{- include "bdrs.fullname" . -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
 Define secret name of postgresql dependency.
 */}}
 {{- define "bdrs.postgresqlSecretName" -}}
