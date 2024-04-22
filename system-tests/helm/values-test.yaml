@@ -29,3 +29,20 @@ server:
       tls:
         enabled: true
         secretName: "tls-secret"
+
+# we use this to pre-populate the Hashicorp Vault with the database user and password
+vault:
+  server:
+    postStart:
+      - sh
+      - -c
+      - |-
+        {
+        sleep 5
+        
+        /bin/vault kv put secret/edc.datasource.didentry.user content=bdrs
+
+        /bin/vault kv put secret/edc.datasource.didentry.password content=password
+        
+        /bin/vault kv put secret/mgmt-api-key content=password
+        }

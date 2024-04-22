@@ -36,11 +36,6 @@ spec:
       image: curlimages/curl
       command: [ 'curl', '--fail' ]
       args: [ '{{- printf "http://%s:%v%s/check/readiness" (include "bdrs.fullname" $ ) $.Values.server.endpoints.default.port $.Values.server.endpoints.default.path -}}' ]
-    {{/* Try getting a BPN/DID mapping via the management API   */}}
-    - name: bdrs-management-api
-      image: curlimages/curl
-      command: [ 'curl', '-i', '--fail', '-X', 'GET', '-H', '{{- printf "x-api-key: %s" $.Values.server.endpoints.management.authKey }}' ]
-      args: [ '{{- printf "http://%s:%v%s/bpn-directory" (include "bdrs.fullname" $ ) $.Values.server.endpoints.management.port $.Values.server.endpoints.management.path -}}' ]
   restartPolicy: Never
   securityContext:
     fsGroup: 101 # curl_group

@@ -50,3 +50,9 @@ dependencies:
     version: 12.11.2
     repository: https://charts.bitnami.com/bitnami
     condition: install.postgresql
+  # HashiCorp Vault
+  - name: vault
+    alias: vault
+    version: "0.27.0"
+    repository: https://helm.releases.hashicorp.com
+    condition: install.vault

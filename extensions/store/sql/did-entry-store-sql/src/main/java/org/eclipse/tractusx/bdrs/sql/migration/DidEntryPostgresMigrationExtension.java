@@ -21,8 +21,18 @@
 package org.eclipse.tractusx.bdrs.sql.migration;
 
 
+import org.eclipse.edc.runtime.metamodel.annotation.Inject;
+import org.eclipse.edc.spi.security.Vault;
+
 public class DidEntryPostgresMigrationExtension extends AbstractPostgresqlMigrationExtension {
     private static final String NAME_SUBSYSTEM = "didentry";
+    @Inject
+    private Vault vault;
+
+    @Override
+    protected Vault getVault() {
+        return vault;
+    }
 
     protected String getSubsystemName() {
         return NAME_SUBSYSTEM;
