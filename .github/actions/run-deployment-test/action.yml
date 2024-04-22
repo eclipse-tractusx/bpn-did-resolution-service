@@ -92,6 +92,7 @@ runs:
     - name: "Install Vault chart"
       shell: bash
       run: |
+        helm repo add hashicorp https://helm.releases.hashicorp.com  
         helm install vault hashicorp/vault \
           -f system-tests/helm/values-vault-test.yaml \
           --wait -for-jobs --timeout=120s --dependency-update
