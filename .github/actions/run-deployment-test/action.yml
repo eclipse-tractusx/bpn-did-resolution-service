@@ -93,12 +93,15 @@ runs:
       shell: bash
       run: |
         helm repo add hashicorp https://helm.releases.hashicorp.com  
+        
         helm install vault hashicorp/vault \
           -f system-tests/helm/values-vault-test.yaml \
-          --wait -for-jobs --timeout=120s --dependency-update
+          --wait-for-jobs --timeout=120s --dependency-update
         
-        echo "Wait for Vault pod to become ready"
-        kubectl wait --for=condition=Ready pod/vault-0
+        # wait for Vault pod to become ready
+        kubectl wait --for=condition=ready pod \
+         --selector=app.kubernetes.io/name=vault \
+         --timeout=90s
 
     - name: Install Runtime
       shell: bash
