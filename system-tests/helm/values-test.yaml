@@ -17,6 +17,7 @@
 #  SPDX-License-Identifier: Apache-2.0
 #################################################################################
 
+# this file is intended to provide configuration for a BDRS deployment in a CI test
 ---
 install:
   vault: false
