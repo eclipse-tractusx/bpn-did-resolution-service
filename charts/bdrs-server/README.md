@@ -71,7 +71,7 @@ helm install my-release tractusx-edc/bdrs-server --version 0.0.2 \
 | server.endpoints.directory.port | int | `8082` | port for incoming api calls |
 | server.endpoints.management | object | `{"authKey":"password","existingSecret":"","path":"/api/management","port":8081}` | management api, used by internal users, can be added to an ingress and must not be internet facing |
 | server.endpoints.management.authKey | string | `"password"` | authentication key, must be attached to each 'X-Api-Key' request header |
-| server.endpoints.management.existingSecret | string | `""` | secret containing the auth-key for incoming api calls |
+| server.endpoints.management.existingSecret | string | `""` | existing secret containing the auth-key for incoming api calls |
 | server.endpoints.management.path | string | `"/api/management"` | path for incoming api calls |
 | server.endpoints.management.port | int | `8081` | port for incoming api calls |
 | server.env | object | `{}` |  |

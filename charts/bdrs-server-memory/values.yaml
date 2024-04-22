@@ -85,7 +85,7 @@ server:
       path: /api/management
       # -- authentication key, must be attached to each 'X-Api-Key' request header
       authKey: "password"
-      # -- secret containing the auth-key for incoming api calls
+      # -- existing secret containing the auth-key for incoming api calls
       existingSecret: ""
     # -- directory API
     directory:

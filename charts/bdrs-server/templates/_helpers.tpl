@@ -89,7 +89,7 @@ Create the name of the service account to use
 Determine secret name.
 */}}
 {{- define "bdrs.secretName" -}}
-{{- if .Values.existingSecret -}}
+{{- if .Values.server.endpoints.management.existingSecret -}}
 {{- .Values.existingSecret }}
 {{- else -}}
 {{- include "bdrs.fullname" . -}}
