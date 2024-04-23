@@ -44,7 +44,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: KICS scan
-        uses: checkmarx/kics-github-action@v1.6
+        uses: checkmarx/kics-github-action@v2
         continue-on-error: true # kics 1.6 fails
         with:
           path: "."
