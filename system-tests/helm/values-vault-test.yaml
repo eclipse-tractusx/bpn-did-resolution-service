@@ -17,22 +17,33 @@
 #  SPDX-License-Identifier: Apache-2.0
 #################################################################################
 
-# this file is intended to provide configuration for a BDRS deployment in a CI test
+# this file is intended to provide configuration for a standalone Hashicorp Vault deployment used in a BDRS CI test
 ---
-install:
-  vault: false
+injector:
+  enabled: false
 server:
-  ingresses:
-    - enabled: true
-      hostname: "localhost"
-      endpoints:
-        - directory
-        - management
-      className: "nginx"
-      tls:
-        enabled: true
-        secretName: "tls-secret"
-
-vault:
-  hashicorp:
-    url: "http://vault:8200"
+  dev:
+    enabled: true
+    devRootToken: "root"
+  postStart:
+    - sh
+    - -c
+    - |-
+      {
+      sleep 5
+      
+      /bin/vault kv put secret/edc.datasource.didentry.user content=bdrs
+      
+      /bin/vault kv put secret/edc.datasource.didentry.password content=password
+      
+      /bin/vault kv put secret/mgmt-api-key content=password
+      }
+hashicorp:
+  token: "root"
+  timeout: 30
+  healthCheck:
+    enabled: true
+    standbyOk: true
+  paths:
+    secret: /v1/secret
+    health: /v1/sys/health

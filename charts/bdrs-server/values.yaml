@@ -24,6 +24,7 @@
 
 install:
   postgresql: true
+  vault: true
 
 fullnameOverride: ""
 nameOverride: ""
@@ -88,7 +89,7 @@ server:
       # -- path for incoming api calls
       path: /api/management
       # -- authentication key, must be attached to each 'X-Api-Key' request header
-      authKey: "password"
+      authKeyAlias: "mgmt-api-key"
     # -- directory API
     directory:
       # -- port for incoming api calls
@@ -277,5 +278,24 @@ postgresql:
       enabled: false
   auth:
     database: "bdrs"
-    username: "postgres"
+    username: "bdrs"
     password: "password"
+
+vault:
+  injector:
+    enabled: false
+  server:
+    dev:
+      enabled: true
+      devRootToken: "root"
+    postStart:    # must be set externally!
+  hashicorp:
+    url: "http://{{ .Release.Name }}-vault:8200"
+    token: "root"
+    timeout: 30
+    healthCheck:
+      enabled: true
+      standbyOk: true
+    paths:
+      secret: /v1/secret
+      health: /v1/sys/health
