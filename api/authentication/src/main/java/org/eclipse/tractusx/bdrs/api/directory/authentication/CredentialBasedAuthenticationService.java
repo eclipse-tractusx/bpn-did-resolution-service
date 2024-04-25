@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import static jakarta.ws.rs.core.HttpHeaders.AUTHORIZATION;
 
@@ -39,29 +38,37 @@ public class CredentialBasedAuthenticationService implements AuthenticationServi
     public boolean isAuthenticated(Map<String, List<String>> headers) {
 
         if (headers == null || headers.isEmpty()) {
-            throw new AuthenticationFailedException("Headers were null or empty");
+            var msg = "Headers were null or empty";
+            monitor.warning(msg);
+            throw new AuthenticationFailedException(msg);
         }
-        Objects.requireNonNull(headers, "headers");
 
         var authHeaders = headers.keySet().stream()
                 .filter(k -> k.equalsIgnoreCase(AUTHORIZATION))
                 .map(headers::get)
                 .findFirst();
 
-        return authHeaders.map(this::performCredentialValidation).orElseThrow(() -> new AuthenticationFailedException("Header '%s' not present".formatted(AUTHORIZATION)));
+        return authHeaders.map(this::performCredentialValidation).orElseThrow(() -> {
+            var msg = "Header '%s' not present";
+            monitor.warning(msg);
+            return new AuthenticationFailedException(msg.formatted(AUTHORIZATION));
+        });
     }
 
     private boolean performCredentialValidation(List<String> authHeaders) {
         if (authHeaders.size() != 1) {
+            monitor.warning("Expected exactly 1 Authorization header, found %d".formatted(authHeaders.size()));
             return false;
         }
         var token = authHeaders.get(0);
         if (!token.toLowerCase().startsWith("bearer ")) {
+            monitor.warning("Authorization header must start with 'bearer '");
             return false;
         }
         token = token.substring(6).trim(); // "bearer" has 7 characters, it could be upper case, lower case or capitalized
 
         if (!isValidJwt(token)) {
+            monitor.warning("Bearer token is not valid JWT");
             return false;
         }
 
