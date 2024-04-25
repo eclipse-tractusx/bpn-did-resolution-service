@@ -20,7 +20,10 @@ dependencies {
     testImplementation(libs.edc.junit)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.restAssured)
+    testImplementation(libs.edc.spi.web)
+    testImplementation(libs.edc.spi.did)
 
-    testCompileOnly(project(":system-tests:test-server"))
+    testImplementation(testFixtures(libs.edc.vc.jwt)) // JwtCreationUtils
+    testImplementation(libs.nimbus.jwt)
 }
 

@@ -25,16 +25,13 @@ plugins {
 }
 
 dependencies {
-    runtimeOnly(libs.bundles.bdrs.boot)
-    runtimeOnly(libs.edc.api.observability)
+    runtimeOnly(project(":runtimes:bdrs-server-memory"))
     runtimeOnly(libs.edc.transaction.local)
     runtimeOnly(libs.edc.sql.pool)
     runtimeOnly(libs.postgres)
+    runtimeOnly(libs.edc.vault.hashicorp)
 
-    runtimeOnly(project(":core:core-services"))
     runtimeOnly(project(":extensions:store:sql:did-entry-store-sql"))
-    runtimeOnly(project(":api:directory-api"))
-    runtimeOnly(project(":api:management-api"))
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {

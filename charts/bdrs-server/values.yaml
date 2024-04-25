@@ -1,6 +1,5 @@
 #################################################################################
-#  Copyright (c) 2023 Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
-#  Copyright (c) 2021,2023 Contributors to the Eclipse Foundation
+#  Copyright (c) 2024 Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
 #
 #  See the NOTICE file(s) distributed with this work for additional
 #  information regarding copyright ownership.
@@ -19,13 +18,13 @@
 #################################################################################
 
 ---
-# Default values for eclipse-dataspace-connector.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 
 install:
   postgresql: true
+  vault: true
 
 fullnameOverride: ""
 nameOverride: ""
@@ -90,7 +89,7 @@ server:
       # -- path for incoming api calls
       path: /api/management
       # -- authentication key, must be attached to each 'X-Api-Key' request header
-      authKey: "password"
+      authKeyAlias: "mgmt-api-key"
     # -- directory API
     directory:
       # -- port for incoming api calls
@@ -164,13 +163,12 @@ server:
     ## Public / Internet facing Ingress
     - enabled: false
       # -- The hostname to be used to precisely map incoming traffic onto the underlying network service
-      hostname: "bdrs-server.local"
+      hostname: "bdrs-server.directory.local"
       # -- Additional ingress annotations to add
       annotations: {}
       # -- EDC endpoints exposed by this ingress resource
       endpoints:
-        - protocol
-        - public
+        - directory
       # -- Defines the [ingress class](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class)  to use
       className: ""
       # -- TLS [tls class](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls) applied to the ingress resource
@@ -185,16 +183,15 @@ server:
         issuer: ""
         # -- If preset enables certificate generation via cert-manager cluster-wide issuer
         clusterIssuer: ""
-    ## Private / Intranet facing Ingress
+    ## Ingress for the Management API, should not be internet facing
     - enabled: false
       # -- The hostname to be used to precisely map incoming traffic onto the underlying network service
-      hostname: "edc-control.intranet"
+      hostname: "bdrs-server.mgmt.local"
       # -- Additional ingress annotations to add
       annotations: {}
       # -- EDC endpoints exposed by this ingress resource
       endpoints:
         - management
-        - control
       # -- Defines the [ingress class](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class)  to use
       className: ""
       # -- TLS [tls class](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls) applied to the ingress resource
@@ -281,5 +278,24 @@ postgresql:
       enabled: false
   auth:
     database: "bdrs"
-    username: "postgres"
+    username: "bdrs"
     password: "password"
+
+vault:
+  injector:
+    enabled: false
+  server:
+    dev:
+      enabled: true
+      devRootToken: "root"
+    postStart:    # must be set externally!
+  hashicorp:
+    url: "http://{{ .Release.Name }}-vault:8200"
+    token: "root"
+    timeout: 30
+    healthCheck:
+      enabled: true
+      standbyOk: true
+    paths:
+      secret: /v1/secret
+      health: /v1/sys/health

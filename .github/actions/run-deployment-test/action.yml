@@ -38,12 +38,12 @@ inputs:
 
   rootDir:
     required: true
-    description: "The directory that contains the docker file, e.g. edc-controlplane/edc-runtime-memory"
+    description: "The directory that contains the docker file"
 
-  values_file:
-    #    required: true
-    required: false
-    description: "A yaml file that contains the values for the test installation. will be modified!"
+  cluster-config:
+    required: true
+    description: "YAML file to contain KinD cluster configuration"
+    default: system-tests/helm/kind.config.yaml
 
 runs:
   using: "composite"
@@ -68,25 +68,44 @@ runs:
 
     - name: Create k8s Kind Cluster
       uses: helm/kind-action@v1.5.0
+      with:
+        config: ${{ inputs.cluster-config }}
 
     - name: Load images into KinD
       shell: bash
       run: |
         kind get clusters | xargs -n1 kind load docker-image ${{ inputs.imagename }}:${{ inputs.image_tag }} --name
 
-    ###################################################
-    # Install the test infrastructure
-    ###################################################
-    #    - name: "Generate test credentials"
-    #      shell: bash
-    #      run: |-
-    #        sh -c "edc-tests/deployment/src/main/resources/prepare-test.sh \
-    #               ${{ inputs.values_file }}"
+    - name: "Install NGINX ingress controller"
+      shell: bash
+      run: |
+        # see: https://kind.sigs.k8s.io/docs/user/ingress/#ingress-nginx
+        # install NGINX ingress controller
+        kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+        
+        # wait for ingress to become available
+        kubectl wait --namespace ingress-nginx \
+          --for=condition=ready pod \
+          --selector=app.kubernetes.io/component=controller \
+          --timeout=90s
+
+    - name: "Install Vault chart"
+      shell: bash
+      run: |
+        helm repo add hashicorp https://helm.releases.hashicorp.com  
+        
+        helm install vault hashicorp/vault \
+          -f system-tests/helm/values-vault-test.yaml \
+          --wait-for-jobs --timeout=120s --dependency-update
+        
+        # wait for Vault pod to become ready
+        kubectl wait --for=condition=ready pod \
+         --selector=app.kubernetes.io/name=vault \
+         --timeout=90s
 
     - name: Install Runtime
       shell: bash
       run: ${{ inputs.helm_command }}
-
 
     #################
     ### Tear Down ###

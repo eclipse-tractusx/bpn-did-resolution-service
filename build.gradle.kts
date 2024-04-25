@@ -90,7 +90,8 @@ subprojects {
                     from("${projectDir}/notice.md")
 
                 }
-                dependsOn(tasks.named(ShadowJavaPlugin.SHADOW_JAR_TASK_NAME))
+                mustRunAfter(tasks.named(ShadowJavaPlugin.SHADOW_JAR_TASK_NAME))
+                mustRunAfter(tasks.named(JavaPlugin.JAR_TASK_NAME))
             }
 
             //actually apply the plugin to the (sub-)project

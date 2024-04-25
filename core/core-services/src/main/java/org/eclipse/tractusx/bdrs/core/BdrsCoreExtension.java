@@ -21,9 +21,9 @@
 
 package org.eclipse.tractusx.bdrs.core;
 
+import org.eclipse.edc.json.JacksonTypeManager;
 import org.eclipse.edc.runtime.metamodel.annotation.BaseExtension;
 import org.eclipse.edc.runtime.metamodel.annotation.Extension;
-import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.runtime.metamodel.annotation.Provider;
 import org.eclipse.edc.runtime.metamodel.annotation.Setting;
 import org.eclipse.edc.spi.security.Vault;
@@ -65,10 +65,8 @@ public class BdrsCoreExtension implements ServiceExtension {
     private static final long DEFAULT_DURATION = 60;
     private static final int DEFAULT_TP_SIZE = 3;
 
-    @Inject
-    private TypeManager typeManager;
-
     private HealthCheckServiceImpl healthCheckService;
+    private TypeManager typeManager;
 
     @Override
     public String name() {
@@ -95,13 +93,21 @@ public class BdrsCoreExtension implements ServiceExtension {
     }
 
     @Provider
+    public TypeManager typeManager() {
+        if (typeManager == null) {
+            typeManager = new JacksonTypeManager();
+        }
+        return typeManager;
+    }
+
+    @Provider
     public HealthCheckService healthCheckService() {
         return healthCheckService;
     }
 
     @Provider(isDefault = true)
     public DidEntryStore defaultDidEntryStore() {
-        return new InMemoryDidEntryStore(typeManager.getMapper());
+        return new InMemoryDidEntryStore(typeManager().getMapper());
     }
 
     @Provider(isDefault = true)

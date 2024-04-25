@@ -1,6 +1,6 @@
 # bdrs-server-memory
 
-![Version: 0.0.2](https://img.shields.io/badge/Version-0.0.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.0.2](https://img.shields.io/badge/AppVersion-0.0.2-informational?style=flat-square)
+![Version: 0.0.3](https://img.shields.io/badge/Version-0.0.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.0.3](https://img.shields.io/badge/AppVersion-0.0.3-informational?style=flat-square)
 
 A Helm chart for the Tractus-X BPN-DID Resolution Service (only in-memory persistence)
 
@@ -25,7 +25,7 @@ Simply execute these commands on a shell:
 
 ```shell
 helm repo add tractusx https://eclipse-tractusx.github.io/charts/dev
-helm install my-release tractusx-edc/bdrs-server --version 0.0.2 \
+helm install my-release tractusx-edc/bdrs-server --version 0.0.3 \
      -f <path-to>/additional-values-file.yaml \
      --wait-for-jobs --timeout=120s --dependency-update
 ```
@@ -75,8 +75,8 @@ helm install my-release tractusx-edc/bdrs-server --version 0.0.2 \
 | server.ingresses[0].certManager.issuer | string | `""` | If preset enables certificate generation via cert-manager namespace scoped issuer |
 | server.ingresses[0].className | string | `""` | Defines the [ingress class](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class)  to use |
 | server.ingresses[0].enabled | bool | `false` |  |
-| server.ingresses[0].endpoints | list | `["protocol","public"]` | EDC endpoints exposed by this ingress resource |
-| server.ingresses[0].hostname | string | `"bdrs-server.local"` | The hostname to be used to precisely map incoming traffic onto the underlying network service |
+| server.ingresses[0].endpoints | list | `["directory"]` | EDC endpoints exposed by this ingress resource |
+| server.ingresses[0].hostname | string | `"bdrs-server.directory.local"` | The hostname to be used to precisely map incoming traffic onto the underlying network service |
 | server.ingresses[0].tls | object | `{"enabled":false,"secretName":""}` | TLS [tls class](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls) applied to the ingress resource |
 | server.ingresses[0].tls.enabled | bool | `false` | Enables TLS on the ingress resource |
 | server.ingresses[0].tls.secretName | string | `""` | If present overwrites the default secret name |
@@ -85,8 +85,8 @@ helm install my-release tractusx-edc/bdrs-server --version 0.0.2 \
 | server.ingresses[1].certManager.issuer | string | `""` | If preset enables certificate generation via cert-manager namespace scoped issuer |
 | server.ingresses[1].className | string | `""` | Defines the [ingress class](https://kubernetes.io/docs/concepts/services-networking/ingress/#ingress-class)  to use |
 | server.ingresses[1].enabled | bool | `false` |  |
-| server.ingresses[1].endpoints | list | `["management","control"]` | EDC endpoints exposed by this ingress resource |
-| server.ingresses[1].hostname | string | `"edc-control.intranet"` | The hostname to be used to precisely map incoming traffic onto the underlying network service |
+| server.ingresses[1].endpoints | list | `["management"]` | EDC endpoints exposed by this ingress resource |
+| server.ingresses[1].hostname | string | `"bdrs-server.mgmt.local"` | The hostname to be used to precisely map incoming traffic onto the underlying network service |
 | server.ingresses[1].tls | object | `{"enabled":false,"secretName":""}` | TLS [tls class](https://kubernetes.io/docs/concepts/services-networking/ingress/#tls) applied to the ingress resource |
 | server.ingresses[1].tls.enabled | bool | `false` | Enables TLS on the ingress resource |
 | server.ingresses[1].tls.secretName | string | `""` | If present overwrites the default secret name |

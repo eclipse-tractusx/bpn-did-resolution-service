@@ -21,24 +21,19 @@
 
 plugins {
     id("application")
-    alias(libs.plugins.shadow)
 }
 
 dependencies {
-    api(libs.bundles.bdrs.boot)
-    api(project(":core:core-services"))
-    api(project(":api:directory-api"))
-    api(project(":api:management-api"))
-}
+    runtimeOnly(project(":core:core-services"))
+    runtimeOnly(project(":api:directory-api"))
+    runtimeOnly(project(":api:management-api"))
+    runtimeOnly(project(":api:authentication"))
+    // will replace this with a mocked Did Resolver
+    // runtimeOnly(libs.edc.identitydidweb)
 
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-    exclude("**/pom.properties", "**/pom.xm")
-    mergeServiceFiles()
-    archiveFileName.set("${project.name}.jar")
-}
-
-application {
-    mainClass.set("org.eclipse.edc.boot.system.runtime.BaseRuntime")
+    runtimeOnly(libs.edc.identitytrust.issuers)
+    runtimeOnly(libs.bundles.bdrs.boot)
+    runtimeOnly(libs.edc.core.did)
 }
 
 edcBuild {
