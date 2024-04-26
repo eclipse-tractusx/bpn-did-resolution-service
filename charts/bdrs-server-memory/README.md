@@ -52,15 +52,15 @@ helm install my-release tractusx-edc/bdrs-server --version 0.0.3 \
 | server.debug.enabled | bool | `false` |  |
 | server.debug.port | int | `1044` |  |
 | server.debug.suspendOnStart | bool | `false` |  |
-| server.endpoints | object | `{"default":{"path":"/api","port":8080},"directory":{"path":"/api/directory","port":8082},"management":{"authKey":"password","path":"/api/management","port":8081}}` | endpoints of the control plane |
+| server.endpoints | object | `{"default":{"path":"/api","port":8080},"directory":{"path":"/api/directory","port":8082},"management":{"authKeyAlias":"mgmt-api-key","path":"/api/management","port":8081}}` | endpoints of the control plane |
 | server.endpoints.default | object | `{"path":"/api","port":8080}` | default api for health checks, should not be added to any ingress |
 | server.endpoints.default.path | string | `"/api"` | path for incoming api calls |
 | server.endpoints.default.port | int | `8080` | port for incoming api calls |
 | server.endpoints.directory | object | `{"path":"/api/directory","port":8082}` | directory API |
 | server.endpoints.directory.path | string | `"/api/directory"` | path for incoming api calls |
 | server.endpoints.directory.port | int | `8082` | port for incoming api calls |
-| server.endpoints.management | object | `{"authKey":"password","path":"/api/management","port":8081}` | management api, used by internal users, can be added to an ingress and must not be internet facing |
-| server.endpoints.management.authKey | string | `"password"` | authentication key, must be attached to each 'X-Api-Key' request header |
+| server.endpoints.management | object | `{"authKeyAlias":"mgmt-api-key","path":"/api/management","port":8081}` | management api, used by internal users, can be added to an ingress and must not be internet facing |
+| server.endpoints.management.authKeyAlias | string | `"mgmt-api-key"` | authentication key, must be attached to each 'X-Api-Key' request header |
 | server.endpoints.management.path | string | `"/api/management"` | path for incoming api calls |
 | server.endpoints.management.port | int | `8081` | port for incoming api calls |
 | server.env | object | `{}` |  |
@@ -127,6 +127,7 @@ helm install my-release tractusx-edc/bdrs-server --version 0.0.3 \
 | server.service.annotations | object | `{}` |  |
 | server.service.type | string | `"ClusterIP"` | [Service type](https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types) to expose the running application on a set of Pods as a network service. |
 | server.tolerations | list | `[]` |  |
+| server.trustedIssuers | list | `[]` | Configures the trusted issuers for this runtime |
 | server.url.protocol | string | `""` | Explicitly declared url for reaching the dsp api (e.g. if ingresses not used) |
 | server.url.public | string | `""` |  |
 | server.url.readiness | string | `""` |  |
