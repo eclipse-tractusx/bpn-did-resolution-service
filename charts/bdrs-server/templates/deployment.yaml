@@ -192,6 +192,14 @@ spec:
               value: {{ .Values.vault.hashicorp.paths.health | quote }}
 
 
+            #############################
+            ## TRUSTED ISSUER CONFIG
+            #############################
+            {{- range $index, $issuer := .Values.server.trustedIssuers }}
+            - name: "EDC_IAM_TRUSTED-ISSUER_{{$index}}-ISSUER_ID"
+              value: {{ $issuer | quote }}
+            {{- end }}
+
             ######################################
             ## Additional environment variables ##
             ######################################

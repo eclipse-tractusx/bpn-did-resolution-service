@@ -98,6 +98,9 @@ server:
       path: /api/directory
     # -- dsp api, used for inter connector communication and must be internet facing
 
+  # -- Configures the trusted issuers for this runtime
+  trustedIssuers: []
+
   service:
     # -- [Service type](https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types) to expose the running application on a set of Pods as a network service.
     type: ClusterIP
