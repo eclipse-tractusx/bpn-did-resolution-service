@@ -145,8 +145,8 @@ spec:
             #######
             # API #
             #######
-            - name: "EDC_API_AUTH_KEY_ALIAS"
-              value: {{ .Values.server.endpoints.management.authKeyAlias | required ".Values.runtime.endpoints.management.authKeyAlias is required" | quote }}
+            - name: "EDC_API_AUTH_KEY"
+              value: {{ .Values.server.endpoints.management.authKey | required ".Values.runtime.endpoints.management.authKey is required" | quote }}
             - name: "WEB_HTTP_PORT"
               value: {{ .Values.server.endpoints.default.port | quote }}
             - name: "WEB_HTTP_PATH"
