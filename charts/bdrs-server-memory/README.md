@@ -1,6 +1,6 @@
 # bdrs-server-memory
 
-![Version: 0.0.3](https://img.shields.io/badge/Version-0.0.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.0.3](https://img.shields.io/badge/AppVersion-0.0.3-informational?style=flat-square)
+![Version: 0.0.4](https://img.shields.io/badge/Version-0.0.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.0.4](https://img.shields.io/badge/AppVersion-0.0.4-informational?style=flat-square)
 
 A Helm chart for the Tractus-X BPN-DID Resolution Service (only in-memory persistence)
 
@@ -25,7 +25,7 @@ Simply execute these commands on a shell:
 
 ```shell
 helm repo add tractusx https://eclipse-tractusx.github.io/charts/dev
-helm install my-release tractusx-edc/bdrs-server --version 0.0.3 \
+helm install my-release tractusx-edc/bdrs-server --version 0.0.4 \
      -f <path-to>/additional-values-file.yaml \
      --wait-for-jobs --timeout=120s --dependency-update
 ```
@@ -127,6 +127,7 @@ helm install my-release tractusx-edc/bdrs-server --version 0.0.3 \
 | server.service.annotations | object | `{}` |  |
 | server.service.type | string | `"ClusterIP"` | [Service type](https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types) to expose the running application on a set of Pods as a network service. |
 | server.tolerations | list | `[]` |  |
+| server.trustedIssuers | list | `[]` | Configures the trusted issuers for this runtime. Must not be empty. |
 | server.url.protocol | string | `""` | Explicitly declared url for reaching the dsp api (e.g. if ingresses not used) |
 | server.url.public | string | `""` |  |
 | server.url.readiness | string | `""` |  |

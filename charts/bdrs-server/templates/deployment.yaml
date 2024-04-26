@@ -95,7 +95,7 @@ spec:
           {{- if .Values.server.image.repository }}
           image: "{{ .Values.server.image.repository }}:{{ .Values.server.image.tag | default .Chart.AppVersion }}"
           {{- else }}
-          image: "tractusx/bdrs-server-memory:{{ .Values.server.image.tag | default .Chart.AppVersion }}"
+          image: "tractusx/bdrs-server:{{ .Values.server.image.tag | default .Chart.AppVersion }}"
           {{- end }}
 
           imagePullPolicy: {{ .Values.server.image.pullPolicy }}
@@ -191,6 +191,18 @@ spec:
             - name: "EDC_VAULT_HASHICORP_API_HEALTH_CHECK_PATH"
               value: {{ .Values.vault.hashicorp.paths.health | quote }}
 
+
+            #############################
+            ## TRUSTED ISSUER CONFIG
+            #############################
+            {{- if empty .Values.server.trustedIssuers }}
+            {{- required "List of trusted issuers cannot be empty!" "" }}
+            {{- else }}
+            {{- range $index, $issuer := .Values.server.trustedIssuers }}
+            - name: "EDC_IAM_TRUSTED-ISSUER_{{$index}}-ISSUER_ID"
+              value: {{ $issuer | quote }}
+            {{- end }}
+            {{- end }}
 
             ######################################
             ## Additional environment variables ##
