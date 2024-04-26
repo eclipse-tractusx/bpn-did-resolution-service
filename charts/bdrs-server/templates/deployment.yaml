@@ -195,9 +195,13 @@ spec:
             #############################
             ## TRUSTED ISSUER CONFIG
             #############################
+            {{- if empty .Values.server.trustedIssuers }}
+            {{- required "List of trusted issuers cannot be empty!" "" }}
+            {{- else }}
             {{- range $index, $issuer := .Values.server.trustedIssuers }}
             - name: "EDC_IAM_TRUSTED-ISSUER_{{$index}}-ISSUER_ID"
               value: {{ $issuer | quote }}
+            {{- end }}
             {{- end }}
 
             ######################################
