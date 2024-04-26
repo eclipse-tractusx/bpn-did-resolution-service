@@ -127,6 +127,7 @@ helm install my-release tractusx-edc/bdrs-server --version 0.0.3 \
 | server.service.annotations | object | `{}` |  |
 | server.service.type | string | `"ClusterIP"` | [Service type](https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types) to expose the running application on a set of Pods as a network service. |
 | server.tolerations | list | `[]` |  |
+| server.trustedIssuers | list | `[]` | Configures the trusted issuers for this runtime. Must not be empty. |
 | server.url.protocol | string | `""` | Explicitly declared url for reaching the dsp api (e.g. if ingresses not used) |
 | server.url.public | string | `""` |  |
 | server.url.readiness | string | `""` |  |
