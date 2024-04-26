@@ -93,7 +93,7 @@ server:
       path: /api/directory
     # -- dsp api, used for inter connector communication and must be internet facing
 
-  # -- Configures the trusted issuers for this runtime
+  # -- Configures the trusted issuers for this runtime. Must not be empty.
   trustedIssuers: []
 
   service:
