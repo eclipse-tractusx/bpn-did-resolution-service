@@ -71,6 +71,20 @@ jobs:
           echo "RELEASE=$RELEASED_VERSION" >> $GITHUB_ENV
           exit 0
 
+      - name: "Install Vault chart"
+        shell: bash
+        run: |
+          helm repo add hashicorp https://helm.releases.hashicorp.com  
+          
+          helm install vault hashicorp/vault \
+          -f system-tests/helm/values-vault-test.yaml \
+          --wait-for-jobs --timeout=120s --dependency-update
+          
+          # wait for Vault pod to become ready
+          kubectl wait --for=condition=ready pod \
+          --selector=app.kubernetes.io/name=vault \
+          --timeout=90s
+
       - name: "Install latest release"
         run: |
           helm install bdrs-server tractusx/bdrs-server \
