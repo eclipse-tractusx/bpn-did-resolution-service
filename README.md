@@ -70,6 +70,10 @@ checkout the [Chart README](charts/bdrs-server/README.md)
     --wait-for-jobs --timeout=120s --dependency-update
   ```
 
+## Further documentation
+
+please refer to the [docs](docs) folder for further documentation.
+
 ## License
 
 Distributed under the Apache 2.0 License.
