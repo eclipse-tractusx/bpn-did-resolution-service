@@ -82,7 +82,7 @@ jobs:
       - uses: ./.github/actions/setup-java
 
       - name: Run Integration tests
-        run: ./gradlew test -DincludeTags="ComponentTest"
+        run: ./gradlew test -DincludeTags="ComponentTest,EndToEndTest"
 
   postgres-tests:
     runs-on: ubuntu-latest
