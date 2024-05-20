@@ -45,6 +45,11 @@ inputs:
     description: "YAML file to contain KinD cluster configuration"
     default: system-tests/helm/kind.config.yaml
 
+  k8sversion:
+    required: false
+    description: "Version of Kubernetes to use"
+    default: "v1.30.0"
+
 runs:
   using: "composite"
   steps:
@@ -70,6 +75,8 @@ runs:
       uses: helm/kind-action@v1.5.0
       with:
         config: ${{ inputs.cluster-config }}
+        node_image: kindest/node:${{ inputs.k8sversion }}
+
 
     - name: Load images into KinD
       shell: bash
