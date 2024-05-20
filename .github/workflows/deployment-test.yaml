@@ -50,7 +50,7 @@ jobs:
           key: ${{ runner.os }}-io.containerd.snapshotter.v1.overlayfs
 
   test-bdrs-server:
-    name: "Run deployment tests for all charts"
+    name: "Deployment test"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -59,6 +59,9 @@ jobs:
           { chart: charts/bdrs-server-memory, name: bdrs-server-memory },
           { chart: charts/bdrs-server,        name: bdrs-server }
         ]
+        k8s-version: [ "v1.30.0",
+                       "v1.29.4",
+                       "v1.28.9" ]
     needs: test-prepare
     steps:
       - uses: actions/checkout@v4
@@ -68,6 +71,7 @@ jobs:
           imagename: ${{ matrix.variant.name }}
           rootDir: runtimes/${{ matrix.variant.name }}
           cluster-config: "system-tests/helm/kind.config.yaml"
+          k8sversion: ${{ matrix.k8s-version }}
           helm_command: |-
             helm install ${{ matrix.variant.name }} ${{ matrix.variant.chart }} \
             --set server.image.pullPolicy="Never" \
