@@ -45,6 +45,6 @@ install:
 vault:
   hashicorp:
     url: "https://vault.demo.catena-x.net"
-    token: "<path:portal/data/bdrs#vault-token>"
+    token: "<path:portal/data/bdrs-vault#token>"
     paths:
       secret: "/v1/portal"
