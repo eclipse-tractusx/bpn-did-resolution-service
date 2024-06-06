@@ -23,7 +23,7 @@ metadata:
   name: bdrs
 spec:
   destination:
-    namespace: product-portal
+    namespace: product-iam
     server: 'https://kubernetes.default.svc'
   source:
     path: charts/bdrs-server
