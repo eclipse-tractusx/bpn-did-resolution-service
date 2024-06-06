@@ -17,33 +17,22 @@
 # SPDX-License-Identifier: Apache-2.0
 ###############################################################
 
-server:
-  endpoints:
-    management:
-      authKeyAlias: "bdrs-mgmt-api-key"
-  trustedIssuers:
-    - "did:web:dim-static-prod.dis-cloud-prod.cfapps.eu10-004.hana.ondemand.com:dim-hosted:2f45795c-d6cc-4038-96c9-63cedc0cd266:holder-iatp"
-  ingresses:
-    - enabled: true
-      hostname: "bpn-did-resolution-service.dev.demo.catena-x.net"
-      endpoints:
-        - directory
-      className: "nginx"
-      tls:
-        enabled: true
-        secretName: "tls-secret"
-postgresql:
-  primary:
-    persistence:
-      enabled: true
-  auth:
-    postgresPassword: "<path:portal/data/bdrs#postgres-password>"
-    password: "<path:portal/data/bdrs#password>"
-install:
-  vault: false
-vault:
-  hashicorp:
-    url: "https://vault.demo.catena-x.net"
-    token: "<path:portal/data/bdrs-vault#token>"
-    paths:
-      secret: "/v1/portal"
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bdrs
+spec:
+  destination:
+    namespace: product-portal
+    server: 'https://kubernetes.default.svc'
+  source:
+    path: charts/bdrs-server
+    repoURL: 'https://github.com/eclipse-tractusx/bpn-did-resolution-service.git'
+    targetRevision: chore/consortia-env-with-vault
+    plugin:
+      env:
+        - name: AVP_SECRET
+          value: vault-secret
+        - name: helm_args
+          value: '-f values.yaml -f ../../consortia/environments/values-rc.yaml'
+  project: project-portal
