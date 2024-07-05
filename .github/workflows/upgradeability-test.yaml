@@ -56,69 +56,74 @@ jobs:
           version: 'v1.28.2'
 
       - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.9.0
+        uses: helm/kind-action@v1.10.0
 
       - name: "Update helm repo"
         run: |
           helm repo add tractusx https://eclipse-tractusx.github.io/charts/dev
           helm repo update tractusx
 
-      ## Skip 0.6.0 when doing the compatibility check ref https://github.com/eclipse-tractusx/tractusx-edc/issues/1082
       - name: "Get latest released version"
         id: get-version
         run: |
-          RELEASED_VERSION=$(helm search repo tractusx/tractusx-connector -l -o json | jq -r 'map(select(.version !="0.6.0")) | first | .version') 
+          RELEASED_VERSION=$(helm search repo tractusx/bdrs-server -l -o json | jq -r 'first | .version') 
           echo "Last official release is $RELEASED_VERSION"
           echo "RELEASE=$RELEASED_VERSION" >> $GITHUB_ENV
           exit 0
 
+      - name: "Install Vault chart"
+        shell: bash
+        run: |
+          helm repo add hashicorp https://helm.releases.hashicorp.com  
+          
+          helm install vault hashicorp/vault \
+          -f system-tests/helm/values-vault-test.yaml \
+          --wait-for-jobs --timeout=120s --dependency-update
+          
+          # wait for Vault pod to become ready
+          kubectl wait --for=condition=ready pod \
+          --selector=app.kubernetes.io/name=vault \
+          --timeout=90s
+
       - name: "Install latest release"
         run: |
-          sh -c "edc-tests/deployment/src/main/resources/prepare-test.sh \
-                         edc-tests/deployment/src/main/resources/helm/tractusx-connector-test.yaml"
-          
-          helm upgrade --install tx-prod tractusx/tractusx-connector \
-            -f edc-tests/deployment/src/main/resources/helm/tractusx-connector-test.yaml \
-            --set "controlplane.image.tag=$RELEASE" \
-            --set "controlplane.image.pullPolicy=Always" \
-            --set "controlplane.image.repository=tractusx/edc-controlplane-postgresql-hashicorp-vault" \
-            --set "dataplane.image.tag=$RELEASE" \
-            --set "dataplane.image.pullPolicy=Always" \
-            --set "dataplane.image.repository=tractusx/edc-dataplane-hashicorp-vault" \
-            --dependency-update \
-            --wait-for-jobs --timeout=120s \
+          helm install bdrs-server tractusx/bdrs-server \
+           --set server.image.pullPolicy="Always" \
+           --set server.image.tag="$RELEASE" \
+           --set server.image.repository="tractusx/bdrs-server" \
+           -f system-tests/helm/values-test.yaml \
+           --wait-for-jobs --timeout=120s --dependency-update \
             --version $RELEASE
           
           # wait for the pod to become ready
-          kubectl rollout status deployment tx-prod-controlplane
-          kubectl rollout status deployment tx-prod-dataplane
+          kubectl rollout status deployment bdrs-server
 
       - uses: ./.github/actions/setup-java
 
       - name: "Build docker images"
         shell: bash
         run: |-
-          ./gradlew :edc-controlplane:edc-controlplane-postgresql-hashicorp-vault:dockerize
-          ./gradlew :edc-dataplane:edc-dataplane-hashicorp-vault:dockerize
+          ./gradlew :runtimes:bdrs-server:dockerize
 
       - name: "Load images into KinD"
         shell: bash
         run: |
-          kind get clusters | xargs -n1 kind load docker-image edc-controlplane-postgresql-hashicorp-vault edc-dataplane-hashicorp-vault --name
+          kind get clusters | xargs -n1 kind load docker-image bdrs-server:latest --name
 
       - name: "Install new chart"
         run: |
-          helm upgrade --install tx-prod charts/tractusx-connector \
-            -f edc-tests/deployment/src/main/resources/helm/tractusx-connector-test.yaml \
-            --dependency-update \
-            --wait-for-jobs --timeout=120s
+          helm upgrade --install bdrs-server charts/bdrs-server \
+            --set server.image.pullPolicy="Never" \
+            --set server.image.tag="latest" \
+            --set server.image.repository="bdrs-server" \
+            -f system-tests/helm/values-test.yaml \
+            --wait-for-jobs --timeout=120s --dependency-update
           
            # wait for the pod to become ready
-          kubectl rollout status deployment tx-prod-controlplane
-          kubectl rollout status deployment tx-prod-dataplane
+          kubectl rollout status deployment bdrs-server
           
           # execute the helm test
-          helm test tx-prod
+          helm test bdrs-server
 
       - name: Destroy the kind cluster
         if: always()

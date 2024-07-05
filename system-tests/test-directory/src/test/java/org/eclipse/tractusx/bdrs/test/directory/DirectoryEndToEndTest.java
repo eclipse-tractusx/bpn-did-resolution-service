@@ -1,15 +1,20 @@
 /*
- *  Copyright (c) 2024 Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
+ * Copyright (c) 2024 Bayerische Motoren Werke Aktiengesellschaft
  *
- *  This program and the accompanying materials are made available under the
- *  terms of the Apache License, Version 2.0 which is available at
- *  https://www.apache.org/licenses/LICENSE-2.0
+ * See the NOTICE file(s) distributed with this work for additional
+ * information regarding copyright ownership.
  *
- *  SPDX-License-Identifier: Apache-2.0
+ * This program and the accompanying materials are made available under the
+ * terms of the Apache License, Version 2.0 which is available at
+ * https://www.apache.org/licenses/LICENSE-2.0.
  *
- *  Contributors:
- *       Bayerische Motoren Werke Aktiengesellschaft (BMW AG) - initial API and implementation
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
  *
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package org.eclipse.tractusx.bdrs.test.directory;
@@ -28,7 +33,9 @@ import org.eclipse.edc.iam.did.spi.document.VerificationMethod;
 import org.eclipse.edc.iam.did.spi.resolution.DidResolver;
 import org.eclipse.edc.iam.did.spi.resolution.DidResolverRegistry;
 import org.eclipse.edc.junit.annotations.EndToEndTest;
-import org.eclipse.edc.junit.extensions.EdcRuntimeExtension;
+import org.eclipse.edc.junit.extensions.EmbeddedRuntime;
+import org.eclipse.edc.junit.extensions.RuntimeExtension;
+import org.eclipse.edc.junit.extensions.RuntimePerMethodExtension;
 import org.eclipse.edc.spi.result.Result;
 import org.eclipse.edc.verifiablecredentials.jwt.JwtCreationUtils;
 import org.eclipse.edc.web.spi.ApiErrorDetail;
@@ -70,8 +77,7 @@ public class DirectoryEndToEndTest {
     private static final String BPN1 = "BPN12345";
     private static final String DID1 = "did:web:localhost/foo";
     @RegisterExtension
-    protected static EdcRuntimeExtension runtime = new EdcRuntimeExtension(
-            ":system-tests:test-server",
+    protected static RuntimeExtension runtime = new RuntimePerMethodExtension(new EmbeddedRuntime(
             "BDRS Server",
             Map.of("web.http.port", String.valueOf(API_ENDPOINT.getPort()),
                     "web.http.management.port", String.valueOf(MANAGEMENT_ENDPOINT.getPort()),
@@ -79,7 +85,8 @@ public class DirectoryEndToEndTest {
                     "web.http.directory.port", String.valueOf(DIRECTORY_ENDPOINT.getPort()),
                     "web.http.directory.path", String.valueOf(DIRECTORY_ENDPOINT.getPath()),
                     "edc.iam.trusted-issuer.test.id", "did:web:some-issuer",
-                    "edc.api.auth.key", AUTH_KEY)
+                    "edc.api.auth.key", AUTH_KEY),
+            ":system-tests:test-server")
     );
     private final String issuerId = "did:web:some-issuer";
     private final String holderId = "did:web:bdrs-client";
