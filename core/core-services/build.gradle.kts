@@ -22,6 +22,7 @@ plugins {
 }
 
 dependencies {
+    implementation(libs.edc.spi.auth)
     implementation(libs.edc.spi.core)
     implementation(libs.edc.lib.json)
     implementation(project(":spi:core-spi"))

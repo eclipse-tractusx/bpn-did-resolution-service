@@ -22,6 +22,7 @@ package org.eclipse.tractusx.bdrs.api.directory.authentication;
 import dev.failsafe.RetryPolicy;
 import okhttp3.OkHttpClient;
 import org.eclipse.edc.api.auth.spi.AuthenticationRequestFilter;
+import org.eclipse.edc.api.auth.spi.registry.ApiAuthenticationRegistry;
 import org.eclipse.edc.http.client.EdcHttpClientImpl;
 import org.eclipse.edc.http.spi.EdcHttpClient;
 import org.eclipse.edc.iam.did.spi.resolution.DidPublicKeyResolver;
@@ -76,6 +77,9 @@ public class CredentialBasedAuthenticationExtension implements ServiceExtension 
     @Inject
     private Clock clock;
 
+    @Inject
+    private ApiAuthenticationRegistry registry;
+
     private TrustedIssuerRegistry trustedIssuerRegistry;
     private TypeTransformerRegistryImpl typeTransformerRegistry;
 
@@ -95,7 +99,9 @@ public class CredentialBasedAuthenticationExtension implements ServiceExtension 
         var statuslistService = new StatusList2021RevocationService(typeManager.getMapper(), validity);
         var validationService = new VerifiableCredentialValidationServiceImpl(presentationVerifier, createTrustedIssuerRegistry(), statuslistService, clock);
 
-        webService.registerResource(DIRECTORY_CONTEXT, new AuthenticationRequestFilter(new CredentialBasedAuthenticationService(context.getMonitor(), typeManager.getMapper(), validationService, typeTransformerRegistry(context))));
+        var authService = new CredentialBasedAuthenticationService(context.getMonitor(), typeManager.getMapper(), validationService, typeTransformerRegistry(context));
+        registry.register(DIRECTORY_CONTEXT, authService);
+        webService.registerResource(DIRECTORY_CONTEXT, new AuthenticationRequestFilter(registry, DIRECTORY_CONTEXT));
     }
 
     // must provide this, so the TrustedIssuerRegistryConfigurationExtension can inject it
