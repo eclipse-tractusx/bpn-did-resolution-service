@@ -15,7 +15,7 @@
 package org.eclipse.tractusx.bdrs.api.management;
 
 import org.eclipse.edc.api.auth.spi.AuthenticationRequestFilter;
-import org.eclipse.edc.api.auth.spi.AuthenticationService;
+import org.eclipse.edc.api.auth.spi.registry.ApiAuthenticationRegistry;
 import org.eclipse.edc.runtime.metamodel.annotation.BaseExtension;
 import org.eclipse.edc.runtime.metamodel.annotation.Extension;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
@@ -46,7 +46,7 @@ public class ManagementApiExtension implements ServiceExtension {
     private WebService webService;
 
     @Inject
-    private AuthenticationService authService;
+    private ApiAuthenticationRegistry registry;
 
     @Override
     public String name() {
@@ -56,7 +56,8 @@ public class ManagementApiExtension implements ServiceExtension {
     @Override
     public void initialize(ServiceExtensionContext context) {
         webService.registerResource(CONTEXT_NAME, new ManagementApiController(store));
-        webService.registerResource(CONTEXT_NAME, new AuthenticationRequestFilter(authService));
+
+        webService.registerResource(CONTEXT_NAME, new AuthenticationRequestFilter(registry, CONTEXT_NAME));
     }
 
 }

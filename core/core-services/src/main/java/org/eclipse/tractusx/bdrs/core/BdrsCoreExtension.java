@@ -21,24 +21,20 @@
 
 package org.eclipse.tractusx.bdrs.core;
 
+import org.eclipse.edc.api.auth.spi.registry.ApiAuthenticationRegistry;
 import org.eclipse.edc.json.JacksonTypeManager;
 import org.eclipse.edc.runtime.metamodel.annotation.BaseExtension;
 import org.eclipse.edc.runtime.metamodel.annotation.Extension;
 import org.eclipse.edc.runtime.metamodel.annotation.Provider;
-import org.eclipse.edc.runtime.metamodel.annotation.Setting;
 import org.eclipse.edc.spi.security.Vault;
-import org.eclipse.edc.spi.system.ExecutorInstrumentation;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
 import org.eclipse.edc.spi.system.health.HealthCheckService;
 import org.eclipse.edc.spi.types.TypeManager;
-import org.eclipse.tractusx.bdrs.core.health.HealthCheckServiceConfiguration;
 import org.eclipse.tractusx.bdrs.core.health.HealthCheckServiceImpl;
 import org.eclipse.tractusx.bdrs.core.store.InMemoryDidEntryStore;
 import org.eclipse.tractusx.bdrs.core.vault.InMemoryVault;
 import org.eclipse.tractusx.bdrs.spi.store.DidEntryStore;
-
-import java.time.Duration;
 
 import static org.eclipse.tractusx.bdrs.core.BdrsCoreExtension.NAME;
 
@@ -50,21 +46,6 @@ import static org.eclipse.tractusx.bdrs.core.BdrsCoreExtension.NAME;
 public class BdrsCoreExtension implements ServiceExtension {
     public static final String NAME = "BDRS Core";
 
-    @Setting
-    public static final String LIVENESS_PERIOD_SECONDS_SETTING = "edc.core.system.health.check.liveness-period";
-
-    @Setting
-    public static final String STARTUP_PERIOD_SECONDS_SETTING = "edc.core.system.health.check.startup-period";
-
-    @Setting
-    public static final String READINESS_PERIOD_SECONDS_SETTING = "edc.core.system.health.check.readiness-period";
-
-    @Setting
-    public static final String THREADPOOL_SIZE_SETTING = "edc.core.system.health.check.threadpool-size";
-
-    private static final long DEFAULT_DURATION = 60;
-    private static final int DEFAULT_TP_SIZE = 3;
-
     private HealthCheckServiceImpl healthCheckService;
     private TypeManager typeManager;
 
@@ -75,21 +56,7 @@ public class BdrsCoreExtension implements ServiceExtension {
 
     @Override
     public void initialize(ServiceExtensionContext context) {
-        var config = getHealthCheckConfig(context);
-        var instrumentation = new ExecutorInstrumentation() {
-        };
-        healthCheckService = new HealthCheckServiceImpl(config, instrumentation);
-    }
-
-    @Override
-    public void start() {
-        healthCheckService.start();
-    }
-
-    @Override
-    public void shutdown() {
-        healthCheckService.stop();
-        ServiceExtension.super.shutdown();
+        healthCheckService = new HealthCheckServiceImpl();
     }
 
     @Provider
@@ -115,13 +82,8 @@ public class BdrsCoreExtension implements ServiceExtension {
         return new InMemoryVault();
     }
 
-    private HealthCheckServiceConfiguration getHealthCheckConfig(ServiceExtensionContext context) {
-        return HealthCheckServiceConfiguration.Builder.newInstance()
-                .livenessPeriod(Duration.ofSeconds(context.getSetting(LIVENESS_PERIOD_SECONDS_SETTING, DEFAULT_DURATION)))
-                .startupStatusPeriod(Duration.ofSeconds(context.getSetting(STARTUP_PERIOD_SECONDS_SETTING, DEFAULT_DURATION)))
-                .readinessPeriod(Duration.ofSeconds(context.getSetting(READINESS_PERIOD_SECONDS_SETTING, DEFAULT_DURATION)))
-                .readinessPeriod(Duration.ofSeconds(context.getSetting(READINESS_PERIOD_SECONDS_SETTING, DEFAULT_DURATION)))
-                .threadPoolSize(context.getSetting(THREADPOOL_SIZE_SETTING, DEFAULT_TP_SIZE))
-                .build();
+    @Provider
+    public ApiAuthenticationRegistry apiAuthenticationRegistry() {
+        return new ApiAuthenticationRegistryImpl();
     }
 }
