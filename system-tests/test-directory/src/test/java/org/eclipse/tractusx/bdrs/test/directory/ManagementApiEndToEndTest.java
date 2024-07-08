@@ -26,6 +26,9 @@ import org.eclipse.edc.junit.extensions.EdcRuntimeExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -111,6 +114,28 @@ public class ManagementApiEndToEndTest {
         result = getBpnDirectory(managementRequest());
 
         assertThat(result.get(BPN2)).isEqualTo(UPDATED_DID2);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = "invalid-key")
+    @EmptySource
+    void verifyManagementApi_invalidAuthHeader(String invalidAuthHeader) {
+        seedServer(BPN1, DID1);
+        seedServer(BPN2, DID2);
+
+        given().baseUri(MANAGEMENT_ENDPOINT.toString())
+                .headers("x-api-key", invalidAuthHeader)
+                .contentType(JSON)
+                .then()
+                .statusCode(401);
+    }
+
+    @Test
+    void verifyManagementApi_missingAuthHeader() {
+        given().baseUri(MANAGEMENT_ENDPOINT.toString())
+                .contentType(JSON)
+                .then()
+                .statusCode(401);
     }
 
     @BeforeEach

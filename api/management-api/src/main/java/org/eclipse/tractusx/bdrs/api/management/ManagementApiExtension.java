@@ -61,8 +61,7 @@ public class ManagementApiExtension implements ServiceExtension {
     @Override
     public void initialize(ServiceExtensionContext context) {
         webService.registerResource(CONTEXT_NAME, new ManagementApiController(store));
-
-        webService.registerResource(CONTEXT_NAME, new AuthenticationRequestFilter(registry, CONTEXT_NAME));
+        webService.registerResource(CONTEXT_NAME, new AuthenticationRequestFilter(registry, "management-api"));
     }
 
 }
