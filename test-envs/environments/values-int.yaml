@@ -17,22 +17,33 @@
 # SPDX-License-Identifier: Apache-2.0
 ###############################################################
 
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: bdrs
-spec:
-  destination:
-    namespace: product-iam
-    server: 'https://kubernetes.default.svc'
-  source:
-    path: charts/bdrs-server
-    repoURL: 'https://github.com/eclipse-tractusx/bpn-did-resolution-service.git'
-    targetRevision: chore/0.0.4_on_consortia-envs
-    plugin:
-      env:
-        - name: AVP_SECRET
-          value: vault-secret
-        - name: helm_args
-          value: '-f values.yaml -f ../../consortia/environments/values-int.yaml'
-  project: project-portal
+server:
+  endpoints:
+    management:
+      authKeyAlias: "bdrs-mgmt-api-key"
+  trustedIssuers:
+    - "did:web:dim-static-prod.dis-cloud-prod.cfapps.eu10-004.hana.ondemand.com:dim-hosted:2f45795c-d6cc-4038-96c9-63cedc0cd266:holder-iatp"
+  ingresses:
+    - enabled: true
+      hostname: "bpn-did-resolution-service.int.catena-x.net"
+      endpoints:
+        - directory
+      className: "nginx"
+      tls:
+        enabled: true
+        secretName: "tls-secret-bdrs"
+postgresql:
+  primary:
+    persistence:
+      enabled: true
+  auth:
+    postgresPassword: "<path:portal/bdrs-postgres-pw#content>"
+    password: "<path:portal/edc.datasource.didentry.password#content>"
+install:
+  vault: false
+vault:
+  hashicorp:
+    url: "https://vault.core.catena-x.net"
+    token: "<path:portal/bdrs-vault#token>"
+    paths:
+      secret: "/v1/portal"
