@@ -37,13 +37,13 @@ postgresql:
     persistence:
       enabled: true
   auth:
-    postgresPassword: "<path:portal/bdrs-postgres-pw#content>"
-    password: "<path:portal/edc.datasource.didentry.password#content>"
+    postgresPassword: "<path:portal/data/bdrs-postgres-pw#content>"
+    password: "<path:portal/data/edc.datasource.didentry.password#content>"
 install:
   vault: false
 vault:
   hashicorp:
     url: "https://vault.core.catena-x.net"
-    token: "<path:portal/bdrs-vault#token>"
+    token: "<path:portal/data/bdrs-vault#token>"
     paths:
       secret: "/v1/portal"
