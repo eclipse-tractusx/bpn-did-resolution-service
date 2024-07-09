@@ -28,11 +28,11 @@ spec:
   source:
     path: charts/bdrs-server
     repoURL: 'https://github.com/lgblaumeiser/bpn-did-resolution-service.git'
-    targetRevision: chore/consortia_env
+    targetRevision: chore/test_envs
     plugin:
       env:
         - name: AVP_SECRET
           value: vault-secret
         - name: helm_args
-          value: '-f values.yaml -f ../../consortia/environments/values-int.yaml'
+          value: '-f values.yaml -f ../../test-envs/environments/values-int.yaml'
   project: project-portal

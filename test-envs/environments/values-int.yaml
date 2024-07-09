@@ -22,7 +22,7 @@ server:
     management:
       authKeyAlias: "bdrs-mgmt-api-key"
   trustedIssuers:
-    - "did:web:dim-static-prod.dis-cloud-prod.cfapps.eu10-004.hana.ondemand.com:dim-hosted:2f45795c-d6cc-4038-96c9-63cedc0cd266:holder-iatp"
+    - "did:web:portal-backend.int.catena-x.net:api:administration:staticdata:did:BPNL00000003CRHK"
   ingresses:
     - enabled: true
       hostname: "bpn-did-resolution-service.int.catena-x.net"
