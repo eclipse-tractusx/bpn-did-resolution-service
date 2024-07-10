@@ -3,12 +3,12 @@ format.version = "1.1"
 
 [versions]
 assertj = "3.25.3"
-edc = "0.6.2"
-nimbus = "9.37.3"
+edc = "0.7.1"
+nimbus = "9.40"
 restAssured = "5.4.0"
-jupiter = "5.10.2"
+jupiter = "5.10.3"
 postgres = "42.7.3"
-flyway = "10.11.1"
+flyway = "10.15.0"
 
 
 [libraries]

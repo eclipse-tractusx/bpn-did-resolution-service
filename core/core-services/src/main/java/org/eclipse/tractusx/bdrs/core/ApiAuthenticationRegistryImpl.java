@@ -17,30 +17,35 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package org.eclipse.tractusx.bdrs.api.directory.authentication;
+package org.eclipse.tractusx.bdrs.core;
 
-import org.eclipse.edc.iam.verifiablecredentials.spi.model.Issuer;
-import org.eclipse.edc.iam.verifiablecredentials.spi.validation.TrustedIssuerRegistry;
+import org.eclipse.edc.api.auth.spi.AuthenticationService;
+import org.eclipse.edc.api.auth.spi.registry.ApiAuthenticationRegistry;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TrustedIssuerRegistryImpl implements TrustedIssuerRegistry {
-    private final Map<String, Issuer> store = new HashMap<>();
+public class ApiAuthenticationRegistryImpl implements ApiAuthenticationRegistry {
 
-    @Override
-    public void addIssuer(Issuer issuer) {
-        store.put(issuer.id(), issuer);
+    private static final AuthenticationService ALL_PASS = headers -> true;
+    private final Map<String, AuthenticationService> services = new HashMap<>();
+
+    public ApiAuthenticationRegistryImpl() {
     }
 
     @Override
-    public Issuer getById(String id) {
-        return store.get(id);
+    public void register(String context, AuthenticationService service) {
+        services.put(context, service);
     }
 
     @Override
-    public Collection<Issuer> getTrustedIssuers() {
-        return store.values();
+    public @NotNull AuthenticationService resolve(String context) {
+        return services.getOrDefault(context, ALL_PASS);
+    }
+
+    @Override
+    public boolean hasService(String context) {
+        return services.containsKey(context);
     }
 }
