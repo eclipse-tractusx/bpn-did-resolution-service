@@ -1,4 +1,4 @@
 # Deployment files for BDRS on Catena-X test environments
 
-Status: final
-BDRS version: 0.0.4
+Status: draft
+BDRS version: 0.5.1
