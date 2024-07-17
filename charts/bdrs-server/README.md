@@ -1,6 +1,6 @@
 # bdrs-server
 
-![Version: 0.5.1](https://img.shields.io/badge/Version-0.5.1-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.5.1](https://img.shields.io/badge/AppVersion-0.5.1-informational?style=flat-square)
+![Version: 0.5.2](https://img.shields.io/badge/Version-0.5.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.5.2](https://img.shields.io/badge/AppVersion-0.5.2-informational?style=flat-square)
 
 A Helm chart for the Tractus-X BPN-DID Resolution Service
 
@@ -22,7 +22,7 @@ Simply execute these commands on a shell:
 
 ```shell
 helm repo add tractusx https://eclipse-tractusx.github.io/charts/dev
-helm install my-release tractusx-edc/bdrs-server --version 0.5.1 \
+helm install my-release tractusx-edc/bdrs-server --version 0.5.2 \
      -f <path-to>/additional-values-file.yaml \
      --wait-for-jobs --timeout=120s --dependency-update
 ```
