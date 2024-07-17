@@ -2,8 +2,32 @@ apiVersion: v1
 entries:
   bdrs-server:
   - apiVersion: v2
+    appVersion: 0.5.2
+    created: "2024-07-17T09:00:23.000550957Z"
+    dependencies:
+    - alias: postgresql
+      condition: install.postgresql
+      name: postgresql
+      repository: https://charts.bitnami.com/bitnami
+      version: 12.11.2
+    - alias: vault
+      condition: install.vault
+      name: vault
+      repository: https://helm.releases.hashicorp.com
+      version: 0.27.0
+    description: A Helm chart for the Tractus-X BPN-DID Resolution Service
+    digest: 803f2ad1475c42f191aff6119e152c3652d0b36833e0459cfcb8604b19e74977
+    home: https://github.com/eclipse-tractusx/bpn-did-resolution-service/tree/main/charts/bdrs-server
+    name: bdrs-server
+    sources:
+    - https://github.com/eclipse-tractusx/bpn-did-resolution-service/tree/main/charts/bdrs-server
+    type: application
+    urls:
+    - https://eclipse-tractusx.github.io/bpn-did-resolution-service/helm-charts/bdrs-server-0.5.2.tgz
+    version: 0.5.2
+  - apiVersion: v2
     appVersion: 0.5.1
-    created: "2024-07-08T10:52:05.148391985Z"
+    created: "2024-07-17T09:00:22.992635433Z"
     dependencies:
     - alias: postgresql
       condition: install.postgresql
@@ -27,7 +51,7 @@ entries:
     version: 0.5.1
   - apiVersion: v2
     appVersion: 0.0.5
-    created: "2024-07-08T10:52:05.14024531Z"
+    created: "2024-07-17T09:00:22.984700372Z"
     dependencies:
     - alias: postgresql
       condition: install.postgresql
@@ -51,7 +75,7 @@ entries:
     version: 0.0.5
   - apiVersion: v2
     appVersion: 0.0.4
-    created: "2024-07-08T10:52:05.132432033Z"
+    created: "2024-07-17T09:00:22.976820224Z"
     dependencies:
     - alias: postgresql
       condition: install.postgresql
@@ -75,7 +99,7 @@ entries:
     version: 0.0.4
   - apiVersion: v2
     appVersion: 0.0.3
-    created: "2024-07-08T10:52:05.124397037Z"
+    created: "2024-07-17T09:00:22.968677986Z"
     dependencies:
     - alias: postgresql
       condition: install.postgresql
@@ -99,7 +123,7 @@ entries:
     version: 0.0.3
   - apiVersion: v2
     appVersion: 0.0.2
-    created: "2024-07-08T10:52:05.116247813Z"
+    created: "2024-07-17T09:00:22.960835577Z"
     dependencies:
     - alias: postgresql
       condition: install.postgresql
@@ -118,7 +142,7 @@ entries:
     version: 0.0.2
   - apiVersion: v2
     appVersion: 0.0.1
-    created: "2024-07-08T10:52:05.110723294Z"
+    created: "2024-07-17T09:00:22.955459297Z"
     dependencies:
     - alias: postgresql
       condition: install.postgresql
@@ -137,8 +161,22 @@ entries:
     version: 0.0.1
   bdrs-server-memory:
   - apiVersion: v2
+    appVersion: 0.5.2
+    created: "2024-07-17T09:00:23.007626001Z"
+    description: A Helm chart for the Tractus-X BPN-DID Resolution Service (only in-memory
+      persistence)
+    digest: e30518d620a608fec24e054899dc456e4f6cce8dce5b5516a33c34b3bb3c433f
+    home: https://github.com/eclipse-tractusx/bpn-did-resolution-service/tree/main/charts/bdrs-server
+    name: bdrs-server-memory
+    sources:
+    - https://github.com/eclipse-tractusx/bpn-did-resolution-service/tree/main/charts/bdrs-server
+    type: application
+    urls:
+    - https://eclipse-tractusx.github.io/bpn-did-resolution-service/helm-charts/bdrs-server-memory-0.5.2.tgz
+    version: 0.5.2
+  - apiVersion: v2
     appVersion: 0.5.1
-    created: "2024-07-08T10:52:05.154418892Z"
+    created: "2024-07-17T09:00:23.006758487Z"
     description: A Helm chart for the Tractus-X BPN-DID Resolution Service (only in-memory
       persistence)
     digest: 6c37eeb0c43447c70941b92ea10278179a182cdd80e2b0767ba9538258250388
@@ -152,7 +190,7 @@ entries:
     version: 0.5.1
   - apiVersion: v2
     appVersion: 0.0.5
-    created: "2024-07-08T10:52:05.153541727Z"
+    created: "2024-07-17T09:00:23.005868983Z"
     description: A Helm chart for the Tractus-X BPN-DID Resolution Service (only in-memory
       persistence)
     digest: 6bd984cb2d22d9eea4a402538a6afdb2046786c363beff3615ebcfdd70cf9824
@@ -166,7 +204,7 @@ entries:
     version: 0.0.5
   - apiVersion: v2
     appVersion: 0.0.4
-    created: "2024-07-08T10:52:05.15248235Z"
+    created: "2024-07-17T09:00:23.004974348Z"
     description: A Helm chart for the Tractus-X BPN-DID Resolution Service (only in-memory
       persistence)
     digest: d9cf572a56cf2f20d7346ccf0b0e9846a1c0dfaf70e1b06be22c10c1e24d97f2
@@ -180,7 +218,7 @@ entries:
     version: 0.0.4
   - apiVersion: v2
     appVersion: 0.0.3
-    created: "2024-07-08T10:52:05.151101536Z"
+    created: "2024-07-17T09:00:23.003275416Z"
     description: A Helm chart for the Tractus-X BPN-DID Resolution Service (only in-memory
       persistence)
     digest: bd3a7bb7ccc59bd62b1b0c7d6e6e524c267e9c756efaacfc37f7954c6b6517ed
@@ -194,7 +232,7 @@ entries:
     version: 0.0.3
   - apiVersion: v2
     appVersion: 0.0.2
-    created: "2024-07-08T10:52:05.150183554Z"
+    created: "2024-07-17T09:00:23.002391081Z"
     description: A Helm chart for the Tractus-X BPN-DID Resolution Service (only in-memory
       persistence)
     digest: 81e8c24802d71599417d9350e811e0b4ca9477f4d5d53d472694ca46c9ee2fca
@@ -208,7 +246,7 @@ entries:
     version: 0.0.2
   - apiVersion: v2
     appVersion: 0.0.1
-    created: "2024-07-08T10:52:05.149263249Z"
+    created: "2024-07-17T09:00:23.001456281Z"
     description: A Helm chart for the Tractus-X BPN-DID Resolution Service (only in-memory
       persistence)
     digest: 11e7f0a8cbc8908b5b1552a1b9513227b35cbee8c20de5de57360c4418266090
@@ -220,4 +258,4 @@ entries:
     urls:
     - https://eclipse-tractusx.github.io/bpn-did-resolution-service/helm-charts/bdrs-server-memory-0.0.1.tgz
     version: 0.0.1
-generated: "2024-07-08T10:52:05.104919294Z"
+generated: "2024-07-17T09:00:22.950123822Z"
