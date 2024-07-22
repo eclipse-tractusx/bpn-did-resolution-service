@@ -32,6 +32,8 @@ server:
       tls:
         enabled: true
         secretName: "tls-secret-bdrs"
+      certManager:
+        clusterIssuer: "letsencrypt-prod"
 postgresql:
   primary:
     persistence:
