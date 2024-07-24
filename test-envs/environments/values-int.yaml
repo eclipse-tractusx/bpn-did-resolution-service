@@ -34,10 +34,18 @@ server:
         secretName: "tls-secret-bdrs"
       certManager:
         clusterIssuer: "letsencrypt-prod"
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
 postgresql:
   primary:
     persistence:
       enabled: true
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
   auth:
     postgresPassword: "<path:portal/data/bdrs-postgres-pw#content>"
     password: "<path:portal/data/edc.datasource.didentry.password#content>"
