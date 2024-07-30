@@ -276,9 +276,23 @@ postgresql:
   primary:
     persistence:
       enabled: false
+    resources:
+      limits:
+        cpu: 1
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
   readReplicas:
     persistence:
       enabled: false
+    resources:
+      limits:
+        cpu: 500Mi
+        memory: 1Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
   auth:
     database: "bdrs"
     username: "bdrs"

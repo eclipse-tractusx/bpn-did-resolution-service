@@ -54,7 +54,15 @@ helm install my-release tractusx-edc/bdrs-server --version 0.5.2 \
 | postgresql.auth.username | string | `"bdrs"` |  |
 | postgresql.jdbcUrl | string | `"jdbc:postgresql://{{ .Release.Name }}-postgresql:5432/bdrs"` |  |
 | postgresql.primary.persistence.enabled | bool | `false` |  |
+| postgresql.primary.resources.limits.cpu | int | `1` |  |
+| postgresql.primary.resources.limits.memory | string | `"1Gi"` |  |
+| postgresql.primary.resources.requests.cpu | string | `"250m"` |  |
+| postgresql.primary.resources.requests.memory | string | `"256Mi"` |  |
 | postgresql.readReplicas.persistence.enabled | bool | `false` |  |
+| postgresql.readReplicas.resources.limits.cpu | string | `"500Mi"` |  |
+| postgresql.readReplicas.resources.limits.memory | string | `"1Gi"` |  |
+| postgresql.readReplicas.resources.requests.cpu | string | `"250m"` |  |
+| postgresql.readReplicas.resources.requests.memory | string | `"256Mi"` |  |
 | server.affinity | object | `{}` |  |
 | server.autoscaling.enabled | bool | `false` | Enables [horizontal pod autoscaling](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) |
 | server.autoscaling.maxReplicas | int | `100` | Maximum replicas if resource consumption exceeds resource threshholds |
