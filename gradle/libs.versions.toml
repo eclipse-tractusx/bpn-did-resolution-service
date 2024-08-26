@@ -7,7 +7,7 @@ edc = "0.7.1"
 nimbus = "9.40"
 restAssured = "5.5.0"
 jupiter = "5.10.3"
-postgres = "42.7.3"
+postgres = "42.7.4"
 flyway = "10.15.2"
 
 
