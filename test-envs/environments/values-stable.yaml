@@ -47,8 +47,8 @@ postgresql:
         cpu: 100m
         memory: 256Mi
   auth:
-    postgresPassword: "<path:portal/data/stable/bdrs-postgres-pw#content>"
-    password: "<path:portal/data/stable/edc.datasource.didentry.password#content>"
+    postgresPassword: "<path:portal/data/bdrs-postgres-pw#content>"
+    password: "<path:portal/data/edc.datasource.didentry.password#content>"
 install:
   vault: false
 vault:
