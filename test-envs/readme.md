@@ -7,5 +7,5 @@ BDRS version: 0.5.2
 
 ## Stable
 
-Status: draft
+Status: final
 BDRS version: 0.5.2
