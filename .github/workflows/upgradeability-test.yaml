@@ -98,6 +98,10 @@ jobs:
           # wait for the pod to become ready
           kubectl rollout status deployment bdrs-server
 
+      - if: failure()
+        run:
+          kubectl logs deployment/bdrs-server
+
       - uses: ./.github/actions/setup-java
 
       - name: "Build docker images"
