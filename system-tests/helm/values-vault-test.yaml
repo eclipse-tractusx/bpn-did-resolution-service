@@ -31,11 +31,7 @@ server:
     - |-
       {
       sleep 5
-      
-      /bin/vault kv put secret/edc.datasource.didentry.user content=bdrs
-      
-      /bin/vault kv put secret/edc.datasource.didentry.password content=password
-      
+
       /bin/vault kv put secret/mgmt-api-key content=password
       }
 hashicorp:
