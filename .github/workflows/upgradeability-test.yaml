@@ -76,7 +76,7 @@ jobs:
         run: |
           helm repo add hashicorp https://helm.releases.hashicorp.com  
           
-          helm install vault hashicorp/vault \
+          helm install vault hashicorp/vault --version 0.28.0 \
           -f system-tests/helm/values-vault-test.yaml \
           --wait-for-jobs --timeout=120s --dependency-update
           
