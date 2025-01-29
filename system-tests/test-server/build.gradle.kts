@@ -32,6 +32,7 @@ dependencies {
     runtimeOnly(libs.edc.identitytrust.issuers)
     runtimeOnly(libs.bundles.bdrs.boot)
     runtimeOnly(libs.edc.core.did)
+    runtimeOnly(libs.edc.core.token)
 }
 
 edcBuild {
