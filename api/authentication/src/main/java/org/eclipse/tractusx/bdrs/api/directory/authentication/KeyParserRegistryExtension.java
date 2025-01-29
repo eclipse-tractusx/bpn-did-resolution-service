@@ -20,12 +20,15 @@
 package org.eclipse.tractusx.bdrs.api.directory.authentication;
 
 import org.eclipse.edc.keys.KeyParserRegistryImpl;
+import org.eclipse.edc.keys.VaultPrivateKeyResolver;
 import org.eclipse.edc.keys.keyparsers.JwkParser;
 import org.eclipse.edc.keys.keyparsers.PemParser;
 import org.eclipse.edc.keys.spi.KeyParserRegistry;
+import org.eclipse.edc.keys.spi.PrivateKeyResolver;
 import org.eclipse.edc.runtime.metamodel.annotation.Extension;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.runtime.metamodel.annotation.Provider;
+import org.eclipse.edc.spi.security.Vault;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
 import org.eclipse.edc.spi.types.TypeManager;
@@ -37,6 +40,19 @@ import org.eclipse.edc.spi.types.TypeManager;
 public class KeyParserRegistryExtension implements ServiceExtension {
     @Inject
     private TypeManager typeManager;
+
+    @Inject
+    private Vault vault;
+
+    private PrivateKeyResolver privateKeyResolver;
+
+    @Provider
+    public PrivateKeyResolver privateKeyResolver(ServiceExtensionContext context) {
+        if (privateKeyResolver == null) {
+            privateKeyResolver = new VaultPrivateKeyResolver(keyParserRegistry(context), vault, context.getMonitor().withPrefix("PrivateKeyResolution"), context.getConfig());
+        }
+        return privateKeyResolver;
+    }
 
     @Provider
     public KeyParserRegistry keyParserRegistry(ServiceExtensionContext context) {

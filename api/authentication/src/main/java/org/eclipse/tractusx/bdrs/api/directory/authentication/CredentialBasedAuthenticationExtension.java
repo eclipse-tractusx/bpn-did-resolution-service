@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2024 Bayerische Motoren Werke Aktiengesellschaft
+ * Copyright (c) 2025 Cofinity-X GmbH
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -19,18 +20,19 @@
 
 package org.eclipse.tractusx.bdrs.api.directory.authentication;
 
-import dev.failsafe.RetryPolicy;
-import okhttp3.OkHttpClient;
 import org.eclipse.edc.api.auth.spi.AuthenticationRequestFilter;
+import org.eclipse.edc.api.auth.spi.registry.ApiAuthenticationProviderRegistry;
 import org.eclipse.edc.api.auth.spi.registry.ApiAuthenticationRegistry;
-import org.eclipse.edc.http.client.EdcHttpClientImpl;
-import org.eclipse.edc.http.spi.EdcHttpClient;
 import org.eclipse.edc.iam.did.spi.resolution.DidPublicKeyResolver;
 import org.eclipse.edc.iam.identitytrust.service.verification.MultiFormatPresentationVerifier;
 import org.eclipse.edc.iam.identitytrust.transform.to.JwtToVerifiableCredentialTransformer;
 import org.eclipse.edc.iam.identitytrust.transform.to.JwtToVerifiablePresentationTransformer;
-import org.eclipse.edc.iam.verifiablecredentials.StatusList2021RevocationService;
 import org.eclipse.edc.iam.verifiablecredentials.VerifiableCredentialValidationServiceImpl;
+import org.eclipse.edc.iam.verifiablecredentials.revocation.bitstring.BitstringStatusListRevocationService;
+import org.eclipse.edc.iam.verifiablecredentials.revocation.statuslist2021.StatusList2021RevocationService;
+import org.eclipse.edc.iam.verifiablecredentials.spi.model.RevocationServiceRegistry;
+import org.eclipse.edc.iam.verifiablecredentials.spi.model.revocation.bitstringstatuslist.BitstringStatusListStatus;
+import org.eclipse.edc.iam.verifiablecredentials.spi.model.revocation.statuslist2021.StatusList2021Status;
 import org.eclipse.edc.iam.verifiablecredentials.spi.validation.TrustedIssuerRegistry;
 import org.eclipse.edc.jsonld.JsonLdConfiguration;
 import org.eclipse.edc.jsonld.TitaniumJsonLd;
@@ -80,6 +82,9 @@ public class CredentialBasedAuthenticationExtension implements ServiceExtension 
     @Inject
     private ApiAuthenticationRegistry registry;
 
+    @Inject
+    private RevocationServiceRegistry revocationServiceRegistry;
+
     private TrustedIssuerRegistry trustedIssuerRegistry;
     private TypeTransformerRegistryImpl typeTransformerRegistry;
 
@@ -96,8 +101,9 @@ public class CredentialBasedAuthenticationExtension implements ServiceExtension 
         var presentationVerifier = new MultiFormatPresentationVerifier(null, jwtVerifier);
 
         var validity = context.getConfig().getLong(REVOCATION_CACHE_VALIDITY, DEFAULT_REVOCATION_CACHE_VALIDITY_MILLIS);
-        var statuslistService = new StatusList2021RevocationService(typeManager.getMapper(), validity);
-        var validationService = new VerifiableCredentialValidationServiceImpl(presentationVerifier, createTrustedIssuerRegistry(), statuslistService, clock);
+        revocationServiceRegistry.addService(StatusList2021Status.TYPE, new StatusList2021RevocationService(typeManager.getMapper(), validity));
+        revocationServiceRegistry.addService(BitstringStatusListStatus.TYPE, new BitstringStatusListRevocationService(typeManager.getMapper(), validity));
+        var validationService = new VerifiableCredentialValidationServiceImpl(presentationVerifier, createTrustedIssuerRegistry(), revocationServiceRegistry, clock);
 
         var authService = new CredentialBasedAuthenticationService(context.getMonitor(), typeManager.getMapper(), validationService, typeTransformerRegistry(context));
         registry.register(DIRECTORY_CONTEXT, authService);
@@ -125,7 +131,7 @@ public class CredentialBasedAuthenticationExtension implements ServiceExtension 
     }
 
     @Provider
-    public EdcHttpClient httpClient(ServiceExtensionContext context) {
-        return new EdcHttpClientImpl(new OkHttpClient(), RetryPolicy.ofDefaults(), context.getMonitor().withPrefix(MONITOR_PREFIX));
+    public ApiAuthenticationProviderRegistry apiAuthenticationProviderRegistry() {
+        return new ApiAuthenticationProviderRegistryImpl();
     }
 }

@@ -28,6 +28,7 @@ dependencies {
     runtimeOnly(libs.edc.core.did)
     runtimeOnly(libs.edc.identitydidweb)
     runtimeOnly(libs.edc.identitytrust.issuers)
+    runtimeOnly(libs.edc.core.token)
 
     runtimeOnly(project(":core:core-services"))
     runtimeOnly(project(":api:directory-api"))

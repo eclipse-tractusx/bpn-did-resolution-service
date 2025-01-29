@@ -18,3 +18,4 @@
 #
 org.eclipse.tractusx.bdrs.api.directory.authentication.CredentialBasedAuthenticationExtension
 org.eclipse.tractusx.bdrs.api.directory.authentication.KeyParserRegistryExtension
+org.eclipse.tractusx.bdrs.api.directory.authentication.HttpClientExtension
