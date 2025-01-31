@@ -26,8 +26,8 @@ dependencies {
     implementation(libs.edc.spi.transaction)
     implementation(libs.edc.spi.transaction.datasource)
     implementation(project(":spi:core-spi"))
-    implementation(libs.edc.core.sql)
-    
+    implementation(libs.edc.lib.sql)
+
     implementation(libs.flyway.core)
     // starting from flyway 10, they've moved to a more modular structure,
     // so we need to add PG support explicitly
@@ -36,6 +36,6 @@ dependencies {
 
     testImplementation(libs.edc.junit)
     testImplementation(testFixtures(project(":spi:core-spi")))
-    testImplementation(testFixtures(libs.edc.core.sql))
+    testImplementation(testFixtures(libs.edc.sql.testfixtures))
 }
 

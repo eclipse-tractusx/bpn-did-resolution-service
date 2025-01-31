@@ -28,6 +28,7 @@ dependencies {
     runtimeOnly(libs.edc.sql.pool)
     runtimeOnly(libs.postgres)
     runtimeOnly(libs.edc.vault.hashicorp)
+    runtimeOnly(libs.edc.core.sql)
 
     runtimeOnly(project(":extensions:store:sql:did-entry-store-sql"))
 }

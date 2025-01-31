@@ -27,10 +27,10 @@ dependencies {
     implementation(libs.edc.spi.core)
     implementation(libs.edc.spi.transaction)
     implementation(libs.edc.spi.transaction.datasource)
-    implementation(libs.edc.core.sql)
+    implementation(libs.edc.lib.sql)
 
     testImplementation(libs.edc.junit)
     testImplementation(testFixtures(project(":spi:core-spi")))
-    testImplementation(testFixtures(libs.edc.core.sql))
+    testImplementation(testFixtures(libs.edc.sql.testfixtures))
 }
 

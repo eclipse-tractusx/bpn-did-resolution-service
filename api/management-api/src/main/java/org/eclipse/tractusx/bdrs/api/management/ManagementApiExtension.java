@@ -21,13 +21,14 @@ package org.eclipse.tractusx.bdrs.api.management;
 
 import org.eclipse.edc.api.auth.spi.AuthenticationRequestFilter;
 import org.eclipse.edc.api.auth.spi.registry.ApiAuthenticationRegistry;
-import org.eclipse.edc.runtime.metamodel.annotation.BaseExtension;
 import org.eclipse.edc.runtime.metamodel.annotation.Extension;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.runtime.metamodel.annotation.Setting;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
 import org.eclipse.edc.web.spi.WebService;
+import org.eclipse.edc.web.spi.configuration.PortMapping;
+import org.eclipse.edc.web.spi.configuration.PortMappingRegistry;
 import org.eclipse.tractusx.bdrs.spi.store.DidEntryStore;
 
 import static org.eclipse.tractusx.bdrs.api.management.ManagementApiExtension.NAME;
@@ -35,7 +36,6 @@ import static org.eclipse.tractusx.bdrs.api.management.ManagementApiExtension.NA
 /**
  * Loads resources for the BPN Directory Management API.
  */
-@BaseExtension
 @Extension(NAME)
 public class ManagementApiExtension implements ServiceExtension {
     public static final String NAME = "Management API";
@@ -53,6 +53,9 @@ public class ManagementApiExtension implements ServiceExtension {
     @Inject
     private ApiAuthenticationRegistry registry;
 
+    @Inject
+    private PortMappingRegistry portMappingRegistry;
+
     @Override
     public String name() {
         return NAME;
@@ -60,6 +63,11 @@ public class ManagementApiExtension implements ServiceExtension {
 
     @Override
     public void initialize(ServiceExtensionContext context) {
+        var port = context.getSetting(MGMT_API_PORT, 8081);
+        var path = context.getSetting(MGMT_API_PATH, "/management");
+        var portMapping = new PortMapping(CONTEXT_NAME, port, path);
+        portMappingRegistry.register(portMapping);
+
         webService.registerResource(CONTEXT_NAME, new ManagementApiController(store));
         webService.registerResource(CONTEXT_NAME, new AuthenticationRequestFilter(registry, "management-api"));
     }

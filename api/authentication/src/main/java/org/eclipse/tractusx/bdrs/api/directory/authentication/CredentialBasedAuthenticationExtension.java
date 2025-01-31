@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2024 Bayerische Motoren Werke Aktiengesellschaft
+ * Copyright (c) 2025 Cofinity-X GmbH
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -19,21 +20,18 @@
 
 package org.eclipse.tractusx.bdrs.api.directory.authentication;
 
-import dev.failsafe.RetryPolicy;
-import okhttp3.OkHttpClient;
 import org.eclipse.edc.api.auth.spi.AuthenticationRequestFilter;
 import org.eclipse.edc.api.auth.spi.registry.ApiAuthenticationRegistry;
-import org.eclipse.edc.http.client.EdcHttpClientImpl;
-import org.eclipse.edc.http.spi.EdcHttpClient;
 import org.eclipse.edc.iam.did.spi.resolution.DidPublicKeyResolver;
 import org.eclipse.edc.iam.identitytrust.service.verification.MultiFormatPresentationVerifier;
-import org.eclipse.edc.iam.identitytrust.transform.to.JwtToVerifiableCredentialTransformer;
-import org.eclipse.edc.iam.identitytrust.transform.to.JwtToVerifiablePresentationTransformer;
-import org.eclipse.edc.iam.verifiablecredentials.StatusList2021RevocationService;
+import org.eclipse.edc.iam.identitytrust.spi.SecureTokenService;
 import org.eclipse.edc.iam.verifiablecredentials.VerifiableCredentialValidationServiceImpl;
+import org.eclipse.edc.iam.verifiablecredentials.revocation.bitstring.BitstringStatusListRevocationService;
+import org.eclipse.edc.iam.verifiablecredentials.revocation.statuslist2021.StatusList2021RevocationService;
+import org.eclipse.edc.iam.verifiablecredentials.spi.model.RevocationServiceRegistry;
+import org.eclipse.edc.iam.verifiablecredentials.spi.model.revocation.bitstringstatuslist.BitstringStatusListStatus;
+import org.eclipse.edc.iam.verifiablecredentials.spi.model.revocation.statuslist2021.StatusList2021Status;
 import org.eclipse.edc.iam.verifiablecredentials.spi.validation.TrustedIssuerRegistry;
-import org.eclipse.edc.jsonld.JsonLdConfiguration;
-import org.eclipse.edc.jsonld.TitaniumJsonLd;
 import org.eclipse.edc.runtime.metamodel.annotation.Extension;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.runtime.metamodel.annotation.Provider;
@@ -43,7 +41,6 @@ import org.eclipse.edc.spi.system.ServiceExtensionContext;
 import org.eclipse.edc.spi.types.TypeManager;
 import org.eclipse.edc.token.spi.TokenValidationRulesRegistry;
 import org.eclipse.edc.token.spi.TokenValidationService;
-import org.eclipse.edc.transform.TypeTransformerRegistryImpl;
 import org.eclipse.edc.transform.spi.TypeTransformerRegistry;
 import org.eclipse.edc.verifiablecredentials.jwt.JwtPresentationVerifier;
 import org.eclipse.edc.web.spi.WebService;
@@ -58,12 +55,15 @@ import static org.eclipse.tractusx.bdrs.api.directory.authentication.CredentialB
  */
 @Extension(NAME)
 public class CredentialBasedAuthenticationExtension implements ServiceExtension {
-    public static final long DEFAULT_REVOCATION_CACHE_VALIDITY_MILLIS = 15 * 60 * 1000L;
+
+    public static final String NAME = "Directory API Authentication Extension";
+
+    private static final long DEFAULT_REVOCATION_CACHE_VALIDITY_MILLIS = 15 * 60 * 1000L;
+    private static final String DIRECTORY_CONTEXT = "directory";
+
     @Setting(value = "Validity period of cached StatusList2021 credential entries in milliseconds.", defaultValue = DEFAULT_REVOCATION_CACHE_VALIDITY_MILLIS + "", type = "long")
     public static final String REVOCATION_CACHE_VALIDITY = "edc.iam.credential.revocation.cache.validity";
-    public static final String NAME = "Directory API Authentication Extension";
-    public static final String MONITOR_PREFIX = "Presentation Transformation";
-    private static final String DIRECTORY_CONTEXT = "directory";
+
     @Inject
     private WebService webService;
     @Inject
@@ -76,12 +76,14 @@ public class CredentialBasedAuthenticationExtension implements ServiceExtension 
     private DidPublicKeyResolver didPublicKeyResolver;
     @Inject
     private Clock clock;
-
     @Inject
     private ApiAuthenticationRegistry registry;
-
+    @Inject
+    private RevocationServiceRegistry revocationServiceRegistry;
+    @Inject
     private TrustedIssuerRegistry trustedIssuerRegistry;
-    private TypeTransformerRegistryImpl typeTransformerRegistry;
+    @Inject
+    private TypeTransformerRegistry typeTransformerRegistry;
 
     @Override
     public String name() {
@@ -96,36 +98,18 @@ public class CredentialBasedAuthenticationExtension implements ServiceExtension 
         var presentationVerifier = new MultiFormatPresentationVerifier(null, jwtVerifier);
 
         var validity = context.getConfig().getLong(REVOCATION_CACHE_VALIDITY, DEFAULT_REVOCATION_CACHE_VALIDITY_MILLIS);
-        var statuslistService = new StatusList2021RevocationService(typeManager.getMapper(), validity);
-        var validationService = new VerifiableCredentialValidationServiceImpl(presentationVerifier, createTrustedIssuerRegistry(), statuslistService, clock);
+        revocationServiceRegistry.addService(StatusList2021Status.TYPE, new StatusList2021RevocationService(typeManager.getMapper(), validity));
+        revocationServiceRegistry.addService(BitstringStatusListStatus.TYPE, new BitstringStatusListRevocationService(typeManager.getMapper(), validity));
+        var validationService = new VerifiableCredentialValidationServiceImpl(presentationVerifier, trustedIssuerRegistry, revocationServiceRegistry, clock);
 
-        var authService = new CredentialBasedAuthenticationService(context.getMonitor(), typeManager.getMapper(), validationService, typeTransformerRegistry(context));
+        var authService = new CredentialBasedAuthenticationService(context.getMonitor(), typeManager.getMapper(), validationService, typeTransformerRegistry);
         registry.register(DIRECTORY_CONTEXT, authService);
         webService.registerResource(DIRECTORY_CONTEXT, new AuthenticationRequestFilter(registry, DIRECTORY_CONTEXT));
     }
 
-    // must provide this, so the TrustedIssuerRegistryConfigurationExtension can inject it
     @Provider
-    public TrustedIssuerRegistry createTrustedIssuerRegistry() {
-        if (trustedIssuerRegistry == null) {
-            trustedIssuerRegistry = new TrustedIssuerRegistryImpl();
-        }
-        return trustedIssuerRegistry;
+    public SecureTokenService secureTokenService() {
+        return (map, s) -> null; // not really needed but requested by the runtime because of some tangles into trusted-issuer-core
     }
 
-    @Provider
-    public TypeTransformerRegistry typeTransformerRegistry(ServiceExtensionContext context) {
-        if (typeTransformerRegistry == null) {
-            typeTransformerRegistry = new TypeTransformerRegistryImpl();
-            var monitor = context.getMonitor().withPrefix(MONITOR_PREFIX);
-            typeTransformerRegistry.register(new JwtToVerifiablePresentationTransformer(monitor, typeManager.getMapper(JSON_LD), new TitaniumJsonLd(monitor, JsonLdConfiguration.Builder.newInstance().build())));
-            typeTransformerRegistry.register(new JwtToVerifiableCredentialTransformer(monitor));
-        }
-        return typeTransformerRegistry;
-    }
-
-    @Provider
-    public EdcHttpClient httpClient(ServiceExtensionContext context) {
-        return new EdcHttpClientImpl(new OkHttpClient(), RetryPolicy.ofDefaults(), context.getMonitor().withPrefix(MONITOR_PREFIX));
-    }
 }

@@ -22,7 +22,10 @@ package org.eclipse.tractusx.bdrs.test.directory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.specification.RequestSpecification;
 import org.eclipse.edc.junit.annotations.EndToEndTest;
-import org.eclipse.edc.junit.extensions.EdcRuntimeExtension;
+import org.eclipse.edc.junit.extensions.EmbeddedRuntime;
+import org.eclipse.edc.junit.extensions.RuntimeExtension;
+import org.eclipse.edc.junit.extensions.RuntimePerClassExtension;
+import org.eclipse.edc.spi.system.configuration.ConfigFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -64,20 +67,20 @@ public class ManagementApiEndToEndTest {
     private static final String UPDATED_DID2 = "did:web:localhost/baz";
 
     @RegisterExtension
-    protected static EdcRuntimeExtension runtime =
-            new EdcRuntimeExtension(
-                    ":system-tests:test-server",
-                    "bdrs",
-                    Map.of("web.http.port", String.valueOf(API_ENDPOINT.getPort()),
+    protected static RuntimeExtension runtime = new RuntimePerClassExtension(
+            new EmbeddedRuntime("bdrs", ":runtimes:bdrs-server-memory")
+                    .configurationProvider(() -> ConfigFactory.fromMap(Map.of(
+                            "web.http.port", String.valueOf(API_ENDPOINT.getPort()),
                             "web.http.management.port", String.valueOf(MANAGEMENT_ENDPOINT.getPort()),
                             "web.http.management.path", String.valueOf(MANAGEMENT_ENDPOINT.getPath()),
                             "web.http.directory.port", String.valueOf(DIRECTORY_ENDPOINT.getPort()),
                             "web.http.directory.path", String.valueOf(DIRECTORY_ENDPOINT.getPath()),
-                            "edc.api.auth.key", AUTH_KEY)
-            );
+                            "edc.iam.issuer.id", "any",
+                            "edc.api.auth.key", AUTH_KEY))
+                    )
+    );
 
     private ObjectMapper mapper;
-
 
     @Test
     void verifyManagementApi() throws IOException {
