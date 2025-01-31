@@ -31,5 +31,7 @@ dependencies {
 
     testImplementation(testFixtures(libs.edc.vc.jwt)) // JwtCreationUtils
     testImplementation(libs.nimbus.jwt)
+
+    testCompileOnly(project(":runtimes:bdrs-server-memory"))
 }
 

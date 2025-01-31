@@ -160,6 +160,9 @@ spec:
             - name: "WEB_HTTP_DIRECTORY_PATH"
               value: {{ .Values.server.endpoints.directory.path | quote }}
 
+            - name: "EDC_IAM_ISSUER_ID"
+              value: "required but not really needed"
+
             #############################
             ## TRUSTED ISSUER CONFIG
             #############################

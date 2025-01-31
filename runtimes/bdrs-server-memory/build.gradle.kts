@@ -23,17 +23,23 @@ plugins {
 }
 
 dependencies {
-    runtimeOnly(libs.bundles.bdrs.boot)
-    runtimeOnly(libs.edc.api.observability)
-    runtimeOnly(libs.edc.core.did)
-    runtimeOnly(libs.edc.identitydidweb)
-    runtimeOnly(libs.edc.identitytrust.issuers)
-    runtimeOnly(libs.edc.core.token)
-
     runtimeOnly(project(":core:core-services"))
     runtimeOnly(project(":api:directory-api"))
     runtimeOnly(project(":api:management-api"))
     runtimeOnly(project(":api:authentication"))
+
+    runtimeOnly(libs.edc.api.core)
+    runtimeOnly(libs.edc.api.observability)
+    runtimeOnly(libs.edc.auth.tokenbased)
+    runtimeOnly(libs.edc.boot)
+    runtimeOnly(libs.edc.connector.core)
+    runtimeOnly(libs.edc.core.did)
+    runtimeOnly(libs.edc.core.jersey)
+    runtimeOnly(libs.edc.core.jetty)
+    runtimeOnly(libs.edc.core.token)
+    runtimeOnly(libs.edc.identitydidweb)
+    runtimeOnly(libs.edc.identitytrust.core)
+    runtimeOnly(libs.edc.identitytrust.issuers)
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {

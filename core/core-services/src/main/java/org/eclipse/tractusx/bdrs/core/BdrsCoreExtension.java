@@ -19,19 +19,12 @@
 
 package org.eclipse.tractusx.bdrs.core;
 
-import org.eclipse.edc.api.auth.spi.registry.ApiAuthenticationRegistry;
-import org.eclipse.edc.json.JacksonTypeManager;
-import org.eclipse.edc.runtime.metamodel.annotation.BaseExtension;
 import org.eclipse.edc.runtime.metamodel.annotation.Extension;
+import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.runtime.metamodel.annotation.Provider;
-import org.eclipse.edc.spi.security.Vault;
 import org.eclipse.edc.spi.system.ServiceExtension;
-import org.eclipse.edc.spi.system.ServiceExtensionContext;
-import org.eclipse.edc.spi.system.health.HealthCheckService;
 import org.eclipse.edc.spi.types.TypeManager;
-import org.eclipse.tractusx.bdrs.core.health.HealthCheckServiceImpl;
 import org.eclipse.tractusx.bdrs.core.store.InMemoryDidEntryStore;
-import org.eclipse.tractusx.bdrs.core.vault.InMemoryVault;
 import org.eclipse.tractusx.bdrs.spi.store.DidEntryStore;
 
 import static org.eclipse.tractusx.bdrs.core.BdrsCoreExtension.NAME;
@@ -39,12 +32,11 @@ import static org.eclipse.tractusx.bdrs.core.BdrsCoreExtension.NAME;
 /**
  * Loads BDRS core services
  */
-@BaseExtension
 @Extension(NAME)
 public class BdrsCoreExtension implements ServiceExtension {
     public static final String NAME = "BDRS Core";
 
-    private HealthCheckServiceImpl healthCheckService;
+    @Inject
     private TypeManager typeManager;
 
     @Override
@@ -52,36 +44,9 @@ public class BdrsCoreExtension implements ServiceExtension {
         return NAME;
     }
 
-    @Override
-    public void initialize(ServiceExtensionContext context) {
-        healthCheckService = new HealthCheckServiceImpl();
-    }
-
-    @Provider
-    public TypeManager typeManager() {
-        if (typeManager == null) {
-            typeManager = new JacksonTypeManager();
-        }
-        return typeManager;
-    }
-
-    @Provider
-    public HealthCheckService healthCheckService() {
-        return healthCheckService;
-    }
-
     @Provider(isDefault = true)
     public DidEntryStore defaultDidEntryStore() {
-        return new InMemoryDidEntryStore(typeManager().getMapper());
+        return new InMemoryDidEntryStore(typeManager.getMapper());
     }
 
-    @Provider(isDefault = true)
-    public Vault defaultVault() {
-        return new InMemoryVault();
-    }
-
-    @Provider
-    public ApiAuthenticationRegistry apiAuthenticationRegistry() {
-        return new ApiAuthenticationRegistryImpl();
-    }
 }
