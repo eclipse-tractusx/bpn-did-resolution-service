@@ -17,4 +17,3 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 org.eclipse.tractusx.bdrs.api.directory.authentication.CredentialBasedAuthenticationExtension
-org.eclipse.tractusx.bdrs.api.directory.authentication.KeyParserRegistryExtension

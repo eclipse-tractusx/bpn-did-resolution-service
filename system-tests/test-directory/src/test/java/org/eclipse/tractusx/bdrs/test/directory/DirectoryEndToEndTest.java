@@ -37,6 +37,7 @@ import org.eclipse.edc.junit.extensions.EmbeddedRuntime;
 import org.eclipse.edc.junit.extensions.RuntimeExtension;
 import org.eclipse.edc.junit.extensions.RuntimePerMethodExtension;
 import org.eclipse.edc.spi.result.Result;
+import org.eclipse.edc.spi.system.configuration.ConfigFactory;
 import org.eclipse.edc.verifiablecredentials.jwt.JwtCreationUtils;
 import org.eclipse.edc.web.spi.ApiErrorDetail;
 import org.jetbrains.annotations.NotNull;
@@ -76,18 +77,22 @@ public class DirectoryEndToEndTest {
     private static final String AUTH_KEY = "1234";
     private static final String BPN1 = "BPN12345";
     private static final String DID1 = "did:web:localhost/foo";
+
     @RegisterExtension
-    protected static RuntimeExtension runtime = new RuntimePerMethodExtension(new EmbeddedRuntime(
-            "BDRS Server",
-            Map.of("web.http.port", String.valueOf(API_ENDPOINT.getPort()),
-                    "web.http.management.port", String.valueOf(MANAGEMENT_ENDPOINT.getPort()),
-                    "web.http.management.path", String.valueOf(MANAGEMENT_ENDPOINT.getPath()),
-                    "web.http.directory.port", String.valueOf(DIRECTORY_ENDPOINT.getPort()),
-                    "web.http.directory.path", String.valueOf(DIRECTORY_ENDPOINT.getPath()),
-                    "edc.iam.trusted-issuer.test.id", "did:web:some-issuer",
-                    "edc.api.auth.key", AUTH_KEY),
-            ":system-tests:test-server")
+    protected static RuntimeExtension runtime = new RuntimePerMethodExtension(
+            new EmbeddedRuntime("BDRS Server", ":runtimes:bdrs-server-memory")
+                    .configurationProvider(() -> ConfigFactory.fromMap(Map.of(
+                            "web.http.port", String.valueOf(API_ENDPOINT.getPort()),
+                            "web.http.management.port", String.valueOf(MANAGEMENT_ENDPOINT.getPort()),
+                            "web.http.management.path", String.valueOf(MANAGEMENT_ENDPOINT.getPath()),
+                            "web.http.directory.port", String.valueOf(DIRECTORY_ENDPOINT.getPort()),
+                            "web.http.directory.path", String.valueOf(DIRECTORY_ENDPOINT.getPath()),
+                            "edc.iam.issuer.id", "any",
+                            "edc.iam.trusted-issuer.test.id", "did:web:some-issuer",
+                            "edc.api.auth.key", AUTH_KEY))
+                    )
     );
+
     private final String issuerId = "did:web:some-issuer";
     private final String holderId = "did:web:bdrs-client";
     private ECKey vcIssuerKey;

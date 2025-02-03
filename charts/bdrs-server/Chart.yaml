@@ -34,12 +34,12 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.5.2
+version: 0.5.3
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application. Versions are not expected to
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
-appVersion: "0.5.2"
+appVersion: "0.5.3"
 home: https://github.com/eclipse-tractusx/bpn-did-resolution-service/tree/main/charts/bdrs-server
 sources:
   - https://github.com/eclipse-tractusx/bpn-did-resolution-service/tree/main/charts/bdrs-server
@@ -47,12 +47,12 @@ dependencies:
   # PostgreSQL
   - name: postgresql
     alias: postgresql
-    version: 12.11.2
+    version: 15.2.1
     repository: https://charts.bitnami.com/bitnami
     condition: install.postgresql
   # HashiCorp Vault
   - name: vault
     alias: vault
-    version: "0.27.0"
+    version: "0.28.0"
     repository: https://helm.releases.hashicorp.com
     condition: install.vault

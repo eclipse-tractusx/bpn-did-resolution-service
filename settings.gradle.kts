@@ -55,5 +55,4 @@ include(":extensions:store:sql:sql-lib")
 include(":extensions:store:sql:did-entry-store-sql")
 
 // test modules
-include(":system-tests:test-server")
 include(":system-tests:test-directory")
