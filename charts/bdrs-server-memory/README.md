@@ -1,6 +1,6 @@
 # bdrs-server-memory
 
-![Version: 0.5.2](https://img.shields.io/badge/Version-0.5.2-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.5.2](https://img.shields.io/badge/AppVersion-0.5.2-informational?style=flat-square)
+![Version: 0.5.4](https://img.shields.io/badge/Version-0.5.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.5.4](https://img.shields.io/badge/AppVersion-0.5.4-informational?style=flat-square)
 
 A Helm chart for the Tractus-X BPN-DID Resolution Service (only in-memory persistence)
 
@@ -25,7 +25,7 @@ Simply execute these commands on a shell:
 
 ```shell
 helm repo add tractusx https://eclipse-tractusx.github.io/charts/dev
-helm install my-release tractusx-edc/bdrs-server --version 0.5.2 \
+helm install my-release tractusx-edc/bdrs-server --version 0.5.4 \
      -f <path-to>/additional-values-file.yaml \
      --wait-for-jobs --timeout=120s --dependency-update
 ```
@@ -91,8 +91,6 @@ helm install my-release tractusx-edc/bdrs-server --version 0.5.2 \
 | server.ingresses[1].tls.enabled | bool | `false` | Enables TLS on the ingress resource |
 | server.ingresses[1].tls.secretName | string | `""` | If present overwrites the default secret name |
 | server.initContainers | list | `[]` |  |
-| server.limits.cpu | float | `1.5` |  |
-| server.limits.memory | string | `"512Mi"` |  |
 | server.livenessProbe.enabled | bool | `true` | Whether to enable kubernetes [liveness-probe](https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/) |
 | server.livenessProbe.failureThreshold | int | `6` | when a probe fails kubernetes will try 6 times before giving up |
 | server.livenessProbe.initialDelaySeconds | int | `5` | seconds to wait before performing the first liveness check |
@@ -115,9 +113,7 @@ helm install my-release tractusx-edc/bdrs-server --version 0.5.2 \
 | server.readinessProbe.successThreshold | int | `1` | number of consecutive successes for the probe to be considered successful after having failed |
 | server.readinessProbe.timeoutSeconds | int | `5` | number of seconds after which the probe times out |
 | server.replicaCount | int | `1` |  |
-| server.requests.cpu | string | `"500m"` |  |
-| server.requests.memory | string | `"128Mi"` |  |
-| server.resources | object | `{}` | [resource management](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/) for the container |
+| server.resources | object | `{"limits":{"cpu":1.5,"memory":"512Mi"},"requests":{"cpu":"500m","memory":"128Mi"}}` | [resource management](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/) for the container |
 | server.securityContext.allowPrivilegeEscalation | bool | `false` | Controls [Privilege Escalation](https://kubernetes.io/docs/concepts/security/pod-security-policy/#privilege-escalation) enabling setuid binaries changing the effective user ID |
 | server.securityContext.capabilities.add | list | `[]` | Specifies which capabilities to add to issue specialized syscalls |
 | server.securityContext.capabilities.drop | list | `["ALL"]` | Specifies which capabilities to drop to reduce syscall attack surface |

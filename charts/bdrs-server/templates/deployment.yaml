@@ -191,6 +191,8 @@ spec:
             - name: "EDC_VAULT_HASHICORP_API_HEALTH_CHECK_PATH"
               value: {{ .Values.vault.hashicorp.paths.health | quote }}
 
+            - name: "EDC_IAM_ISSUER_ID"
+              value: "required but not really needed"
 
             #############################
             ## TRUSTED ISSUER CONFIG

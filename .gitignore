@@ -55,3 +55,6 @@ distributions/**/github.properties
 .env
 runtime_settings.properties
 generated_backend.tf
+
+# Visual Studio Code temporary folder
+bin/
