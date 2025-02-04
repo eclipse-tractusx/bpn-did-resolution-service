@@ -35,7 +35,7 @@ helm install my-release tractusx-edc/bdrs-server --version 0.5.3 \
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://charts.bitnami.com/bitnami | postgresql(postgresql) | 15.2.1 |
+| https://charts.bitnami.com/bitnami | postgresql(postgresql) | 12.11.2 |
 | https://helm.releases.hashicorp.com | vault(vault) | 0.28.0 |
 
 ## Values
