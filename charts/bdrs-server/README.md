@@ -1,6 +1,6 @@
 # bdrs-server
 
-![Version: 0.5.3](https://img.shields.io/badge/Version-0.5.3-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.5.3](https://img.shields.io/badge/AppVersion-0.5.3-informational?style=flat-square)
+![Version: 0.5.4](https://img.shields.io/badge/Version-0.5.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.5.4](https://img.shields.io/badge/AppVersion-0.5.4-informational?style=flat-square)
 
 A Helm chart for the Tractus-X BPN-DID Resolution Service
 
@@ -22,7 +22,7 @@ Simply execute these commands on a shell:
 
 ```shell
 helm repo add tractusx https://eclipse-tractusx.github.io/charts/dev
-helm install my-release tractusx-edc/bdrs-server --version 0.5.3 \
+helm install my-release tractusx-edc/bdrs-server --version 0.5.4 \
      -f <path-to>/additional-values-file.yaml \
      --wait-for-jobs --timeout=120s --dependency-update
 ```
@@ -35,7 +35,7 @@ helm install my-release tractusx-edc/bdrs-server --version 0.5.3 \
 
 | Repository | Name | Version |
 |------------|------|---------|
-| https://charts.bitnami.com/bitnami | postgresql(postgresql) | 15.2.1 |
+| https://charts.bitnami.com/bitnami | postgresql(postgresql) | 12.11.2 |
 | https://helm.releases.hashicorp.com | vault(vault) | 0.28.0 |
 
 ## Values
