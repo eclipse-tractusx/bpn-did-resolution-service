@@ -2,8 +2,8 @@
 
 ## Integration
 
-Status: final
-BDRS version: 0.5.2
+Status: draft
+BDRS version: 0.5.4
 
 ## Stable
 
