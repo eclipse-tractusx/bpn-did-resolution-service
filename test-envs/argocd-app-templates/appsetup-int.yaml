@@ -27,7 +27,7 @@ spec:
     server: 'https://kubernetes.default.svc'
   source:
     path: charts/bdrs-server
-    repoURL: 'https://github.com/lgblaumeiser/bpn-did-resolution-service.git'
+    repoURL: 'https://github.com/eclipse-tractusx/bpn-did-resolution-service.git'
     targetRevision: chore/test_envs
     plugin:
       env:
