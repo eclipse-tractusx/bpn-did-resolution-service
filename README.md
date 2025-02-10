@@ -74,6 +74,10 @@ checkout the [Chart README](charts/bdrs-server/README.md)
 
 please refer to the [docs](docs) folder for further documentation.
 
+## Known Incompatibilities
+
+- Hashicorp Vault 1.18.1 is not compatible with the EDC due to a bug in the vault concerning path handling
+
 ## License
 
 Distributed under the Apache 2.0 License.
