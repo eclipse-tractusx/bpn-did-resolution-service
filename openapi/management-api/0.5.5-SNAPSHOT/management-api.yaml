@@ -1,0 +1,215 @@
+openapi: 3.0.1
+info:
+  title: management-api
+  description: REST API documentation for the management-api
+  version: 0.5.5-SNAPSHOT
+servers:
+- url: /
+paths:
+  /bpn-directory:
+    get:
+      tags:
+      - BDRS Server Management API
+      description: Gets a binary gzipped stream with BPN/DID mapping entries.
+      operationId: getData
+      responses:
+        "200":
+          description: The GZipped binary stream contains BPN-to-DID mapping entries.
+        "400":
+          description: Request body was malformed
+          content:
+            application/json:
+              schema:
+                type: array
+                example: null
+                items:
+                  $ref: '#/components/schemas/ApiErrorDetail'
+        "401":
+          description: User is not authenticated
+          content:
+            application/json:
+              schema:
+                type: array
+                example: null
+                items:
+                  $ref: '#/components/schemas/ApiErrorDetail'
+        "403":
+          description: User is not authorized to obtain BPN/DID mapping data
+          content:
+            application/json:
+              schema:
+                type: array
+                example: null
+                items:
+                  $ref: '#/components/schemas/ApiErrorDetail'
+    put:
+      tags:
+      - BDRS Server Management API
+      description: Updates a BpnMapping entry
+      operationId: update
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/BpnMapping'
+      responses:
+        "204":
+          description: BPN/DID mapping entry successfully created
+        "400":
+          description: Request body was malformed
+          content:
+            application/json:
+              schema:
+                type: array
+                example: null
+                items:
+                  $ref: '#/components/schemas/ApiErrorDetail'
+        "401":
+          description: User is not authenticated
+          content:
+            application/json:
+              schema:
+                type: array
+                example: null
+                items:
+                  $ref: '#/components/schemas/ApiErrorDetail'
+        "403":
+          description: User is not authorized to update BPN/DID mapping data
+          content:
+            application/json:
+              schema:
+                type: array
+                example: null
+                items:
+                  $ref: '#/components/schemas/ApiErrorDetail'
+        "404":
+          description: No mapping for that BPN was registered
+          content:
+            application/json:
+              schema:
+                type: array
+                example: null
+                items:
+                  $ref: '#/components/schemas/ApiErrorDetail'
+    post:
+      tags:
+      - BDRS Server Management API
+      description: "Creates a new BpnMapping entry, or updates an existing one."
+      operationId: save
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/BpnMapping'
+      responses:
+        "204":
+          description: BPN/DID mapping entry successfully created (updated).
+        "400":
+          description: Request body was malformed
+          content:
+            application/json:
+              schema:
+                type: array
+                example: null
+                items:
+                  $ref: '#/components/schemas/ApiErrorDetail'
+        "401":
+          description: User is not authenticated
+          content:
+            application/json:
+              schema:
+                type: array
+                example: null
+                items:
+                  $ref: '#/components/schemas/ApiErrorDetail'
+        "403":
+          description: User is not authorized to create BPN/DID mapping data
+          content:
+            application/json:
+              schema:
+                type: array
+                example: null
+                items:
+                  $ref: '#/components/schemas/ApiErrorDetail'
+  /bpn-directory/{bpn}:
+    delete:
+      tags:
+      - BDRS Server Management API
+      description: Removes a BpnMapping entry for the given BPN
+      operationId: delete
+      parameters:
+      - name: bpn
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: null
+      responses:
+        "204":
+          description: BpnMapping entry was deleted successfully
+        "400":
+          description: Request body was malformed
+          content:
+            application/json:
+              schema:
+                type: array
+                example: null
+                items:
+                  $ref: '#/components/schemas/ApiErrorDetail'
+        "401":
+          description: User is not authenticated
+          content:
+            application/json:
+              schema:
+                type: array
+                example: null
+                items:
+                  $ref: '#/components/schemas/ApiErrorDetail'
+        "403":
+          description: User is not authorized to delete BPN/DID mapping data
+          content:
+            application/json:
+              schema:
+                type: array
+                example: null
+                items:
+                  $ref: '#/components/schemas/ApiErrorDetail'
+        "404":
+          description: No mapping for that BPN was registered
+          content:
+            application/json:
+              schema:
+                type: array
+                example: null
+                items:
+                  $ref: '#/components/schemas/ApiErrorDetail'
+components:
+  schemas:
+    ApiErrorDetail:
+      type: object
+      properties:
+        invalidValue:
+          type: object
+          example: null
+        message:
+          type: string
+          example: null
+        path:
+          type: string
+          example: null
+        type:
+          type: string
+          example: null
+      example: null
+    BpnMapping:
+      type: object
+      properties:
+        bpn:
+          type: string
+          example: null
+        did:
+          type: string
+          example: null
+      example: null
