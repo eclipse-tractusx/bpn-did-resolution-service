@@ -1,6 +1,16 @@
 All notable changes to this project will be documented in this file see also the
 overarching [`CHANGELOG.md`](https://eclipse-tractusx.github.io/changelog) for Tractus-X releases.
 
+## [0.5.4] - 2025-02-04
+
+- chore: bump EDC upstream to 0.11.0
+- chore: update dependency versions
+- chore: minor improvements in helm charts
+
+## [0.5.2] - 2024-07-17
+
+- fix: remove license header from migration script
+
 ## [0.5.1] - 2024-07-08
 
 - fix: use correct context name for Management API

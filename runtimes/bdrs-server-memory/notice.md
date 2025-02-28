@@ -8,6 +8,8 @@ Launch:
 
 > docker run -p 8181:8181 -p 8282:8282 -e EDC_API_AUTH_KEY="1234" server
 
+- Repository: [eclipse-tractusx/bpn-did-resolution-service](https://github.com/eclipse-tractusx/bpn-did-resolution-service)
+- Dockerfile: [bdrs-server](https://github.com/eclipse-tractusx/bpn-did-resolution-service/blob/main/runtimes/bdrs-server-memory/src/main/docker/Dockerfile)
 - Project license: [Apache License, Version 2.0](https://github.com/eclipse-tractusx/tractusx-edc/blob/main/LICENSE)
 
 ## Used base image
