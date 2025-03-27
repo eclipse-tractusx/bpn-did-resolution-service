@@ -77,6 +77,7 @@ public class ManagementApiEndToEndTest {
                             "web.http.directory.path", String.valueOf(DIRECTORY_ENDPOINT.getPath()),
                             "edc.iam.issuer.id", "any",
                             "web.http.management.auth.alias", AUTH_KEY,
+                            "web.http.management.auth.type", "tokenbased",
                             "web.http.management.auth.key", AUTH_KEY))
                     )
     );

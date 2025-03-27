@@ -41,6 +41,7 @@ dependencies {
     runtimeOnly(libs.edc.identitytrust.core){
         exclude("org.eclipse.edc","identity-trust-sts-remote-client")
     }
+    runtimeOnly(libs.edc.auth.configuration)
     runtimeOnly(libs.edc.identitytrust.issuers)
 }
 

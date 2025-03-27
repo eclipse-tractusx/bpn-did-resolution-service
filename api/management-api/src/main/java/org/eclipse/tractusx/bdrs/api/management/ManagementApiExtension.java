@@ -69,7 +69,7 @@ public class ManagementApiExtension implements ServiceExtension {
         portMappingRegistry.register(portMapping);
 
         webService.registerResource(CONTEXT_NAME, new ManagementApiController(store));
-        webService.registerResource(CONTEXT_NAME, new AuthenticationRequestFilter(registry, "management-api"));
+        webService.registerResource(CONTEXT_NAME, new AuthenticationRequestFilter(registry, CONTEXT_NAME));
     }
 
 }

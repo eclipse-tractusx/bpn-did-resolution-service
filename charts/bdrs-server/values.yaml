@@ -90,6 +90,8 @@ server:
       path: /api/management
       # -- authentication key, must be attached to each 'X-Api-Key' request header
       authKeyAlias: "mgmt-api-key"
+      # -- Authentication type token based
+      authType: "tokenbased"
     # -- directory API
     directory:
       # -- port for incoming api calls

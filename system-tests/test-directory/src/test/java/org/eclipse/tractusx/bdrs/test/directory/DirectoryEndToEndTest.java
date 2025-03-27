@@ -90,6 +90,7 @@ public class DirectoryEndToEndTest {
                             "edc.iam.issuer.id", "any",
                             "edc.iam.trusted-issuer.test.id", "did:web:some-issuer",
                             "web.http.management.auth.key.alias", AUTH_KEY,
+                            "web.http.management.auth.type", "tokenbased",
                             "web.http.management.auth.key", AUTH_KEY))
                     )
     );
