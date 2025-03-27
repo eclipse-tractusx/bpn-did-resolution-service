@@ -28,12 +28,11 @@ dependencies {
     implementation(libs.edc.spi.web)
     implementation(libs.edc.spi.auth)
     implementation(libs.edc.spi.did)
-    implementation(libs.edc.spi.identitytrust)
     implementation(libs.edc.spi.token)
     implementation(libs.edc.spi.vc)
 
     implementation(libs.edc.lib.keys)
-    implementation(libs.edc.vc.jwt) // JwtPresentationVerifier
+    implementation(libs.edc.vc.jwt) // JwtPresentationVerifie
     implementation(libs.edc.vc) // VerifiableCredentialValidationService
     implementation(libs.edc.identitytrust.service) //MultiFormatPresentationVerifier
     implementation(libs.edc.identitytrust.transform) //JwtToVerifiablePresentationTransformer
