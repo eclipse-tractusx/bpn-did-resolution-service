@@ -145,8 +145,10 @@ spec:
             #######
             # API #
             #######
-            - name: "EDC_API_AUTH_KEY"
+            - name: "WEB_HTTP_MANAGEMENT_AUTH_KEY"
               value: {{ .Values.server.endpoints.management.authKey | required ".Values.runtime.endpoints.management.authKey is required" | quote }}
+            - name: "WEB_HTTP_MANAGEMENT_AUTH_TYPE"
+              value: {{ .Values.server.endpoints.management.authType | required ".Values.server.endpoints.management.authType is required" | quote }}
             - name: "WEB_HTTP_PORT"
               value: {{ .Values.server.endpoints.default.port | quote }}
             - name: "WEB_HTTP_PATH"
