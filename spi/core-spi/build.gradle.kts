@@ -25,11 +25,5 @@ plugins {
 dependencies {
     testFixturesApi(libs.edc.junit)
     testFixturesImplementation(libs.edc.junit)
-
-    //TODO need to check why below dependency is not coming with edc.juinit
-    testFixturesImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
-    testFixturesImplementation("org.junit.platform:junit-platform-launcher:1.10.0")
-    testFixturesImplementation("org.junit.platform:junit-platform-engine:1.10.0")
-    testFixturesImplementation("org.assertj:assertj-core:3.27.3")
 }
 

@@ -46,10 +46,6 @@ allprojects {
     }
 
     configure<org.eclipse.edc.plugins.edcbuild.extensions.BuildExtension> {
-        versions {
-            // override default dependency versions here
-            metaModel.set(metaModelVersion)
-        }
         swagger {
             title.set((project.findProperty("apiTitle") ?: "Tractus-X BDRS Server REST API") as String)
             description =
@@ -60,13 +56,6 @@ allprojects {
             resourcePackages = setOf("org.eclipse.tractusx.bdrs")
         }
 
-    }
-
-    // EdcRuntimeExtension uses this to determine the runtime classpath of the module to run.
-    tasks.register("printClasspath") {
-        doLast {
-            println(sourceSets["main"].runtimeClasspath.asPath)
-        }
     }
 }
 // the "dockerize" task is added to all projects that use the `shadowJar` plugin, e.g. runtimes
