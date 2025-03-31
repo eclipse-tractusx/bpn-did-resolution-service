@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2024 Bayerische Motoren Werke Aktiengesellschaft
+ * Copyright (c) 2025 Cofinity-X GmbH
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -28,7 +29,6 @@ dependencies {
     implementation(libs.edc.spi.web)
     implementation(libs.edc.spi.auth)
     implementation(libs.edc.spi.did)
-    implementation(libs.edc.spi.identitytrust)
     implementation(libs.edc.spi.token)
     implementation(libs.edc.spi.vc)
 

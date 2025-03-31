@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2024 Bayerische Motoren Werke Aktiengesellschaft
+ * Copyright (c) 2025 Cofinity-X GmbH
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -76,7 +77,9 @@ public class ManagementApiEndToEndTest {
                             "web.http.directory.port", String.valueOf(DIRECTORY_ENDPOINT.getPort()),
                             "web.http.directory.path", String.valueOf(DIRECTORY_ENDPOINT.getPath()),
                             "edc.iam.issuer.id", "any",
-                            "edc.api.auth.key", AUTH_KEY))
+                            "web.http.management.auth.alias", AUTH_KEY,
+                            "web.http.management.auth.type", "tokenbased",
+                            "web.http.management.auth.key", AUTH_KEY))
                     )
     );
 

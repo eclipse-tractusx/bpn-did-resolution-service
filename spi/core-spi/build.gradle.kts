@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2024 Bayerische Motoren Werke Aktiengesellschaft
+ * Copyright (c) 2025 Cofinity-X GmbH
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -23,9 +24,7 @@ plugins {
 }
 
 dependencies {
+    testFixturesApi(libs.edc.junit)
     testFixturesImplementation(libs.edc.junit)
-    testFixturesImplementation(libs.junit.jupiter.api)
-    testFixturesImplementation(libs.junit.jupiter.params)
-    testFixturesImplementation(libs.assertj)
 }
 
