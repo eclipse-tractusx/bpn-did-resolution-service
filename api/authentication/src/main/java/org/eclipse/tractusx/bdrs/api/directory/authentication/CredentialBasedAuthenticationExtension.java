@@ -60,7 +60,7 @@ public class CredentialBasedAuthenticationExtension implements ServiceExtension 
     private static final long DEFAULT_REVOCATION_CACHE_VALIDITY_MILLIS = 15 * 60 * 1000L;
     private static final String DIRECTORY_CONTEXT = "directory";
 
-    @Setting(description = "Validity period of cached StatusList2021 credential entries in milliseconds.", defaultValue = DEFAULT_REVOCATION_CACHE_VALIDITY_MILLIS + "")
+    @Setting(value = "Validity period of cached StatusList2021 credential entries in milliseconds.", defaultValue = DEFAULT_REVOCATION_CACHE_VALIDITY_MILLIS + "", type = "long")
     public static final String REVOCATION_CACHE_VALIDITY = "edc.iam.credential.revocation.cache.validity";
 
     @Inject
