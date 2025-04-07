@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2024 Bayerische Motoren Werke Aktiengesellschaft
+ * Copyright (c) 2025 Cofinity-X GmbH
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -69,7 +70,7 @@ public class ManagementApiExtension implements ServiceExtension {
         portMappingRegistry.register(portMapping);
 
         webService.registerResource(CONTEXT_NAME, new ManagementApiController(store));
-        webService.registerResource(CONTEXT_NAME, new AuthenticationRequestFilter(registry, "management-api"));
+        webService.registerResource(CONTEXT_NAME, new AuthenticationRequestFilter(registry, CONTEXT_NAME));
     }
 
 }

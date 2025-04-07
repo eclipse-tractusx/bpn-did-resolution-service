@@ -48,15 +48,14 @@ import org.eclipse.edc.web.spi.WebService;
 import java.time.Clock;
 
 import static org.eclipse.edc.spi.constants.CoreConstants.JSON_LD;
-import static org.eclipse.tractusx.bdrs.api.directory.authentication.CredentialBasedAuthenticationExtension.NAME;
 
 /**
  * Registers an authentication service that checks MembershipCredentials.
  */
-@Extension(NAME)
+@Extension(CredentialBasedAuthenticationExtension.EXTENSION_NAME)
 public class CredentialBasedAuthenticationExtension implements ServiceExtension {
 
-    public static final String NAME = "Directory API Authentication Extension";
+    public static final String EXTENSION_NAME = "Directory API Authentication Extension";
 
     private static final long DEFAULT_REVOCATION_CACHE_VALIDITY_MILLIS = 15 * 60 * 1000L;
     private static final String DIRECTORY_CONTEXT = "directory";
@@ -87,20 +86,19 @@ public class CredentialBasedAuthenticationExtension implements ServiceExtension 
 
     @Override
     public String name() {
-        return NAME;
+        return EXTENSION_NAME;
     }
 
     @Override
     public void initialize(ServiceExtensionContext context) {
-        var mapper = typeManager.getMapper(JSON_LD);
         // the DidPublicKeyResolver has a dependency onto the KeyParserRegistry, so that must be created in a separate ext -> KeyParserRegistryExtension
-        var jwtVerifier = new JwtPresentationVerifier(mapper, tokenValidationService, rulesRegistry, didPublicKeyResolver);
+        var jwtVerifier = new JwtPresentationVerifier(typeManager, JSON_LD, tokenValidationService, rulesRegistry, didPublicKeyResolver);
         var presentationVerifier = new MultiFormatPresentationVerifier(null, jwtVerifier);
 
         var validity = context.getConfig().getLong(REVOCATION_CACHE_VALIDITY, DEFAULT_REVOCATION_CACHE_VALIDITY_MILLIS);
         revocationServiceRegistry.addService(StatusList2021Status.TYPE, new StatusList2021RevocationService(typeManager.getMapper(), validity));
         revocationServiceRegistry.addService(BitstringStatusListStatus.TYPE, new BitstringStatusListRevocationService(typeManager.getMapper(), validity));
-        var validationService = new VerifiableCredentialValidationServiceImpl(presentationVerifier, trustedIssuerRegistry, revocationServiceRegistry, clock);
+        var validationService = new VerifiableCredentialValidationServiceImpl(presentationVerifier, trustedIssuerRegistry, revocationServiceRegistry, clock, typeManager.getMapper());
 
         var authService = new CredentialBasedAuthenticationService(context.getMonitor(), typeManager.getMapper(), validationService, typeTransformerRegistry);
         registry.register(DIRECTORY_CONTEXT, authService);
