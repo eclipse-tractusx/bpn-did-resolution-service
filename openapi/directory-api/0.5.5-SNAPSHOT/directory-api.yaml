@@ -21,27 +21,24 @@ paths:
             application/json:
               schema:
                 type: array
-                example: null
                 items:
-                  $ref: '#/components/schemas/ApiErrorDetail'
+                  $ref: "#/components/schemas/ApiErrorDetail"
         "401":
           description: User is not authenticated
           content:
             application/json:
               schema:
                 type: array
-                example: null
                 items:
-                  $ref: '#/components/schemas/ApiErrorDetail'
+                  $ref: "#/components/schemas/ApiErrorDetail"
         "403":
           description: User is not authorized to obtain BPN/DID mapping data
           content:
             application/json:
               schema:
                 type: array
-                example: null
                 items:
-                  $ref: '#/components/schemas/ApiErrorDetail'
+                  $ref: "#/components/schemas/ApiErrorDetail"
 components:
   schemas:
     ApiErrorDetail:
@@ -49,14 +46,9 @@ components:
       properties:
         invalidValue:
           type: object
-          example: null
         message:
           type: string
-          example: null
         path:
           type: string
-          example: null
         type:
           type: string
-          example: null
-      example: null
