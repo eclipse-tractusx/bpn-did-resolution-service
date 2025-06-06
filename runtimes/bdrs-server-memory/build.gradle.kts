@@ -38,6 +38,7 @@ dependencies {
     runtimeOnly(libs.edc.core.jersey)
     runtimeOnly(libs.edc.core.jetty)
     runtimeOnly(libs.edc.core.token)
+    runtimeOnly(libs.edc.core.runtime)
     runtimeOnly(libs.edc.identitydidweb)
     runtimeOnly(libs.edc.identitytrust.core){
         exclude("org.eclipse.edc","identity-trust-sts-remote-client")
