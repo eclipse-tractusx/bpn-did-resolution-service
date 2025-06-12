@@ -40,7 +40,7 @@ server:
     # -- Overrides the image tag whose default is the chart appVersion
     tag: ""
   initContainers: []
-  logs:
+  log:
     # -- Defines the log granularity of the default Console Monitor.
     level: INFO
   debug:

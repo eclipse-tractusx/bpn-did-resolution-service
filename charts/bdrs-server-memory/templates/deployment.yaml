@@ -99,7 +99,7 @@ spec:
           image: "tractusx/bdrs-server-memory:{{ .Values.server.image.tag | default .Chart.AppVersion }}"
           {{- end }}
 
-          args: [ --log-level={{ .Values.server.logs.level | required ".Values.server.logs.level is required" }} ]
+          args: [ --log-level={{ .Values.server.log.level | required ".Values.server.logs.level is required" }} ]
           imagePullPolicy: {{ .Values.server.image.pullPolicy }}
           ports:
           {{- range $key,$value := .Values.server.endpoints }}
