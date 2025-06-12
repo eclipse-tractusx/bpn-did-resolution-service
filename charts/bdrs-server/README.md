@@ -118,7 +118,7 @@ helm install my-release tractusx-edc/bdrs-server --version 0.5.4 \
 | server.livenessProbe.periodSeconds | int | `5` | this fields specifies that kubernetes should perform a liveness check every 5 seconds |
 | server.livenessProbe.successThreshold | int | `1` | number of consecutive successes for the probe to be considered successful after having failed |
 | server.livenessProbe.timeoutSeconds | int | `5` | number of seconds after which the probe times out |
-| server.logs.level | string | `"DEBUG"` | Defines the log granularity of the default Console Monitor. |
+| server.log.level | string | `"INFO"` | Defines the log granularity of the default Console Monitor. |
 | server.nodeSelector | object | `{}` |  |
 | server.podAnnotations | object | `{}` | additional annotations for the pod |
 | server.podLabels | object | `{}` | additional labels for the pod |
