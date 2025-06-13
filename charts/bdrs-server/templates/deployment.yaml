@@ -99,6 +99,7 @@ spec:
           image: "tractusx/bdrs-server:{{ .Values.server.image.tag | default .Chart.AppVersion }}"
           {{- end }}
 
+          args: [ --log-level={{ .Values.server.log.level | required ".Values.server.logs.level is required" }} ]
           imagePullPolicy: {{ .Values.server.image.pullPolicy }}
           ports:
           {{- range $key,$value := .Values.server.endpoints }}
@@ -241,12 +242,6 @@ spec:
             - name: "tmp"
               mountPath: "/tmp"
       volumes:
-        - name: "configuration"
-          configMap:
-            name: {{ include "bdrs.fullname" . }}
-            items:
-              - key: "logging.properties"
-                path: "logging.properties"
         {{- if .Values.customCaCerts }}
         - name: custom-cacertificates
           configMap:
