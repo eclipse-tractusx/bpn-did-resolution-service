@@ -76,6 +76,7 @@ runs:
       with:
         config: ${{ inputs.cluster-config }}
         node_image: kindest/node:${{ inputs.k8sversion }}
+        version: v0.29.0
 
 
     - name: Load images into KinD
