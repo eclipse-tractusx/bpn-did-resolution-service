@@ -1,6 +1,6 @@
 # bdrs-server
 
-![Version: 0.5.4](https://img.shields.io/badge/Version-0.5.4-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.5.4](https://img.shields.io/badge/AppVersion-0.5.4-informational?style=flat-square)
+![Version: 0.5.5](https://img.shields.io/badge/Version-0.5.5-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.5.5](https://img.shields.io/badge/AppVersion-0.5.5-informational?style=flat-square)
 
 A Helm chart for the Tractus-X BPN-DID Resolution Service
 
@@ -22,7 +22,7 @@ Simply execute these commands on a shell:
 
 ```shell
 helm repo add tractusx https://eclipse-tractusx.github.io/charts/dev
-helm install my-release tractusx-edc/bdrs-server --version 0.5.4 \
+helm install my-release tractusx-edc/bdrs-server --version 0.5.5 \
      -f <path-to>/additional-values-file.yaml \
      --wait-for-jobs --timeout=120s --dependency-update
 ```
@@ -72,15 +72,16 @@ helm install my-release tractusx-edc/bdrs-server --version 0.5.4 \
 | server.debug.enabled | bool | `false` |  |
 | server.debug.port | int | `1044` |  |
 | server.debug.suspendOnStart | bool | `false` |  |
-| server.endpoints | object | `{"default":{"path":"/api","port":8080},"directory":{"path":"/api/directory","port":8082},"management":{"authKeyAlias":"mgmt-api-key","path":"/api/management","port":8081}}` | endpoints of the control plane |
+| server.endpoints | object | `{"default":{"path":"/api","port":8080},"directory":{"path":"/api/directory","port":8082},"management":{"authKeyAlias":"mgmt-api-key","authType":"tokenbased","path":"/api/management","port":8081}}` | endpoints of the control plane |
 | server.endpoints.default | object | `{"path":"/api","port":8080}` | default api for health checks, should not be added to any ingress |
 | server.endpoints.default.path | string | `"/api"` | path for incoming api calls |
 | server.endpoints.default.port | int | `8080` | port for incoming api calls |
 | server.endpoints.directory | object | `{"path":"/api/directory","port":8082}` | directory API |
 | server.endpoints.directory.path | string | `"/api/directory"` | path for incoming api calls |
 | server.endpoints.directory.port | int | `8082` | port for incoming api calls |
-| server.endpoints.management | object | `{"authKeyAlias":"mgmt-api-key","path":"/api/management","port":8081}` | management api, used by internal users, can be added to an ingress and must not be internet facing |
+| server.endpoints.management | object | `{"authKeyAlias":"mgmt-api-key","authType":"tokenbased","path":"/api/management","port":8081}` | management api, used by internal users, can be added to an ingress and must not be internet facing |
 | server.endpoints.management.authKeyAlias | string | `"mgmt-api-key"` | authentication key, must be attached to each 'X-Api-Key' request header |
+| server.endpoints.management.authType | string | `"tokenbased"` | Authentication type token based |
 | server.endpoints.management.path | string | `"/api/management"` | path for incoming api calls |
 | server.endpoints.management.port | int | `8081` | port for incoming api calls |
 | server.env | object | `{}` |  |
@@ -117,7 +118,7 @@ helm install my-release tractusx-edc/bdrs-server --version 0.5.4 \
 | server.livenessProbe.periodSeconds | int | `5` | this fields specifies that kubernetes should perform a liveness check every 5 seconds |
 | server.livenessProbe.successThreshold | int | `1` | number of consecutive successes for the probe to be considered successful after having failed |
 | server.livenessProbe.timeoutSeconds | int | `5` | number of seconds after which the probe times out |
-| server.logging | string | `".level=INFO\norg.eclipse.edc.level=ALL\nhandlers=java.util.logging.ConsoleHandler\njava.util.logging.ConsoleHandler.formatter=java.util.logging.SimpleFormatter\njava.util.logging.ConsoleHandler.level=ALL\njava.util.logging.SimpleFormatter.format=[%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS] [%4$-7s] %5$s%6$s%n"` | configuration of the [Java Util Logging Facade](https://docs.oracle.com/javase/7/docs/technotes/guides/logging/overview.html) |
+| server.log.level | string | `"INFO"` | Defines the log granularity of the default Console Monitor. |
 | server.nodeSelector | object | `{}` |  |
 | server.podAnnotations | object | `{}` | additional annotations for the pod |
 | server.podLabels | object | `{}` | additional labels for the pod |

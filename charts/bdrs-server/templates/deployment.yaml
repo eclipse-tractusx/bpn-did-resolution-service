@@ -3,6 +3,7 @@
   #  Copyright (c) 2023 Mercedes-Benz Tech Innovation GmbH
   #  Copyright (c) 2023 Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
   #  Copyright (c) 2021,2023 Contributors to the Eclipse Foundation
+  #  Copyright (c) 2025 Cofinity-X GmbH
   #
   #  See the NOTICE file(s) distributed with this work for additional
   #  information regarding copyright ownership.
@@ -98,6 +99,7 @@ spec:
           image: "tractusx/bdrs-server:{{ .Values.server.image.tag | default .Chart.AppVersion }}"
           {{- end }}
 
+          args: [ --log-level={{ .Values.server.log.level | required ".Values.server.logs.level is required" }} ]
           imagePullPolicy: {{ .Values.server.image.pullPolicy }}
           ports:
           {{- range $key,$value := .Values.server.endpoints }}
@@ -145,8 +147,10 @@ spec:
             #######
             # API #
             #######
-            - name: "EDC_API_AUTH_KEY_ALIAS"
+            - name: "WEB_HTTP_MANAGEMENT_AUTH_KEY_ALIAS"
               value: {{ .Values.server.endpoints.management.authKeyAlias | required ".Values.server.endpoints.management.authKeyAlias is required" | quote }}
+            - name: "WEB_HTTP_MANAGEMENT_AUTH_TYPE"
+              value: {{ .Values.server.endpoints.management.authType | required ".Values.server.endpoints.management.authType is required" | quote }}
             - name: "WEB_HTTP_PORT"
               value: {{ .Values.server.endpoints.default.port | quote }}
             - name: "WEB_HTTP_PATH"
@@ -238,12 +242,6 @@ spec:
             - name: "tmp"
               mountPath: "/tmp"
       volumes:
-        - name: "configuration"
-          configMap:
-            name: {{ include "bdrs.fullname" . }}
-            items:
-              - key: "logging.properties"
-                path: "logging.properties"
         {{- if .Values.customCaCerts }}
         - name: custom-cacertificates
           configMap:

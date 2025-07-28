@@ -45,7 +45,7 @@ to avoid bottlenecks and single-points-of-failure.
 
 ## Accessing the Management API
 
-_The Management API should only b accessed by authorized users/applications - appropriate hardening measures **must** be
+_The Management API should only be accessed by authorized users/applications - appropriate hardening measures **must** be
 employed._
 
 In all other respects please refer to

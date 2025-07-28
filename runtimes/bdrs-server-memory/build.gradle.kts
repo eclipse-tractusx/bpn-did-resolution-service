@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2024 Bayerische Motoren Werke Aktiengesellschaft
+ * Copyright (c) 2025 Cofinity-X GmbH
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information regarding copyright ownership.
@@ -37,8 +38,12 @@ dependencies {
     runtimeOnly(libs.edc.core.jersey)
     runtimeOnly(libs.edc.core.jetty)
     runtimeOnly(libs.edc.core.token)
+    runtimeOnly(libs.edc.core.runtime)
     runtimeOnly(libs.edc.identitydidweb)
-    runtimeOnly(libs.edc.identitytrust.core)
+    runtimeOnly(libs.edc.identitytrust.core){
+        exclude("org.eclipse.edc","identity-trust-sts-remote-client")
+    }
+    runtimeOnly(libs.edc.auth.configuration)
     runtimeOnly(libs.edc.identitytrust.issuers)
 }
 
