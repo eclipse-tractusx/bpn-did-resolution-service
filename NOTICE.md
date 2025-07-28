@@ -20,8 +20,8 @@ source code repository logs.
 
 The Tractus-X project uses the following licenses:
 
-- Apache-2.0 for code
-- CC-BY-4.0 for non-code
+* Apache-2.0 for code
+* CC-BY-4.0 for non-code
 
 Apache-2.0:
 This program and the accompanying materials are made available under the terms of the Apache License, Version 2.0 which is available at https://www.apache.org/licenses/LICENSE-2.0.
@@ -42,9 +42,9 @@ in the GitHub organization <https://github.com/eclipse-tractusx>:
 
 This project leverages the following third party content.
 
-- OpenTelemetry Agent v1.32.0: <https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/tag/v1.32.0>
+* OpenTelemetry Agent v1.32.0: <https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/tag/v1.32.0>
 
-For additional dependencies, see [DEPENDENCIES](DEPENDENCIES)
+For additional dependencies, see [DEPENDENCIES](https://eclipse-tractusx.github.io/bpn-did-resolution-service/DEPENDENCIES) file.
 
 ## Cryptography
 
