@@ -59,9 +59,9 @@ jobs:
           { chart: charts/bdrs-server-memory, name: bdrs-server-memory },
           { chart: charts/bdrs-server,        name: bdrs-server }
         ]
-        k8s-version: [ "v1.30.0",
-                       "v1.29.4",
-                       "v1.28.9" ]
+        k8s-version: [ "v1.33.1",
+                       "v1.32.5",
+                       "v1.31.9" ]
     needs: test-prepare
     steps:
       - uses: actions/checkout@v4

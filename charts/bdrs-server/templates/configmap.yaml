@@ -28,6 +28,4 @@ metadata:
   namespace: {{ .Release.Namespace | default "default" | quote }}
   labels:
     {{- include "bdrs.server.labels" . | nindent 4 }}
-data:
-  logging.properties: |-
-    {{- .Values.server.logging | nindent 4 }}
+
