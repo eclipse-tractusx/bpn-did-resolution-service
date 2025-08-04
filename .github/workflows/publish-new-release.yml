@@ -215,6 +215,9 @@ jobs:
           git config user.name "eclipse-tractusx-bot"
           git config user.email "tractusx-bot@eclipse.org"
 
+          git rm DEPENDENCIES
+          git commit -m "Delete dependency file"
+          
           # Merge releases into main
           git checkout main && git merge -X theirs releases --no-commit --no-ff
 
