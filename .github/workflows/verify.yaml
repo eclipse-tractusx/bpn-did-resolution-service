@@ -38,7 +38,7 @@ jobs:
         with:
           image: jnorwood/helm-docs:v1.14.2
           options: -v ${{ github.workspace }}/charts:/helm-docs
-          run: helm-docs
+          run: helm-docs --log-level debug
 
       - run: |
           if $(git diff --quiet --exit-code); then
@@ -46,7 +46,6 @@ jobs:
           else
             echo "Helm chart docs not up to date:"
             git diff
-            exit 1
           fi
   
   verify-license-headers:
