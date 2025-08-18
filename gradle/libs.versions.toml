@@ -6,7 +6,7 @@ edc = "0.13.2"
 nimbus = "10.4.1"
 restAssured = "5.5.5"
 postgres = "42.7.7"
-flyway = "11.11.0"
+flyway = "11.11.1"
 
 
 [libraries]
