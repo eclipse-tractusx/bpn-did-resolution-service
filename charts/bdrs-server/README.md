@@ -52,6 +52,8 @@ helm install my-release tractusx-edc/bdrs-server --version 0.5.6 \
 | postgresql.auth.database | string | `"bdrs"` |  |
 | postgresql.auth.password | string | `"password"` |  |
 | postgresql.auth.username | string | `"bdrs"` |  |
+| postgresql.image.repository | string | `"bitnamilegacy/postgresql"` | workaround to use bitnamilegacy chart for version 12.12.x till committers align on new postgresql charts |
+| postgresql.image.tag | string | `"15.4.0-debian-11-r45"` | workaround to use bitnamilegacy chart for version 12.12.x till committers align on new postgresql charts |
 | postgresql.jdbcUrl | string | `"jdbc:postgresql://{{ .Release.Name }}-postgresql:5432/bdrs"` |  |
 | postgresql.primary.persistence.enabled | bool | `false` |  |
 | postgresql.primary.resources.limits.cpu | int | `1` |  |
