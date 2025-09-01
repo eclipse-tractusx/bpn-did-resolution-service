@@ -3,7 +3,7 @@
 ## Integration
 
 Status: final
-BDRS version: 0.5.6
+BDRS version: 0.5.7
 
 ## Stable
 
