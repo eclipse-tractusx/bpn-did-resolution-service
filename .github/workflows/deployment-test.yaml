@@ -64,7 +64,7 @@ jobs:
                        "v1.31.9" ]
     needs: test-prepare
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./.github/actions/run-deployment-test
         name: "deploy ${{ matrix.variant.chart }}"
         with:
