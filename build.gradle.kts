@@ -29,21 +29,24 @@ plugins {
 
 buildscript {
     dependencies {
-        val edcGradlePluginsVersion: String by project
-        classpath("org.eclipse.edc.edc-build:org.eclipse.edc.edc-build.gradle.plugin:${edcGradlePluginsVersion}")
+        val edcBuildVersion: String by project
+        val edcVersion: String by project
+
+        classpath("org.eclipse.edc.edc-build:org.eclipse.edc.edc-build.gradle.plugin:${edcBuildVersion}")
+        classpath("org.eclipse.edc.autodoc:org.eclipse.edc.autodoc.gradle.plugin:$edcVersion")
     }
 }
 
-val metaModelVersion: String by project
-val annotationProcessorVersion: String by project
-
 allprojects {
+    val edcVersion: String by project
+
     apply(plugin = "org.eclipse.edc.edc-build")
+    apply(plugin = "org.eclipse.edc.autodoc")
 
     // configure which version of the annotation processor to use. defaults to the same version as the plugin
     configure<org.eclipse.edc.plugins.autodoc.AutodocExtension> {
         outputDirectory.set(project.layout.buildDirectory.asFile)
-        processorVersion.set(annotationProcessorVersion)
+        processorVersion.set(edcVersion)
     }
 
     configure<org.eclipse.edc.plugins.edcbuild.extensions.BuildExtension> {
