@@ -93,7 +93,7 @@ public class CredentialBasedAuthenticationService implements AuthenticationServi
 
         var finalToken = token;
         return typeTransformerRegistry.transform(token, VerifiablePresentation.class)
-                .compose(pres -> verifiableCredentialValidationService.validate(List.of(new VerifiablePresentationContainer(finalToken, CredentialFormat.JWT, pres)), new MustHaveMemberhipCredentialRule()))
+                .compose(pres -> verifiableCredentialValidationService.validate(List.of(new VerifiablePresentationContainer(finalToken, CredentialFormat.VC1_0_JWT, pres)), new MustHaveMemberhipCredentialRule()))
                 .onFailure(f -> monitor.warning("Error validating BDRS client VP: %s".formatted(f.getFailureDetail())))
                 .succeeded();
     }
