@@ -22,6 +22,7 @@ package org.eclipse.tractusx.bdrs.api.directory.authentication;
 
 import org.eclipse.edc.api.auth.spi.AuthenticationRequestFilter;
 import org.eclipse.edc.api.auth.spi.registry.ApiAuthenticationRegistry;
+import org.eclipse.edc.http.spi.EdcHttpClient;
 import org.eclipse.edc.iam.did.spi.resolution.DidPublicKeyResolver;
 import org.eclipse.edc.iam.identitytrust.service.verification.MultiFormatPresentationVerifier;
 import org.eclipse.edc.iam.identitytrust.spi.SecureTokenService;
@@ -46,6 +47,7 @@ import org.eclipse.edc.verifiablecredentials.jwt.JwtPresentationVerifier;
 import org.eclipse.edc.web.spi.WebService;
 
 import java.time.Clock;
+import java.util.List;
 
 import static org.eclipse.edc.spi.constants.CoreConstants.JSON_LD;
 
@@ -60,13 +62,17 @@ public class CredentialBasedAuthenticationExtension implements ServiceExtension 
     private static final long DEFAULT_REVOCATION_CACHE_VALIDITY_MILLIS = 15 * 60 * 1000L;
     private static final String DIRECTORY_CONTEXT = "directory";
 
-    @Setting(value = "Validity period of cached StatusList2021 credential entries in milliseconds.", defaultValue = DEFAULT_REVOCATION_CACHE_VALIDITY_MILLIS + "", type = "long")
-    public static final String REVOCATION_CACHE_VALIDITY = "edc.iam.credential.revocation.cache.validity";
+    @Setting(key = "edc.iam.credential.revocation.cache.validity", description = "Validity period of cached StatusList2021 credential entries in milliseconds.", defaultValue = DEFAULT_REVOCATION_CACHE_VALIDITY_MILLIS + "")
+    private long revocationCacheValidity;
+    @Setting(key = "edc.iam.credential.revocation.mimetype", description = "A comma-separated list of accepted content types of the revocation list credential.", defaultValue = "*/*")
+    private String contentTypes;
 
     @Inject
     private WebService webService;
     @Inject
     private TypeManager typeManager;
+    @Inject
+    private EdcHttpClient httpClient;
     @Inject
     private TokenValidationService tokenValidationService;
     @Inject
@@ -95,9 +101,9 @@ public class CredentialBasedAuthenticationExtension implements ServiceExtension 
         var jwtVerifier = new JwtPresentationVerifier(typeManager, JSON_LD, tokenValidationService, rulesRegistry, didPublicKeyResolver);
         var presentationVerifier = new MultiFormatPresentationVerifier(null, jwtVerifier);
 
-        var validity = context.getConfig().getLong(REVOCATION_CACHE_VALIDITY, DEFAULT_REVOCATION_CACHE_VALIDITY_MILLIS);
-        revocationServiceRegistry.addService(StatusList2021Status.TYPE, new StatusList2021RevocationService(typeManager.getMapper(), validity));
-        revocationServiceRegistry.addService(BitstringStatusListStatus.TYPE, new BitstringStatusListRevocationService(typeManager.getMapper(), validity));
+        var acceptedContentTypes = List.of(contentTypes.split(","));
+        revocationServiceRegistry.addService(StatusList2021Status.TYPE, new StatusList2021RevocationService(typeManager.getMapper(), revocationCacheValidity, acceptedContentTypes, httpClient));
+        revocationServiceRegistry.addService(BitstringStatusListStatus.TYPE, new BitstringStatusListRevocationService(typeManager.getMapper(), revocationCacheValidity, acceptedContentTypes, httpClient));
         var validationService = new VerifiableCredentialValidationServiceImpl(presentationVerifier, trustedIssuerRegistry, revocationServiceRegistry, clock, typeManager.getMapper());
 
         var authService = new CredentialBasedAuthenticationService(context.getMonitor(), typeManager.getMapper(), validationService, typeTransformerRegistry);
