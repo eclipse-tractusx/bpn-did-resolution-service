@@ -22,31 +22,35 @@ import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 import com.github.jengelman.gradle.plugins.shadow.ShadowJavaPlugin
 
 plugins {
+    checkstyle
     `java-library`
-    id("com.bmuschko.docker-remote-api") version "9.4.0"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    `maven-publish`
+    alias(libs.plugins.edc.build)
+    alias(libs.plugins.shadow)
+    alias(libs.plugins.docker)
 }
+
+val edcVersion = libs.versions.edc
 
 buildscript {
     dependencies {
-        val edcBuildVersion: String by project
-        val edcVersion: String by project
+        val edcVersion: String = libs.versions.edc.asProvider().get()
 
-        classpath("org.eclipse.edc.edc-build:org.eclipse.edc.edc-build.gradle.plugin:${edcBuildVersion}")
         classpath("org.eclipse.edc.autodoc:org.eclipse.edc.autodoc.gradle.plugin:$edcVersion")
     }
 }
 
-allprojects {
-    val edcVersion: String by project
+val edcBuildId = libs.plugins.edc.build.get().pluginId
 
-    apply(plugin = "org.eclipse.edc.edc-build")
+allprojects {
+
+    apply(plugin = edcBuildId)
     apply(plugin = "org.eclipse.edc.autodoc")
 
     // configure which version of the annotation processor to use. defaults to the same version as the plugin
     configure<org.eclipse.edc.plugins.autodoc.AutodocExtension> {
         outputDirectory.set(project.layout.buildDirectory.asFile)
-        processorVersion.set(edcVersion)
+        processorVersion.set(edcVersion.asProvider())
     }
 
     configure<org.eclipse.edc.plugins.edcbuild.extensions.BuildExtension> {
