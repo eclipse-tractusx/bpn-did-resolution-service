@@ -37,38 +37,39 @@ jobs:
     outputs:
       release_version: ${{ steps.release-version.outputs.release_version }}
       update_main_branch_version: ${{ steps.update-main.outputs.update_main_branch_version }}
-        - uses: actions/checkout@v5
-        - name: Output release version
-          id: release-version
-          run: |
-            VERSION=$(grep "version" gradle.properties  | awk -F= '{print $2}')
-            echo "release_version=$VERSION" >> $GITHUB_OUTPUT
-        - name: Output update main branch version
-          id: update-main
-          run: |
-            IFS=.- read -r MAJOR MINOR PATCH SNAPSHOT<<<"${{ steps.release-version.outputs.release_version }}" 
-            if [[ $PATCH == '0' && -z $SNAPSHOT ]]; 
-            then
-              echo "update_main_branch_version=true" >> $GITHUB_OUTPUT
-            else 
-              echo "update_main_branch_version=false" >> $GITHUB_OUTPUT
-            fi
-        - name: Validations
-          run: |
-            if [[ "${{ github.repository }}" != "eclipse-tractusx/bpn-did-resolution-service" ]]; then
-              echo "This workflow can only be run on the eclipse-tractusx/bpn-did-resolution-service repository."
-              exit 1
-            fi
-            
-            if [[ ! "${{ github.ref_name }}" =~ ^release/ ]]; then
-              echo "This workflow can only be run on the branches starting with release/."
-              exit 1
-            fi
-            
-            if [[ "${{steps.release-version.outputs.release_version}}" =~ SNAPSHOT ]]; then
-              echo "This workflow can not be executed for SNAPSHOT versions."
-              exit 1
-            fi
+    steps:
+      - uses: actions/checkout@v5
+      - name: Output release version
+        id: release-version
+        run: |
+          VERSION=$(grep "version" gradle.properties  | awk -F= '{print $2}')
+          echo "release_version=$VERSION" >> $GITHUB_OUTPUT
+      - name: Output update main branch version
+        id: update-main
+        run: |
+          IFS=.- read -r MAJOR MINOR PATCH SNAPSHOT<<<"${{ steps.release-version.outputs.release_version }}" 
+          if [[ $PATCH == '0' && -z $SNAPSHOT ]]; 
+          then
+            echo "update_main_branch_version=true" >> $GITHUB_OUTPUT
+          else 
+            echo "update_main_branch_version=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Validations
+        run: |
+          if [[ "${{ github.repository }}" != "eclipse-tractusx/bpn-did-resolution-service" ]]; then
+            echo "This workflow can only be run on the eclipse-tractusx/bpn-did-resolution-service repository."
+            exit 1
+          fi
+          
+          if [[ ! "${{ github.ref_name }}" =~ ^release/ ]]; then
+            echo "This workflow can only be run on the branches starting with release/."
+            exit 1
+          fi
+          
+          if [[ "${{steps.release-version.outputs.release_version}}" =~ SNAPSHOT ]]; then
+            echo "This workflow can not be executed for SNAPSHOT versions."
+            exit 1
+          fi
 
   # Release: Maven Artifacts
   maven-release:
