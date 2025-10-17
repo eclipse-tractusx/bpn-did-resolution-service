@@ -119,7 +119,7 @@ jobs:
       - name: Replace published DEPENDENCIES file link in NOTICE with the one just created
         run: sed -i "s#\[DEPENDENCIES\]\(.*\)#\[DEPENDENCIES\]\(DEPENDENCIES\)#g" NOTICE.md
       - name: Version and Chart Updates
-        uses: eclipse-tractusx/tractusx-edc/.github/actions/update-version-and-charts
+        uses: ./../tractusx-edc/.github/actions/update-version-and-charts
         with:
           version: ${{ inputs.version }}
           bump_version: "false"
