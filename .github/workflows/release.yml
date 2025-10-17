@@ -46,7 +46,7 @@ jobs:
         - name: Output update main branch version
           id: update-main
           run: |
-            IFS=.- read -r MAJOR MINOR PATCH SNAPSHOT<<<"${{ steps.release-version.outputs.RELEASE_VERSION }}" 
+            IFS=.- read -r MAJOR MINOR PATCH SNAPSHOT<<<"${{ steps.release-version.outputs.release_version }}" 
             if [[ $PATCH == '0' && -z $SNAPSHOT ]]; 
             then
               echo "update_main_branch_version=true" >> $GITHUB_OUTPUT
@@ -65,7 +65,7 @@ jobs:
               exit 1
             fi
             
-            if [[ "${{steps.release-version.outputs.RELEASE_VERSION}}" =~ SNAPSHOT ]]; then
+            if [[ "${{steps.release-version.outputs.release_version}}" =~ SNAPSHOT ]]; then
               echo "This workflow can not be executed for SNAPSHOT versions."
               exit 1
             fi
@@ -89,7 +89,7 @@ jobs:
     permissions:
       contents: write
       packages: write
-    if: github.event.pull_request.merged == true && needs.release-version.outputs.RELEASE_VERSION
+    if: needs.validation.outputs.release_version
 
     strategy:
       fail-fast: false
@@ -101,13 +101,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
-      - name: Export RELEASE_VERSION env
-        run: |
-          echo "RELEASE_VERSION=${{ needs.release-version.outputs.release_version }}" >> $GITHUB_ENV
       - uses: ./.github/actions/publish-docker-image
         name: Publish ${{ matrix.variant.img }}
         with:
-          docker_tag: ${{ env.RELEASE_VERSION }}
+          docker_tag: ${{ needs.validation.outputs.release_version }}
           rootDir: ${{ matrix.variant.dir }}/${{ matrix.variant.img }}
           imagename: ${{ matrix.variant.img }}
           docker_user: ${{ secrets.DOCKER_HUB_USER }}
@@ -123,11 +120,8 @@ jobs:
       contents: write
       pages: write
 
-    if: needs.release-version.outputs.release_version
+    if: needs.validation.outputs.release_version
     steps:
-      - name: Export RELEASE_VERSION env
-        run: |
-          echo "RELEASE_VERSION=${{ needs.release-version.outputs.RELEASE_VERSION }}" >> $GITHUB_ENV
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
@@ -152,7 +146,7 @@ jobs:
 
           # Commit and push to gh-pages
           git add index.yaml helm-charts
-          git commit -s -m "Release ${{ env.RELEASE_VERSION }}"
+          git commit -s -m "Release ${{ needs.validation.outputs.release_version }}"
 
           git push origin gh-pages
 
@@ -163,11 +157,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    if: needs.release-version.outputs.release_version
+    if: needs.validation.outputs.release_version
     steps:
-      - name: Export RELEASE_VERSION env
-        run: |
-          echo "RELEASE_VERSION=${{ needs.release-version.outputs.RELEASE_VERSION }}" >> $GITHUB_ENV
       - uses: actions/checkout@v5
         with:
           # 0 to fetch the full history due to upcoming merge of releases into main branch
@@ -185,13 +176,13 @@ jobs:
           git tag
 
           # Create & push tag
-          git tag --force ${{ env.RELEASE_VERSION }}
-          git push --force origin ${{ env.RELEASE_VERSION }}
+          git tag --force ${{ needs.validation.outputs.release_version }}
+          git push --force origin ${{ needs.validation.outputs.release_version }}
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
           generateReleaseNotes: true
-          tag: ${{ env.RELEASE_VERSION }}
+          tag: ${{ needs.validation.outputs.release_version }}
           token: ${{ secrets.GITHUB_TOKEN }}
           makeLatest: ${{ needs.validation.outputs.update_main_branch_version == 'true' }}
           removeArtifacts: true
