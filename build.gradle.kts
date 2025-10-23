@@ -25,6 +25,8 @@ plugins {
     checkstyle
     `java-library`
     `maven-publish`
+    jacoco
+    `jacoco-report-aggregation`
     alias(libs.plugins.edc.build)
     alias(libs.plugins.shadow)
     alias(libs.plugins.docker)
@@ -40,12 +42,21 @@ buildscript {
     }
 }
 
+// include all subprojects in the jacoco report aggregation
+project.subprojects.forEach {
+    dependencies {
+        jacocoAggregation(project(it.path))
+    }
+
+}
+
 val edcBuildId = libs.plugins.edc.build.get().pluginId
 
 allprojects {
 
     apply(plugin = edcBuildId)
     apply(plugin = "org.eclipse.edc.autodoc")
+    apply(plugin = "jacoco")
 
     // configure which version of the annotation processor to use. defaults to the same version as the plugin
     configure<org.eclipse.edc.plugins.autodoc.AutodocExtension> {
@@ -66,6 +77,7 @@ allprojects {
 
     }
 }
+
 // the "dockerize" task is added to all projects that use the `shadowJar` plugin, e.g. runtimes
 subprojects {
     afterEvaluate {
@@ -110,4 +122,8 @@ subprojects {
                 .dependsOn(copyLegalDocs)
         }
     }
+}
+
+tasks.check {
+    dependsOn(tasks.named<JacocoReport>("testCodeCoverageReport"))
 }
