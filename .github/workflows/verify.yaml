@@ -94,7 +94,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       # Publish Coverage Job Summary  # Optional
-      - name: Add JaCoCo report to workflow run summary
+      - name: Output KPIs from JaCoCo report
         run: |
           echo "| Outcome | Value |" >> $GITHUB_STEP_SUMMARY
           echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
@@ -108,7 +108,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: code-coverage-report-markdown
-          path: "*/coverage-results.md"
+          path: |
+            - "*/coverage-results.md"
+            - build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml
           retention-days: 1
 
   end-to-end-tests:

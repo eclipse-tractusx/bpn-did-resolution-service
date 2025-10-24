@@ -47,7 +47,6 @@ project.subprojects.forEach {
     dependencies {
         jacocoAggregation(project(it.path))
     }
-
 }
 
 val edcBuildId = libs.plugins.edc.build.get().pluginId
