@@ -84,7 +84,15 @@ jobs:
       - name: Run Unit tests
         run: ./gradlew test testCodeCoverageReport
 
-      # generates coverage-report.md and publishes as checkrun
+      # uploads the jacoco report as artifact
+      - name: Upload JaCoCo Coverage Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: JaCoCo coverage-report
+          path: build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml
+          retention-days: 1
+
+      # generates coverage-report.md
       - name: JaCoCo Code Coverage Report
         id: jacoco_reporter
         uses: PavanMudigonda/jacoco-reporter@v5.0
@@ -93,7 +101,7 @@ jobs:
           skip_check_run: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      # Publish Coverage Job Summary  # Optional
+      # Publish Coverage Job Summary
       - name: Output KPIs from JaCoCo report
         run: |
           echo "| Outcome | Value |" >> $GITHUB_STEP_SUMMARY
@@ -102,11 +110,9 @@ jobs:
           echo "| :heavy_check_mark: Number of Lines Covered | ${{ steps.jacoco_reporter.outputs.covered_lines }} |" >> $GITHUB_STEP_SUMMARY
           echo "| :x: Number of Lines Missed | ${{ steps.jacoco_reporter.outputs.missed_lines }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Total Number of Lines | ${{ steps.jacoco_reporter.outputs.total_lines }} |" >> $GITHUB_STEP_SUMMARY
-          ls
-          ls build/reports/jacoco
 
-      # uploads the coverage-report.md artifact  # Optional
-      - name: Upload Code Coverage Artifacts
+      # uploads the coverage-report.md artifact
+      - name: Upload Code Coverage Markdown Report
         uses: actions/upload-artifact@v4
         with:
           name: code-coverage-report-markdown
