@@ -76,8 +76,6 @@ jobs:
   unit-tests:
     runs-on: ubuntu-latest
     needs: [ verify-formatting ]
-    permissions:
-      checks: write
     steps:
       - uses: actions/checkout@v5
 
@@ -92,7 +90,7 @@ jobs:
         uses: PavanMudigonda/jacoco-reporter@v5.0
         with:
           coverage_results_path: build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml
-          #skip_check_run: false
+          skip_check_run: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       # Publish Coverage Job Summary  # Optional
