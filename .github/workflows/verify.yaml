@@ -110,9 +110,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: code-coverage-report-markdown
-          path: |
-            - "*/coverage-results.md"
-            - build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml
+          path: "*/coverage-results.md"
           retention-days: 1
 
   end-to-end-tests:
