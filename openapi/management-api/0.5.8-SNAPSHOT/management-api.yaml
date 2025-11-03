@@ -7,7 +7,7 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.txt
   version: 0.5.8-SNAPSHOT
 servers:
-- url: http://localhost:8080
+- url: /
 paths:
   /bpn-directory:
     get:
