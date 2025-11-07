@@ -51,6 +51,7 @@ updates:
     directories:
       - "runtimes/bdrs-server/src/main/docker"
       - "runtimes/bdrs-server-memory/src/main/docker"
+      - "extensions/store/sql/did-entry-store-sql/src/test/resources"
     labels:
       - "dependabot"
       - "docker"

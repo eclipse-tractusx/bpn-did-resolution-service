@@ -31,12 +31,16 @@ import org.eclipse.tractusx.bdrs.sql.store.schema.PostgresDialectStatements;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
+import java.util.Optional;
 import java.util.stream.IntStream;
 import javax.sql.DataSource;
 
@@ -44,7 +48,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 @PostgresqlIntegrationTest
-@ExtendWith(PostgresqlStoreSetupExtension.class)
 class SqlDidEntryStoreTest extends DidEntryStoreTestBase {
 
     private final DidEntryStoreStatements statements = new PostgresDialectStatements();
@@ -52,6 +55,22 @@ class SqlDidEntryStoreTest extends DidEntryStoreTestBase {
     private SqlDidEntryStore didEntryStore;
     private DataSource dataSource;
     private QueryExecutor queryExecutor;
+
+    @RegisterExtension
+    static PostgresqlStoreSetupExtension extension =
+            new PostgresqlStoreSetupExtension(getPostgresTestContainerName());
+
+    private static String getPostgresTestContainerName() {
+        try (InputStream resourceInput = Optional.ofNullable(SqlDidEntryStore.class
+                .getResourceAsStream("/Dockerfile")).orElseThrow();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(resourceInput))) {
+            return reader.lines()
+                    .findFirst().orElseThrow()
+                    .substring(5);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @BeforeEach
     void setUp(PostgresqlStoreSetupExtension extension, QueryExecutor queryExecutor) throws IOException {
