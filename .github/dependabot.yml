@@ -35,7 +35,9 @@ updates:
   -
     package-ecosystem: "github-actions"
     target-branch: main
-    directory: /
+    directories:
+      - "/"
+      - "/.github/actions/*"
     labels:
       - "dependabot"
       - "github-actions"
@@ -46,43 +48,10 @@ updates:
   -
     package-ecosystem: "docker"
     target-branch: main
-    directory: ./edc-controlplane/edc-controlplane-postgresql-hashicorp-vault/src/main/docker/
-    labels:
-      - "dependabot"
-      - "docker"
-    schedule:
-      interval: "weekly"
-  -
-    package-ecosystem: "docker"
-    target-branch: main
-    directory: ./edc-controlplane/edc-controlplane-postgresql-azure-vault/src/main/docker/
-    labels:
-      - "dependabot"
-      - "docker"
-    schedule:
-      interval: "weekly"
-  -
-    package-ecosystem: "docker"
-    target-branch: main
-    directory: ./edc-controlplane/edc-controlplane-memory/src/main/docker/
-    labels:
-      - "dependabot"
-      - "docker"
-    schedule:
-      interval: "weekly"
-  -
-    package-ecosystem: "docker"
-    target-branch: main
-    directory: ./edc-dataplane/edc-dataplane-azure-vault/src/main/docker/
-    labels:
-      - "dependabot"
-      - "docker"
-    schedule:
-      interval: "weekly"
-  -
-    package-ecosystem: "docker"
-    target-branch: main
-    directory: ./edc-dataplane/edc-dataplane-hashicorp-vault/src/main/docker/
+    directories:
+      - "runtimes/bdrs-server/src/main/docker"
+      - "runtimes/bdrs-server-memory/src/main/docker"
+      - "extensions/store/sql/did-entry-store-sql/src/test/resources"
     labels:
       - "dependabot"
       - "docker"

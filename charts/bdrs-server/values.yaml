@@ -267,31 +267,22 @@ tests:
 
 postgresql:
   image:
-    # -- workaround to use bitnamilegacy chart for version 12.12.x till committers align on new postgresql charts
-    repository: bitnamilegacy/postgresql
-    # -- workaround to use bitnamilegacy chart for version 12.12.x till committers align on new postgresql charts
-    tag: 15.4.0-debian-11-r45
+    # -- PostgreSQL image registry
+    registry: docker.io
+    # -- PostgreSQL image repository
+    repository: postgres
   jdbcUrl: "jdbc:postgresql://{{ .Release.Name }}-postgresql:5432/bdrs"
-  primary:
-    persistence:
-      enabled: false
-    resources:
-      limits:
-        cpu: 1
-        memory: 1Gi
-      requests:
-        cpu: 250m
-        memory: 256Mi
-  readReplicas:
-    persistence:
-      enabled: false
-    resources:
-      limits:
-        cpu: 500Mi
-        memory: 1Gi
-      requests:
-        cpu: 250m
-        memory: 256Mi
+  persistence:
+    enabled: false
+    size: 10Gi
+    storageClass: standard
+  resources:
+    limits:
+      cpu: 1
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 256Mi
   auth:
     database: "bdrs"
     username: "bdrs"

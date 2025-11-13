@@ -45,10 +45,10 @@ sources:
   - https://github.com/eclipse-tractusx/bpn-did-resolution-service/tree/main/charts/bdrs-server
 dependencies:
   # PostgreSQL
-  - name: postgresql
+  - name: postgres
     alias: postgresql
-    version: 12.11.2
-    repository: https://charts.bitnami.com/bitnami
+    repository: oci://registry-1.docker.io/cloudpirates
+    version: 0.11.0
     condition: install.postgresql
   # HashiCorp Vault
   - name: vault
