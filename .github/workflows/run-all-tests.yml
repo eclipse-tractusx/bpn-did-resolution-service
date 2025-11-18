@@ -52,9 +52,11 @@ jobs:
     uses: ./.github/workflows/deployment-test.yaml
     secrets: inherit
 
-  upgradeability-test:
-      uses: ./.github/workflows/upgradeability-test.yaml
-      secrets: inherit
+# TODO: Disabled due to the postgres image change, enable again when a new release is out, there is no
+# upgradability between version 0.5.x and 0.6.x
+#  upgradeability-test:
+#      uses: ./.github/workflows/upgradeability-test.yaml
+#      secrets: inherit
 
   # this job really serves no other purpose than waiting for the other two test workflows
   # in future iterations, this could be used as a choke point to collect test data, etc.
