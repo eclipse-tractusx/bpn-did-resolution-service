@@ -40,6 +40,8 @@ import java.sql.SQLException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -142,6 +144,65 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
         });
     }
 
+    @Override
+    public boolean exists(String bpn) {
+        AtomicBoolean exists = new AtomicBoolean(false);
+        transactionContext.execute(() -> {
+            try (var connection = getConnection()) {
+                exists.set(findByBpn(connection, bpn) != null);
+            } catch (SQLException e) {
+                throw new EdcPersistenceException(e);
+            }
+        });
+        return exists.get();
+    }
+
+    @Override
+    public boolean existsByDid(String did) {
+        AtomicBoolean exists = new AtomicBoolean(false);
+        transactionContext.execute(() -> {
+            try (var connection = getConnection()) {
+                exists.set(findByDid(connection, did) != null);
+            } catch (SQLException e) {
+                throw new EdcPersistenceException(e);
+            }
+        });
+        return exists.get();
+    }
+
+    @Override
+    public Optional<DidEntry> getByBpn(String bpn) {
+        AtomicReference<Optional<DidEntry>> data = new AtomicReference<>(Optional.empty());
+        transactionContext.execute(() -> {
+            try (var connection = getConnection()) {
+                DidEntry byBpn = findByBpn(connection, bpn);
+                data.set(Optional.ofNullable(byBpn));
+            } catch (SQLException e) {
+                throw new EdcPersistenceException(e);
+            }
+        });
+        return data.get();
+    }
+
+    @Override
+    public AtomicReference<byte[]> getCache() {
+        return cache;
+    }
+
+    @Override
+    public Optional<DidEntry> getByDid(String did) {
+        AtomicReference<Optional<DidEntry>> data = new AtomicReference<>(Optional.empty());
+        transactionContext.execute(() -> {
+            try (var connection = getConnection()) {
+                DidEntry byBpn = findByDid(connection, did);
+                data.set(Optional.ofNullable(byBpn));
+            } catch (SQLException e) {
+                throw new EdcPersistenceException(e);
+            }
+        });
+        return data.get();
+    }
+
     /**
      * This method performs a cache update by first checking if the database has new data available, and if it does, reloads the
      * internal cache with values from the database.
@@ -216,6 +277,12 @@ public class SqlDidEntryStore extends AbstractSqlStore implements DidEntryStore 
     private @Nullable DidEntry findByBpn(Connection connection, String bpn) {
         var stmt = statements.findByBpnTemplate();
         return queryExecutor.single(connection, false, this::mapDidEntry, stmt, bpn);
+    }
+
+
+    private @Nullable DidEntry findByDid(Connection connection, String did) {
+        var stmt = statements.findByDidTemplate();
+        return queryExecutor.single(connection, false, this::mapDidEntry, stmt, did);
     }
 
     private DidEntry mapDidEntry(ResultSet resultSet) throws SQLException {

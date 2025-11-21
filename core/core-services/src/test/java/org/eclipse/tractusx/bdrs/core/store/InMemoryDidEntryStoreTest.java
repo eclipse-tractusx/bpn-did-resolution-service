@@ -19,14 +19,63 @@
 
 package org.eclipse.tractusx.bdrs.core.store;
 
+import org.eclipse.tractusx.bdrs.spi.store.DidEntry;
 import org.eclipse.tractusx.bdrs.spi.store.DidEntryStore;
 import org.eclipse.tractusx.bdrs.spi.store.DidEntryStoreTestBase;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
+import java.util.List;
 class InMemoryDidEntryStoreTest extends DidEntryStoreTestBase {
     private final InMemoryDidEntryStore store = new InMemoryDidEntryStore(mapper);
 
     @Override
     protected DidEntryStore getStore() {
         return store;
+    }
+
+
+
+    @Test
+    void verifyExists() {
+        String bpn = "BPNL0000000000045";
+        String did = "did:web:localhost:" + bpn;
+        store.save(new DidEntry(bpn, did));
+        Assertions.assertTrue(store.exists(bpn));
+        Assertions.assertFalse(store.exists("BPNL0000000000011"));
+    }
+
+    @Test
+    void testAudit() {
+        String bpn = "BPNL0000000000045";
+        String did = "did:web:localhost:" + bpn;
+        store.save(new DidEntry(bpn, did));
+
+        //update entry
+        String updatedDid = "did:web:updatedHost:" + bpn;
+        store.update(new DidEntry(bpn, updatedDid));
+
+        //delete entry
+        store.delete(bpn);
+    }
+
+    @Test
+    void verifyExistsByDid() {
+        String bpn = "BPNL0000000000045";
+        String did = "did:web:localhost:" + bpn;
+        store.save(new DidEntry(bpn, did));
+        Assertions.assertTrue(store.existsByDid(did));
+        Assertions.assertFalse(store.existsByDid("did:web:localhost_some_random_host:BPNL0000000000011"));
+    }
+
+    @Test
+    void verifyGetByDid() {
+        String bpn = "BPNL0000000000045";
+        String did = "did:web:localhost:" + bpn;
+        DidEntry entry = new DidEntry(bpn, did);
+        store.save(entry);
+        Assertions.assertTrue(store.getByDid(did).isPresent());
+        Assertions.assertEquals(entry, store.getByDid(did).get());
+        Assertions.assertTrue(store.getByDid("did:web:localhost_some_random_host:BPNL0000000000011").isEmpty());
     }
 }

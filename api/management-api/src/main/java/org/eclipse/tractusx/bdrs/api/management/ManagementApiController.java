@@ -28,8 +28,12 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.StreamingOutput;
+import org.eclipse.edc.spi.monitor.Monitor;
+import org.eclipse.edc.web.spi.ApiErrorDetail;
 import org.eclipse.tractusx.bdrs.spi.store.DidEntry;
 import org.eclipse.tractusx.bdrs.spi.store.DidEntryStore;
+
+import java.util.Optional;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static jakarta.ws.rs.core.Response.ok;
@@ -41,11 +45,13 @@ import static jakarta.ws.rs.core.Response.ok;
 @Produces(APPLICATION_JSON)
 public class ManagementApiController implements ManagementApi {
     private final DidEntryStore store;
+    private final Monitor monitor;
 
-    public ManagementApiController(DidEntryStore store) {
+
+    public ManagementApiController(DidEntryStore store, Monitor monitor) {
         this.store = store;
+        this.monitor = monitor;
     }
-
     @Override
     @Path("/bpn-directory")
     @GET
@@ -58,15 +64,59 @@ public class ManagementApiController implements ManagementApi {
     @Override
     @Path("/bpn-directory")
     @POST
-    public void save(BpnMapping mapping) {
+
+    public Response save(BpnMapping mapping) {
+        String bpn = mapping.bpn();
+        String did = mapping.did();
+        if (store.exists(bpn)) {
+            return Response.status(Response.Status.CONFLICT)
+                    .entity(ApiErrorDetail.Builder.newInstance()
+                            .message("The mapping for '%s' is already exists".formatted(bpn))
+                            .build())
+                    .build();
+        }
+        if (store.existsByDid(did)) {
+            return Response.status(Response.Status.CONFLICT)
+                    .entity(ApiErrorDetail.Builder.newInstance()
+                            .message("The mapping for '%s' is already exists".formatted(did))
+                            .build())
+                    .build();
+        }
         store.save(new DidEntry(mapping.bpn(), mapping.did()));
+        return Response.noContent().build();
     }
 
     @Override
     @Path("/bpn-directory")
     @PUT
-    public void update(BpnMapping mapping) {
-        store.update(new DidEntry(mapping.bpn(), mapping.did()));
+    public Response update(BpnMapping mapping) {
+        String bpn = mapping.bpn();
+        String did = mapping.did();
+        Optional<DidEntry> didEntry = store.getByBpn(bpn);
+        if (didEntry.isEmpty()) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity(ApiErrorDetail.Builder.newInstance()
+                            .message("The mapping for '%s' is not exists".formatted(bpn))
+                            .build())
+                    .build();
+        }
+
+        //validate existing did
+        Optional<DidEntry> didEntryByDid = store.getByDid(did);
+        if (didEntryByDid.isPresent() && !didEntryByDid.get().bpn().equals(bpn)) {
+            monitor.severe("The did '%s' is already mapped to another bpn '%s'".formatted(did, didEntryByDid.get().bpn()));
+            return Response.status(Response.Status.CONFLICT)
+                    .entity(ApiErrorDetail.Builder.newInstance()
+                            .message("The did '%s' is already mapped to another bpn '%s'".formatted(did, didEntryByDid.get().bpn()))
+                            .build())
+                    .build();
+        }
+        if (didEntry.get().did().equals(mapping.did())) {
+            monitor.debug("No changes in did for bpn '%s', skipping update record".formatted(mapping.bpn()));
+        } else {
+            store.update(new DidEntry(mapping.bpn(), mapping.did()));
+        }
+        return Response.noContent().build();
     }
 
     @Override

@@ -144,6 +144,33 @@ public class ManagementApiEndToEndTest {
                 .statusCode(401);
     }
 
+    @Test
+    void verifyDuplicateDid() {
+        seedAllowList(CryptoTestUtils.BASE_WALLET_BPN);
+        seedServer(BPN1, DID1);
+
+        // try to add duplicate DID
+        var content = Map.of("bpn", BPN2, "did", DID1);
+        managementRequest(StringPool.ROLE_CREATE_BPN_DID_RECORD)
+                .body(content)
+                .header("bpn", CryptoTestUtils.BASE_WALLET_BPN)
+                .when()
+                .post(BPN_DIRECTORY)
+                .then()
+                .statusCode(409);
+
+        // try to update with duplicate DID
+        seedServer(BPN2, DID2);
+        content = Map.of("bpn", BPN2, "did", DID1);
+        managementRequest(StringPool.ROLE_UPDATE_BPN_DID_RECORD)
+                .body(content)
+                .header("bpn", CryptoTestUtils.BASE_WALLET_BPN)
+                .when()
+                .put(BPN_DIRECTORY)
+                .then()
+                .statusCode(409);
+    }
+
     @BeforeEach
     void setUp() {
         mapper = new ObjectMapper();

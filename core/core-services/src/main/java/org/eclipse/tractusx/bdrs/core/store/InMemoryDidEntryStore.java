@@ -28,6 +28,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -44,7 +45,7 @@ public class InMemoryDidEntryStore implements DidEntryStore {
     private static final int LOCK_TIMEOUT = 1000;
 
     private final AtomicReference<byte[]> cache = new AtomicReference<>(new byte[0]);
-    private final Map<String, String> backingStore = new HashMap<>();
+    private final Map<String, DidEntry> backingStore = new HashMap<>();
 
     private final ObjectMapper mapper;
     private final ReadWriteLock lock;
@@ -65,7 +66,7 @@ public class InMemoryDidEntryStore implements DidEntryStore {
     public void save(DidEntry entry) {
         requireNonNull(entry);
         writeLock(() -> {
-            backingStore.put(entry.bpn(), entry.did());
+            backingStore.put(entry.bpn(), entry);
             updateCache();
         });
     }
@@ -77,7 +78,7 @@ public class InMemoryDidEntryStore implements DidEntryStore {
                 if (backingStore.containsKey(entry.bpn())) {
                     throw new EdcException("Already exists: " + entry.bpn());
                 }
-                backingStore.put(entry.bpn(), entry.did());
+                backingStore.put(entry.bpn(), entry);
             });
             updateCache();
         });
@@ -91,6 +92,38 @@ public class InMemoryDidEntryStore implements DidEntryStore {
             updateCache();
         });
         updateCache();
+    }
+
+    @Override
+    public boolean exists(String bpn) {
+        return backingStore.containsKey(bpn);
+    }
+
+    @Override
+    public boolean existsByDid(String did) {
+        return backingStore.values().stream()
+                .anyMatch(e -> e.did().equals(did));
+    }
+
+    @Override
+    public Optional<DidEntry> getByBpn(String bpn) {
+        if (backingStore.containsKey(bpn)) {
+            return Optional.of(backingStore.get(bpn));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<DidEntry> getByDid(String did) {
+        return backingStore.values().stream()
+                .filter(e -> e.did().equals(did))
+                .findFirst();
+    }
+
+    @Override
+    public AtomicReference<byte[]> getCache() {
+        return cache;
     }
 
     private void updateCache() {

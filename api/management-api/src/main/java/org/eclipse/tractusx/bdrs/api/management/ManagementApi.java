@@ -63,7 +63,7 @@ public interface ManagementApi {
                     @ApiResponse(responseCode = "403", description = "User is not authorized to create BPN/DID mapping data",
                             content = @Content(array = @ArraySchema(schema = @Schema(implementation = ApiErrorDetail.class))))
             })
-    void save(BpnMapping mapping);
+    Response save(BpnMapping mapping);
 
     @Operation(description = "Updates a BpnMapping entry",
             requestBody = @RequestBody(
@@ -80,7 +80,7 @@ public interface ManagementApi {
                     @ApiResponse(responseCode = "404", description = "No mapping for that BPN was registered",
                             content = @Content(array = @ArraySchema(schema = @Schema(implementation = ApiErrorDetail.class)))),
             })
-    void update(BpnMapping mapping);
+    Response update(BpnMapping mapping);
 
     @Operation(description = "Removes a BpnMapping entry for the given BPN",
             responses = {

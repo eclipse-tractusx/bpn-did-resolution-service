@@ -21,6 +21,9 @@ package org.eclipse.tractusx.bdrs.api.management;
 
 import io.restassured.path.json.JsonPath;
 import io.restassured.specification.RequestSpecification;
+import jakarta.ws.rs.core.Response;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.eclipse.edc.spi.monitor.Monitor;
 import org.eclipse.edc.web.jersey.testfixtures.RestControllerTestBase;
 import org.eclipse.tractusx.bdrs.spi.store.DidEntry;
 import org.eclipse.tractusx.bdrs.spi.store.DidEntryStore;
@@ -30,6 +33,7 @@ import org.mockito.ArgumentCaptor;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Optional;
 import java.util.zip.GZIPOutputStream;
 
 import static io.restassured.RestAssured.given;
@@ -45,6 +49,8 @@ class ManagementApiControllerTest extends RestControllerTestBase {
     private static final String DID = "did:web:localhost:member";
 
     private DidEntryStore store;
+
+    private Monitor monitor;
 
     @Test
     void verifyGetEntries() throws IOException {
@@ -67,7 +73,11 @@ class ManagementApiControllerTest extends RestControllerTestBase {
 
     @Test
     void verifySave() throws IOException {
-        var serialized = objectMapper.writeValueAsString(new DidEntry(BPN, DID));
+
+
+        String bpn = "BPNL" + RandomStringUtils.secure().nextAlphabetic(12).toUpperCase();
+        String did = "did:web:localhost:" + bpn;
+        var serialized = objectMapper.writeValueAsString(new DidEntry(bpn, did));
 
         var captor = ArgumentCaptor.forClass(DidEntry.class);
 
@@ -86,7 +96,10 @@ class ManagementApiControllerTest extends RestControllerTestBase {
 
     @Test
     void verifyUpdate() throws IOException {
-        var serialized = objectMapper.writeValueAsString(new DidEntry(BPN, DID));
+
+        String bpn = "BPNL" + RandomStringUtils.secure().nextAlphabetic(12).toUpperCase();
+        String did = "did:web:localhost:" + bpn;
+        var serialized = objectMapper.writeValueAsString(new DidEntry(bpn, did));
 
         var captor = ArgumentCaptor.forClass(DidEntry.class);
 
@@ -118,10 +131,47 @@ class ManagementApiControllerTest extends RestControllerTestBase {
         assertThat(captor.getValue()).isEqualTo(BPN);
     }
 
+    @Test
+    void verifyDuplicateDid() throws IOException {
+        String bpn = "BPNL" + RandomStringUtils.secure().nextAlphabetic(12).toUpperCase();
+        String did = "did:web:localhost:" + bpn;
+        var serialized = objectMapper.writeValueAsString(new DidEntry(bpn, did));
+
+        when(store.existsByDid(did)).thenReturn(true);
+
+        baseRequest()
+                .contentType(JSON)
+                .body(serialized)
+                .post("")
+                .then()
+                .statusCode(Response.Status.CONFLICT.getStatusCode());
+    }
+
+    @Test
+    void verifyDuplicateDidUpdate() throws IOException {
+        String bpn = "BPNL" + RandomStringUtils.secure().nextAlphabetic(12).toUpperCase();
+        String did = "did:web:localhost:" + bpn;
+        String otherBpn = "BPNL" + RandomStringUtils.secure().nextAlphabetic(12).toUpperCase();
+
+        when(store.exists(bpn)).thenReturn(true);
+        when(store.getByBpn(bpn)).thenReturn(Optional.of(new DidEntry(bpn, "old-did")));
+        when(store.getByDid(did)).thenReturn(Optional.of(new DidEntry(otherBpn, did)));
+
+        var serialized = objectMapper.writeValueAsString(new DidEntry(bpn, did));
+        baseRequest()
+                .contentType(JSON)
+                .body(serialized)
+                .put("")
+                .then()
+                .statusCode(Response.Status.CONFLICT.getStatusCode());
+    }
+
     @Override
     protected Object controller() {
         store = mock(DidEntryStore.class);
-        return new ManagementApiController(store);
+        monitor = mock(Monitor.class);
+
+        return new ManagementApiController(store, monitor);
     }
 
     private RequestSpecification baseRequest() {

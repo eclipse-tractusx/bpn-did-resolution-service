@@ -51,6 +51,19 @@ public interface DidEntryStoreStatements extends SqlStatements {
 
     String getLatestVersionStatement();
 
+    /**
+     * Returns the template for the SQL statement to find DID entries by DID.
+     *
+     * @return The SQL statement template for finding DID entries by DID.
+     */
+    String findByDidTemplate();
+
+    /**
+     * Returns the SQL statement template for inserting multiple DID entries.
+     *
+     * @param entries The list of DID entries to be inserted.
+     * @return The SQL statement template for inserting multiple DID entries.
+     */
     String getInsertMultipleStatement(List<DidEntry> entries);
 
     default String getVersionColumn() {

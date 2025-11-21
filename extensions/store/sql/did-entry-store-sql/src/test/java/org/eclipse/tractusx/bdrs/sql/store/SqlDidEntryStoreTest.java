@@ -122,6 +122,31 @@ class SqlDidEntryStoreTest extends DidEntryStoreTestBase {
         }
     }
 
+    @Test
+    void verifyGetByDid() {
+        String bpn = "BPNL000AKC0475245";
+        String did = "did:web:localhost:" + bpn;
+        getStore().save(new DidEntry(bpn, did, OWNERSHIP_BPN), OWNERSHIP_BPN);
+
+        Optional<DidEntry> byDid = getStore().getByDid(did);
+        Assertions.assertTrue(byDid.isPresent());
+        Assertions.assertEquals(bpn, byDid.get().bpn());
+        Assertions.assertEquals(did, byDid.get().did());
+        Assertions.assertEquals(OWNERSHIP_BPN, byDid.get().ownershipBpn());
+
+        Assertions.assertTrue(getStore().getByDid("non-existent-did").isEmpty());
+    }
+
+    @Test
+    void verifyExistsByDid() {
+        String bpn = "BPNL000AKC0461245";
+        String did = "did:web:localhost:" + bpn;
+        getStore().save(new DidEntry(bpn, did, OWNERSHIP_BPN), OWNERSHIP_BPN);
+
+        Assertions.assertTrue(getStore().existsByDid(did));
+        Assertions.assertFalse(getStore().existsByDid("non-existent-did"));
+    }
+
     @Override
     protected DidEntryStore getStore() {
         return didEntryStore;
