@@ -38,7 +38,7 @@ jobs:
       release_version: ${{ steps.release-version.outputs.release_version }}
       update_main_branch_version: ${{ steps.update-main.outputs.update_main_branch_version }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Output release version
         id: release-version
         run: |
@@ -101,7 +101,7 @@ jobs:
         ]
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/publish-docker-image
         name: Publish ${{ matrix.variant.img }}
         with:
@@ -123,7 +123,7 @@ jobs:
 
     if: needs.validation.outputs.release_version
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Install Helm
@@ -160,7 +160,7 @@ jobs:
       contents: write
     if: needs.validation.outputs.release_version
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           # 0 to fetch the full history due to upcoming merge of releases into main branch
           fetch-depth: 0
@@ -207,7 +207,7 @@ jobs:
       pages: write
     steps:
       - name: Checkout main
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
           ref: main
