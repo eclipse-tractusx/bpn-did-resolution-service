@@ -1,2 +1,2 @@
-FROM postgres:18.0-alpine
+FROM postgres:18.1-alpine
 USER "Dummy"
