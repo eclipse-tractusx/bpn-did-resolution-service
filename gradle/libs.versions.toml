@@ -58,6 +58,7 @@ restAssured = { module = "io.rest-assured:rest-assured", version.ref = "restAssu
 postgres = { module = "org.postgresql:postgresql", version.ref = "postgres" }
 flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
 flyway-database-postgres = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
+swagger-annotations = { module = "io.swagger.core.v3:swagger-annotations", version = "2.2.40" }
 
 [plugins]
 shadow = { id = "com.gradleup.shadow", version = "8.3.8" }

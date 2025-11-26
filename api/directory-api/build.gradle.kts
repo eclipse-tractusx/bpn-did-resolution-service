@@ -19,13 +19,13 @@
 
 plugins {
     `java-library`
-    id("io.swagger.core.v3.swagger-gradle-plugin")
 }
 
 dependencies {
     implementation(libs.edc.spi.core)
     implementation(libs.edc.spi.web)
     implementation(project(":spi:core-spi"))
+    implementation(libs.swagger.annotations)
 
     testImplementation(libs.restAssured)
     testImplementation(testFixtures(libs.edc.core.jersey))
