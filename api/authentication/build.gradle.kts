@@ -20,7 +20,6 @@
 
 plugins {
     `java-library`
-    id("io.swagger.core.v3.swagger-gradle-plugin")
 }
 
 dependencies {

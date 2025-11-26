@@ -19,7 +19,6 @@
 
 plugins {
     `java-library`
-    id("io.swagger.core.v3.swagger-gradle-plugin")
 }
 
 dependencies {
@@ -27,6 +26,7 @@ dependencies {
     implementation(libs.edc.spi.web)
     implementation(libs.edc.spi.auth)
     implementation(project(":spi:core-spi"))
+    implementation(libs.swagger.annotations)
 
     testImplementation(libs.edc.junit)
     testImplementation(libs.restAssured)

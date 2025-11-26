@@ -28,7 +28,7 @@ plugins {
     jacoco
     `jacoco-report-aggregation`
     alias(libs.plugins.edc.build)
-    alias(libs.plugins.shadow)
+    alias(libs.plugins.shadow) apply false
     alias(libs.plugins.docker)
 }
 
