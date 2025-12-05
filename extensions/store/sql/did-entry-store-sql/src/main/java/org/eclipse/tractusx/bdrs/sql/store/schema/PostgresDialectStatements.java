@@ -59,6 +59,7 @@ public class PostgresDialectStatements implements DidEntryStoreStatements {
         return "SELECT * FROM %s;".formatted(getMetadataTable());
     }
 
+    @Override
     public String findByDidTemplate() {
         return "SELECT * FROM %s WHERE %s = ?".formatted(getDidEntryTableName(), getDidColumn());
 
