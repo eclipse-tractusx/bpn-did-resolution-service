@@ -29,6 +29,7 @@ import org.eclipse.tractusx.bdrs.spi.store.DidEntryStoreTestBase;
 import org.eclipse.tractusx.bdrs.sql.store.schema.DidEntryStoreStatements;
 import org.eclipse.tractusx.bdrs.sql.store.schema.PostgresDialectStatements;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -126,13 +127,12 @@ class SqlDidEntryStoreTest extends DidEntryStoreTestBase {
     void verifyGetByDid() {
         String bpn = "BPNL000AKC0475245";
         String did = "did:web:localhost:" + bpn;
-        getStore().save(new DidEntry(bpn, did, OWNERSHIP_BPN), OWNERSHIP_BPN);
+        getStore().save(new DidEntry(bpn, did));
 
         Optional<DidEntry> byDid = getStore().getByDid(did);
         Assertions.assertTrue(byDid.isPresent());
         Assertions.assertEquals(bpn, byDid.get().bpn());
         Assertions.assertEquals(did, byDid.get().did());
-        Assertions.assertEquals(OWNERSHIP_BPN, byDid.get().ownershipBpn());
 
         Assertions.assertTrue(getStore().getByDid("non-existent-did").isEmpty());
     }
@@ -141,7 +141,7 @@ class SqlDidEntryStoreTest extends DidEntryStoreTestBase {
     void verifyExistsByDid() {
         String bpn = "BPNL000AKC0461245";
         String did = "did:web:localhost:" + bpn;
-        getStore().save(new DidEntry(bpn, did, OWNERSHIP_BPN), OWNERSHIP_BPN);
+        getStore().save(new DidEntry(bpn, did));
 
         Assertions.assertTrue(getStore().existsByDid(did));
         Assertions.assertFalse(getStore().existsByDid("non-existent-did"));

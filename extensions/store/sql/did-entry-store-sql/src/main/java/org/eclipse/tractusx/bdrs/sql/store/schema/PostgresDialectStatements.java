@@ -58,6 +58,7 @@ public class PostgresDialectStatements implements DidEntryStoreStatements {
     public String getLatestVersionStatement() {
         return "SELECT * FROM %s;".formatted(getMetadataTable());
     }
+
     public String findByDidTemplate() {
         return "SELECT * FROM %s WHERE %s = ?".formatted(getDidEntryTableName(), getDidColumn());
 

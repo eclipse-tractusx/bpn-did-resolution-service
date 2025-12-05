@@ -25,7 +25,6 @@ import org.eclipse.tractusx.bdrs.spi.store.DidEntryStoreTestBase;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 class InMemoryDidEntryStoreTest extends DidEntryStoreTestBase {
     private final InMemoryDidEntryStore store = new InMemoryDidEntryStore(mapper);
 

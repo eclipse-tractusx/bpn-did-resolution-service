@@ -129,9 +129,11 @@ public class InMemoryDidEntryStore implements DidEntryStore {
     private void updateCache() {
         var bas = new ByteArrayOutputStream();
         try (var gzip = new GZIPOutputStream(bas)) {
-            gzip.write(mapper.writeValueAsBytes(backingStore));
+            Map<String, String> data = new HashMap<>();
+            backingStore.values().forEach(entry -> data.put(entry.bpn(), entry.did()));
+            gzip.write(mapper.writeValueAsBytes(data));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e.getMessage());
         }
         cache.set(bas.toByteArray());
     }

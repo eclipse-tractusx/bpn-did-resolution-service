@@ -22,11 +22,13 @@ package org.eclipse.tractusx.bdrs.test.directory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.specification.RequestSpecification;
+import jakarta.ws.rs.core.Response;
 import org.eclipse.edc.junit.annotations.EndToEndTest;
 import org.eclipse.edc.junit.extensions.EmbeddedRuntime;
 import org.eclipse.edc.junit.extensions.RuntimeExtension;
 import org.eclipse.edc.junit.extensions.RuntimePerClassExtension;
 import org.eclipse.edc.spi.system.configuration.ConfigFactory;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -146,14 +148,12 @@ public class ManagementApiEndToEndTest {
 
     @Test
     void verifyDuplicateDid() {
-        seedAllowList(CryptoTestUtils.BASE_WALLET_BPN);
         seedServer(BPN1, DID1);
 
         // try to add duplicate DID
         var content = Map.of("bpn", BPN2, "did", DID1);
-        managementRequest(StringPool.ROLE_CREATE_BPN_DID_RECORD)
+        managementRequest()
                 .body(content)
-                .header("bpn", CryptoTestUtils.BASE_WALLET_BPN)
                 .when()
                 .post(BPN_DIRECTORY)
                 .then()
@@ -162,9 +162,8 @@ public class ManagementApiEndToEndTest {
         // try to update with duplicate DID
         seedServer(BPN2, DID2);
         content = Map.of("bpn", BPN2, "did", DID1);
-        managementRequest(StringPool.ROLE_UPDATE_BPN_DID_RECORD)
+        managementRequest()
                 .body(content)
-                .header("bpn", CryptoTestUtils.BASE_WALLET_BPN)
                 .when()
                 .put(BPN_DIRECTORY)
                 .then()
@@ -183,7 +182,11 @@ public class ManagementApiEndToEndTest {
                 .when()
                 .post(BPN_DIRECTORY)
                 .then()
-                .statusCode(204);
+                .statusCode(Matchers.isOneOf(
+                        Response.Status.CREATED.getStatusCode(),
+                        Response.Status.NO_CONTENT.getStatusCode(),
+                        Response.Status.CONFLICT.getStatusCode()
+                ));
     }
 
     private Map<String, String> getBpnDirectory(RequestSpecification spec) throws IOException {

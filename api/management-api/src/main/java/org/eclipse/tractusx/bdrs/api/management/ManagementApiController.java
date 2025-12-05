@@ -52,6 +52,7 @@ public class ManagementApiController implements ManagementApi {
         this.store = store;
         this.monitor = monitor;
     }
+
     @Override
     @Path("/bpn-directory")
     @GET

@@ -29,6 +29,7 @@ import org.eclipse.tractusx.bdrs.spi.store.DidEntry;
 import org.eclipse.tractusx.bdrs.spi.store.DidEntryStore;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -90,8 +91,8 @@ class ManagementApiControllerTest extends RestControllerTestBase {
 
         verify(store).save(captor.capture());
 
-        assertThat(captor.getValue().bpn()).isEqualTo(BPN);
-        assertThat(captor.getValue().did()).isEqualTo(DID);
+        assertThat(captor.getValue().bpn()).isEqualTo(bpn);
+        assertThat(captor.getValue().did()).isEqualTo(did);
     }
 
     @Test
@@ -100,9 +101,43 @@ class ManagementApiControllerTest extends RestControllerTestBase {
         String bpn = "BPNL" + RandomStringUtils.secure().nextAlphabetic(12).toUpperCase();
         String did = "did:web:localhost:" + bpn;
         var serialized = objectMapper.writeValueAsString(new DidEntry(bpn, did));
-
+        when(store.exists(bpn)).thenReturn(false);
         var captor = ArgumentCaptor.forClass(DidEntry.class);
 
+        baseRequest()
+                .contentType(JSON)
+                .body(serialized)
+                .put("")
+                .then()
+                .statusCode(Response.Status.NOT_FOUND.getStatusCode());
+
+        //add data
+        serialized = objectMapper.writeValueAsString(new DidEntry(bpn, did));
+        baseRequest()
+                .contentType(JSON)
+                .body(serialized)
+                .post("")
+                .then()
+                .statusCode(Response.Status.NO_CONTENT.getStatusCode());
+        captor = ArgumentCaptor.forClass(DidEntry.class);
+
+        //update data without change in did
+        serialized = objectMapper.writeValueAsString(new DidEntry(bpn, did));
+        when(store.exists(bpn)).thenReturn(true);
+        when(store.getByBpn(bpn)).thenReturn(Optional.of(new DidEntry(bpn, did)));
+        baseRequest()
+                .contentType(JSON)
+                .body(serialized)
+                .put("")
+                .then()
+                .statusCode(204);
+        verify(store, Mockito.never()).update(captor.capture());
+
+        //update data
+        String updatedDid = "did:web:someotherhost:" + bpn;
+        serialized = objectMapper.writeValueAsString(new DidEntry(bpn, updatedDid));
+        when(store.exists(bpn)).thenReturn(true);
+        when(store.getByBpn(bpn)).thenReturn(Optional.of(new DidEntry(bpn, did)));
         baseRequest()
                 .contentType(JSON)
                 .body(serialized)
@@ -112,8 +147,8 @@ class ManagementApiControllerTest extends RestControllerTestBase {
 
         verify(store).update(captor.capture());
 
-        assertThat(captor.getValue().bpn()).isEqualTo(BPN);
-        assertThat(captor.getValue().did()).isEqualTo(DID);
+        assertThat(captor.getValue().bpn()).isEqualTo(bpn);
+        assertThat(captor.getValue().did()).isEqualTo(updatedDid);
     }
 
     @Test
