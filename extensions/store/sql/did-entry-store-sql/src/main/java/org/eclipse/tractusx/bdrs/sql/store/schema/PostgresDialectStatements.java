@@ -60,6 +60,12 @@ public class PostgresDialectStatements implements DidEntryStoreStatements {
     }
 
     @Override
+    public String findByDidTemplate() {
+        return "SELECT * FROM %s WHERE %s = ?".formatted(getDidEntryTableName(), getDidColumn());
+
+    }
+
+    @Override
     public String getInsertMultipleStatement(List<DidEntry> entries) {
         var str = entries.stream().map(e -> "(?, ?)").collect(Collectors.joining(","));
         return "INSERT INTO %s (%s, %s) VALUES %s;".formatted(getDidEntryTableName(), getBpnColumn(), getDidColumn(), str);

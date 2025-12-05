@@ -25,6 +25,7 @@ import org.eclipse.edc.api.auth.spi.registry.ApiAuthenticationRegistry;
 import org.eclipse.edc.runtime.metamodel.annotation.Extension;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.runtime.metamodel.annotation.Setting;
+import org.eclipse.edc.spi.monitor.Monitor;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
 import org.eclipse.edc.web.spi.WebService;
@@ -45,6 +46,10 @@ public class ManagementApiExtension implements ServiceExtension {
     @Setting(value = "Path for the Management API", required = true)
     public static final String MGMT_API_PATH = "web.http.management.path";
     static final String CONTEXT_NAME = "management";
+
+    @Inject
+    private Monitor monitor;
+
     @Inject
     private DidEntryStore store;
 
@@ -69,7 +74,7 @@ public class ManagementApiExtension implements ServiceExtension {
         var portMapping = new PortMapping(CONTEXT_NAME, port, path);
         portMappingRegistry.register(portMapping);
 
-        webService.registerResource(CONTEXT_NAME, new ManagementApiController(store));
+        webService.registerResource(CONTEXT_NAME, new ManagementApiController(store, monitor));
         webService.registerResource(CONTEXT_NAME, new AuthenticationRequestFilter(registry, CONTEXT_NAME));
     }
 
