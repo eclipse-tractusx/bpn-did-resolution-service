@@ -61,6 +61,6 @@ flyway-database-postgres = { module = "org.flywaydb:flyway-database-postgresql",
 swagger-annotations = { module = "io.swagger.core.v3:swagger-annotations", version = "2.2.41" }
 
 [plugins]
-shadow = { id = "com.gradleup.shadow", version = "8.3.8" }
+shadow = { id = "com.gradleup.shadow", version = "9.3.0" }
 docker = { id = "com.bmuschko.docker-remote-api", version = "10.0.0" }
 edc-build = { id = "org.eclipse.edc.edc-build", version.ref = "edc-build" }
