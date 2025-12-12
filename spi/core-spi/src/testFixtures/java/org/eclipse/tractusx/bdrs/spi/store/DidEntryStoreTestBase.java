@@ -51,7 +51,10 @@ public abstract class DidEntryStoreTestBase {
 
         var entries = deserialize(bytes);
 
-        assertThat(entries.get(BPN)).isEqualTo(DID);
+        assertThat(entries).containsEntry(BPN, DID);
+
+        //verify data must be present in cache
+        assertThat(deserialize(getStore().getCache().get())).containsEntry(BPN, DID);
     }
 
     @Test
@@ -90,7 +93,10 @@ public abstract class DidEntryStoreTestBase {
         var bytes = getStore().entries();
         var entries = deserialize(bytes);
 
-        assertThat(entries).hasSize(1).containsEntry(BPN, DID2);
+        assertThat(entries).hasSize(1);
+
+        assertThat(deserialize(getStore().getCache().get())).containsEntry(BPN, DID2);
+
     }
 
     @Test
@@ -100,7 +106,9 @@ public abstract class DidEntryStoreTestBase {
         var bytes = getStore().entries();
         var entries = deserialize(bytes);
 
-        assertThat(entries).hasSize(1).containsEntry(BPN, DID2);
+        assertThat(entries).hasSize(1);
+        assertThat(deserialize(getStore().getCache().get())).containsEntry(BPN, DID2);
+
     }
 
     @Test

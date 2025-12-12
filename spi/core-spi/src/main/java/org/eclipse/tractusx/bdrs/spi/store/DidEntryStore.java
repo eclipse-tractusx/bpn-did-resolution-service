@@ -19,6 +19,8 @@
 
 package org.eclipse.tractusx.bdrs.spi.store;
 
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 /**
@@ -53,4 +55,51 @@ public interface DidEntryStore {
      */
     void delete(String bpn);
 
+
+
+    /**
+     * Checks if a BPN-DID mapping exists in the store.
+     *
+     * @param bpn The Business Process Number (BPN) for which the existence is to be checked.
+     *            This is a unique identifier for a business process.
+     * @return {@code true} if a BPN-DID mapping exists for the given BPN, {@code false} otherwise.
+     */
+    boolean exists(String bpn);
+
+
+    /**
+     * Checks if a DID mapping exists in the store.
+     *
+     * @param did The Decentralized Identifier (DID) for which the existence is to be checked.
+     *            This is a unique identifier for digital identity.
+     * @return {@code true} if a DID mapping exists for the given DID, {@code false} otherwise.
+     */
+    boolean existsByDid(String did);
+
+
+    /**
+     * Retrieves a {@link DidEntry} from the store based on the provided Business Process Number (BPN).
+     *
+     * @param bpn The Business Process Number (BPN) for which the {@link DidEntry} is to be retrieved.
+     *            This is a unique identifier for a business process.
+     * @return The {@link DidEntry} associated with the given BPN if it exists in the store.
+     */
+    Optional<DidEntry> getByBpn(String bpn);
+
+    /**
+     * Retrieves the cache for storing serialized JSON entries.
+     *
+     * @return The cache for storing serialized JSON entries.
+     */
+    AtomicReference<byte[]> getCache();
+
+
+    /**
+     * Retrieves a {@link DidEntry} from the store based on the provided Decentralized Identifier (DID).
+     *
+     * @param did The Decentralized Identifier (DID) for which the {@link DidEntry} is to be retrieved.
+     *            This is a unique identifier for digital identity.
+     * @return The {@link DidEntry} associated with the given DID if it exists in the store.
+     */
+    Optional<DidEntry> getByDid(String did);
 }
