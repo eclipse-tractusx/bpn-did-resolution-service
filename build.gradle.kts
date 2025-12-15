@@ -83,9 +83,10 @@ subprojects {
         if (project.plugins.hasPlugin("com.github.johnrengelman.shadow") &&
             file("${project.projectDir}/src/main/docker/Dockerfile").exists()
         ) {
+            val shadowJarTask = tasks.named("shadowJar").get()
 
             // this task copies some legal docs into the build folder, so we can easily copy them into the docker images
-            val copyLegalDocs = tasks.create("copyLegalDocs", Copy::class) {
+            val copyLegalDocs = tasks.register("copyLegalDocs", Copy::class) {
 
                 into("${project.layout.buildDirectory.asFile.get()}")
                 into("legal") {
@@ -96,15 +97,14 @@ subprojects {
                     from("${projectDir}/notice.md")
 
                 }
-                mustRunAfter(tasks.named(ShadowJavaPlugin.SHADOW_JAR_TASK_NAME))
+                mustRunAfter(shadowJarTask)
                 mustRunAfter(tasks.named(JavaPlugin.JAR_TASK_NAME))
             }
 
             //actually apply the plugin to the (sub-)project
             apply(plugin = "com.bmuschko.docker-remote-api")
             // configure the "dockerize" task
-            val dockerTask: DockerBuildImage = tasks.create("dockerize", DockerBuildImage::class) {
-                val dockerContextDir = project.projectDir
+            tasks.register("dockerize", DockerBuildImage::class) {                val dockerContextDir = project.projectDir
                 dockerFile.set(file("$dockerContextDir/src/main/docker/Dockerfile"))
                 images.add("${project.name}:${project.version}")
                 images.add("${project.name}:latest")
@@ -114,11 +114,10 @@ subprojects {
                 buildArgs.put("JAR", "build/libs/${project.name}.jar")
                 buildArgs.put("ADDITIONAL_FILES", "build/legal/*")
                 inputDir.set(file(dockerContextDir))
+
+                dependsOn(shadowJarTask)
+                dependsOn(copyLegalDocs)
             }
-            // make sure  always runs after "dockerize" and after "copyOtel"
-            dockerTask
-                .dependsOn(tasks.named(ShadowJavaPlugin.SHADOW_JAR_TASK_NAME))
-                .dependsOn(copyLegalDocs)
         }
     }
 }
