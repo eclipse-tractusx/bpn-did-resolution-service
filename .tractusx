@@ -1,3 +1,6 @@
 product: "Tractus-X BPN DID Resolution Service"
 leadingRepository: "https://github.com/eclipse-tractusx/bpn-did-resolution-service"
 repositories: []
+openApiSpecs:
+- "https://eclipse-tractusx.github.io/bpn-did-resolution-service/openapi/directory-api/directory-api.yaml"
+- "https://eclipse-tractusx.github.io/bpn-did-resolution-service/openapi/management-api/management-api.yaml"
