@@ -30,7 +30,7 @@ on:
   workflow_dispatch: # allow manual trigger
 
 jobs:
-  close-issues-with-assignee:
+  cleanup-issues:
     runs-on: ubuntu-latest
     permissions:
       issues: write
