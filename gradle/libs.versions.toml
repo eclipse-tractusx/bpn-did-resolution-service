@@ -28,6 +28,8 @@ edc-spi-did = { module = "org.eclipse.edc:identity-did-spi", version.ref = "edc"
 edc-spi-web = { module = "org.eclipse.edc:web-spi", version.ref = "edc" }
 edc-spi-transaction = { module = "org.eclipse.edc:transaction-spi", version.ref = "edc" }
 edc-spi-transaction-datasource = { module = "org.eclipse.edc:transaction-datasource-spi", version.ref = "edc" }
+edc-core-participant-context-config = { module = "org.eclipse.edc:participant-context-config-core", version.ref = "edc" }
+edc-core-participant-context-single = { module = "org.eclipse.edc:participant-context-single-core", version.ref = "edc" }
 edc-connector-core = { module = "org.eclipse.edc:connector-core", version.ref = "edc" }
 edc-spi-token = { module = "org.eclipse.edc:token-spi", version.ref = "edc" }
 edc-spi-vc = { module = "org.eclipse.edc:verifiable-credentials-spi", version.ref = "edc" }

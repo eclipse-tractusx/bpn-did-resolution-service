@@ -82,8 +82,7 @@ public class CredentialBasedAuthenticationService implements AuthenticationServi
         }
         try {
             String token = authHeaders.stream()
-                    .map(String::toLowerCase)
-                    .filter(t -> t.startsWith("bearer "))
+                    .filter(t -> t.toLowerCase().startsWith("bearer "))
                     .map(t -> t.substring(6).trim())
                     .findFirst()
                     .orElseThrow(() -> new EdcException("Authorization header must start with 'bearer '"));
