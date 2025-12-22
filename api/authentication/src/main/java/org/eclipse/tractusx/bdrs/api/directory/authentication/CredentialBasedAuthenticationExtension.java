@@ -99,7 +99,7 @@ public class CredentialBasedAuthenticationExtension implements ServiceExtension 
     public void initialize(ServiceExtensionContext context) {
         // the DidPublicKeyResolver has a dependency onto the KeyParserRegistry, so that must be created in a separate ext -> KeyParserRegistryExtension
         var jwtVerifier = new JwtPresentationVerifier(typeManager, JSON_LD, tokenValidationService, rulesRegistry, didPublicKeyResolver);
-        var presentationVerifier = new MultiFormatPresentationVerifier(null, jwtVerifier);
+        var presentationVerifier = new MultiFormatPresentationVerifier(jwtVerifier);
 
         var acceptedContentTypes = List.of(contentTypes.split(","));
         revocationServiceRegistry.addService(StatusList2021Status.TYPE, new StatusList2021RevocationService(typeManager.getMapper(), revocationCacheValidity, acceptedContentTypes, httpClient));

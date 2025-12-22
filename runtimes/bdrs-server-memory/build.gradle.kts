@@ -43,6 +43,8 @@ dependencies {
     runtimeOnly(libs.edc.decentralizedclaims.core){
         exclude("org.eclipse.edc","decentralized-claims-sts-remote-client")
     }
+    runtimeOnly(libs.edc.core.participant.context.config)
+    runtimeOnly(libs.edc.core.participant.context.single)
     runtimeOnly(libs.edc.auth.configuration)
     runtimeOnly(libs.edc.decentralizedclaims.issuers)
 }
