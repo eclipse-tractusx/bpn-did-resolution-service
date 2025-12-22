@@ -40,11 +40,11 @@ dependencies {
     runtimeOnly(libs.edc.core.token)
     runtimeOnly(libs.edc.core.runtime)
     runtimeOnly(libs.edc.identitydidweb)
-    runtimeOnly(libs.edc.identitytrust.core){
-        exclude("org.eclipse.edc","identity-trust-sts-remote-client")
+    runtimeOnly(libs.edc.decentralizedclaims.core){
+        exclude("org.eclipse.edc","decentralized-claims-sts-remote-client")
     }
     runtimeOnly(libs.edc.auth.configuration)
-    runtimeOnly(libs.edc.identitytrust.issuers)
+    runtimeOnly(libs.edc.decentralizedclaims.issuers)
 }
 
 tasks.shadowJar {

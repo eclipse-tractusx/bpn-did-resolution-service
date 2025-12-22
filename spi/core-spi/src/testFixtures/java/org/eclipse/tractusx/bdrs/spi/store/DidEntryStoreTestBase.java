@@ -141,8 +141,7 @@ public abstract class DidEntryStoreTestBase {
 
     private Map<String, String> deserialize(byte[] bytes) {
         try {
-            GZIPInputStream stream = null;
-            stream = new GZIPInputStream(new ByteArrayInputStream(bytes));
+            GZIPInputStream stream = new GZIPInputStream(new ByteArrayInputStream(bytes));
             var decompressed = stream.readAllBytes();
             //noinspection unchecked
             return mapper.readValue(decompressed, Map.class);

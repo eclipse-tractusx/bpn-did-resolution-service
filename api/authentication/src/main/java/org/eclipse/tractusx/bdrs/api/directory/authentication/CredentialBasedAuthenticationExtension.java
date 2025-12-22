@@ -23,9 +23,9 @@ package org.eclipse.tractusx.bdrs.api.directory.authentication;
 import org.eclipse.edc.api.auth.spi.AuthenticationRequestFilter;
 import org.eclipse.edc.api.auth.spi.registry.ApiAuthenticationRegistry;
 import org.eclipse.edc.http.spi.EdcHttpClient;
+import org.eclipse.edc.iam.decentralizedclaims.service.verification.MultiFormatPresentationVerifier;
+import org.eclipse.edc.iam.decentralizedclaims.spi.SecureTokenService;
 import org.eclipse.edc.iam.did.spi.resolution.DidPublicKeyResolver;
-import org.eclipse.edc.iam.identitytrust.service.verification.MultiFormatPresentationVerifier;
-import org.eclipse.edc.iam.identitytrust.spi.SecureTokenService;
 import org.eclipse.edc.iam.verifiablecredentials.VerifiableCredentialValidationServiceImpl;
 import org.eclipse.edc.iam.verifiablecredentials.revocation.bitstring.BitstringStatusListRevocationService;
 import org.eclipse.edc.iam.verifiablecredentials.revocation.statuslist2021.StatusList2021RevocationService;
@@ -113,7 +113,7 @@ public class CredentialBasedAuthenticationExtension implements ServiceExtension 
 
     @Provider
     public SecureTokenService secureTokenService() {
-        return (map, s) -> null; // not really needed but requested by the runtime because of some tangles into trusted-issuer-core
+        return (map, s, scope) -> null; // not really needed but requested by the runtime because of some tangles into trusted-issuer-core
     }
 
 }
