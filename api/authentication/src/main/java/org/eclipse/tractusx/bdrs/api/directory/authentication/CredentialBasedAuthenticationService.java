@@ -97,7 +97,7 @@ public class CredentialBasedAuthenticationService implements AuthenticationServi
                     .onFailure(f -> monitor.warning("Error validating BDRS client VP: %s".formatted(f.getFailureDetail())))
                     .succeeded();
         } catch (EdcException e) {
-            monitor.warning("Error validating the BDRS client VP: %s".formatted(e.getLocalizedMessage()));
+            monitor.warning("Error validating BDRS client VP: %s".formatted(e.getLocalizedMessage()));
             return false;
         }
     }
