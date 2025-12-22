@@ -84,7 +84,7 @@ class CredentialBasedAuthenticationServiceTest {
                 .thenReturn(Result.success(VerifiablePresentation.Builder.newInstance().type("VerifiablePresentation").build()));
 
         assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + createSerializedJwt())))).isFalse();
-        verify(monitor).warning(startsWith("Bearer token is not valid JWT"));
+        verify(monitor).warning(startsWith("Error validating the BDRS client VP"));
     }
 
     private String createSerializedJwt() {
