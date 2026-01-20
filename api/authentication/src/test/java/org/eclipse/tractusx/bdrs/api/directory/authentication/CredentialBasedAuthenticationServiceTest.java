@@ -78,7 +78,7 @@ class CredentialBasedAuthenticationServiceTest {
 
     @Test
     void isAuthenticated_vpInvalid() {
-        when(validationService.validate(anyList(), any(CredentialValidationRule[].class)))
+        when(validationService.validate(anyList(), any(), any(CredentialValidationRule[].class)))
                 .thenReturn(Result.failure("test failure"));
         when(typeTransformerRegistry.transform(any(), eq(VerifiablePresentation.class)))
                 .thenReturn(Result.success(VerifiablePresentation.Builder.newInstance().type("VerifiablePresentation").build()));
