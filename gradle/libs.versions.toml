@@ -6,7 +6,7 @@ edc = "0.14.1"
 edc-build = "1.1.4"
 nimbus = "10.7"
 restAssured = "6.0.0"
-postgres = "42.7.8"
+postgres = "42.7.9"
 flyway = "11.20.2"
 
 
