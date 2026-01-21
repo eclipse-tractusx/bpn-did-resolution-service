@@ -2,9 +2,6 @@
 
 This guide covers migrating PostgreSQL from Bitnami to CloudPirates in ArgoCD-managed deployments.
 
-> [!WARNING]
-> ArgoCD steps might be a bit different, took it from the official documentation, don't have access to it.
-
 > ⚠️ **Requires downtime**. Schedule a maintenance window.
 
 ## Prerequisites
