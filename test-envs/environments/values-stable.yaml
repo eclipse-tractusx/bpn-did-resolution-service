@@ -39,15 +39,19 @@ server:
       cpu: 50m
       memory: 128Mi
 postgresql:
-  primary:
-    persistence:
-      enabled: true
-    resources:
-      requests:
-        cpu: 100m
-        memory: 256Mi
+  image:
+    registry: docker.io
+    repository: postgres
+  persistence:
+    enabled: true
+    size: 10Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
   auth:
-    postgresPassword: "<path:portal/data/bdrs-postgres-pw#content>"
+    database: "bdrs"
+    username: "bdrs"
     password: "<path:portal/data/edc.datasource.didentry.password#content>"
 install:
   vault: false
