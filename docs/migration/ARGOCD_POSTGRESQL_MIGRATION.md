@@ -2,6 +2,9 @@
 
 This guide covers migrating PostgreSQL from Bitnami to CloudPirates in ArgoCD-managed deployments.
 
+> [!WARNING]
+> ArgoCD steps might be a bit different, took it from the official documentation, don't have access to it.
+
 > ⚠️ **Requires downtime**. Schedule a maintenance window.
 
 ## Prerequisites
@@ -42,12 +45,6 @@ grep -q "PostgreSQL database dump" ${BACKUP_FILE} && echo "✅ Backup valid"
 1. Open your Application in ArgoCD
 2. Click "App Details" → "Sync Policy"
 3. Disable "Auto-Sync"
-
-**Option B: Via CLI**
-```bash
-argocd app set <app-name> --sync-policy none
-```
-
 ---
 
 ## Step 3: Delete Old PostgreSQL PVC
@@ -102,11 +99,6 @@ postgresql:
 2. Enable "Prune" to remove old resources
 3. Click "Synchronize"
 
-**Option B: Via CLI**
-```bash
-argocd app sync <app-name> --prune
-```
-
 Wait for PostgreSQL pod to be ready:
 ```bash
 kubectl wait --for=condition=ready pod/${POSTGRES_POD} -n ${NAMESPACE} --timeout=300s
@@ -133,18 +125,6 @@ kubectl exec -n ${NAMESPACE} ${POSTGRES_POD} -- bash -c \
 # Re-enable auto-sync
 argocd app set <app-name> --sync-policy automated
 ```
-
----
-
-## Rollback
-
-If issues occur:
-
-1. Disable auto-sync
-2. Revert Git changes (Chart.yaml, values.yaml)
-3. Delete new PVC: `kubectl delete pvc data-${POSTGRES_POD} -n ${NAMESPACE}`
-4. Sync ArgoCD application
-5. Restore backup
 
 ---
 
