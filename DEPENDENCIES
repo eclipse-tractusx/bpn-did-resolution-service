@@ -46,7 +46,7 @@ maven/mavencentral/com.google.j2objc/j2objc-annotations/3.1, Apache-2.0, approve
 maven/mavencentral/com.google.protobuf/protobuf-java/4.32.1, BSD-3-Clause, approved, clearlydefined
 maven/mavencentral/com.networknt/json-schema-validator/2.0.0, , restricted, clearlydefined
 maven/mavencentral/com.nimbusds/nimbus-jose-jwt/10.6, Apache-2.0, approved, clearlydefined
-maven/mavencentral/com.nimbusds/nimbus-jose-jwt/10.7, , restricted, clearlydefined
+maven/mavencentral/com.nimbusds/nimbus-jose-jwt/10.7, Apache-2.0, approved, clearlydefined
 maven/mavencentral/com.puppycrawl.tools/checkstyle/12.3.0, , restricted, clearlydefined
 maven/mavencentral/com.squareup.okhttp3/okhttp-dnsoverhttps/5.3.2, Apache-2.0, approved, clearlydefined
 maven/mavencentral/com.squareup.okhttp3/okhttp-jvm/5.3.2, Apache-2.0, approved, clearlydefined
@@ -221,8 +221,8 @@ maven/mavencentral/org.eclipse.jetty/jetty-server/12.1.4, EPL-2.0 OR Apache-2.0,
 maven/mavencentral/org.eclipse.jetty/jetty-session/12.1.4, EPL-2.0 OR Apache-2.0, approved, rt.jetty
 maven/mavencentral/org.eclipse.jetty/jetty-util/12.1.4, EPL-2.0 OR Apache-2.0, approved, rt.jetty
 maven/mavencentral/org.eclipse.parsson/parsson/1.1.7, EPL-2.0, approved, ee4j.parsson
-maven/mavencentral/org.flywaydb/flyway-core/11.20.3, , restricted, clearlydefined
-maven/mavencentral/org.flywaydb/flyway-database-postgresql/11.20.3, , restricted, clearlydefined
+maven/mavencentral/org.flywaydb/flyway-core/12.0.0, , restricted, clearlydefined
+maven/mavencentral/org.flywaydb/flyway-database-postgresql/12.0.0, , restricted, clearlydefined
 maven/mavencentral/org.glassfish.hk2.external/aopalliance-repackaged/3.0.6, EPL-2.0 OR GPL-2.0-only with Classpath-exception-2.0, approved, ee4j.glassfish
 maven/mavencentral/org.glassfish.hk2/hk2-api/3.0.6, EPL-2.0 OR GPL-2.0-only with Classpath-exception-2.0, approved, ee4j.glassfish
 maven/mavencentral/org.glassfish.hk2/hk2-locator/3.0.6, EPL-2.0 OR GPL-2.0-only with Classpath-exception-2.0, approved, ee4j.glassfish
