@@ -1,6 +1,7 @@
 #################################################################################
 #  Copyright (c) 2023 Mercedes-Benz Tech Innovation GmbH
 #  Copyright (c) 2021,2023 Contributors to the Eclipse Foundation
+#  Copyright (c) 2026 Cofinity-X GmbH
 #
 #  See the NOTICE file(s) distributed with this work for additional
 #  information regarding copyright ownership.
@@ -59,9 +60,9 @@ jobs:
           { chart: charts/bdrs-server-memory, name: bdrs-server-memory },
           { chart: charts/bdrs-server,        name: bdrs-server }
         ]
-        k8s-version: [ "v1.34.0",
-                       "v1.33.4",
-                       "v1.32.8" ]
+        k8s-version: [ "v1.35.1",
+                       "v1.34.3",
+                       "v1.33.7" ]
     needs: test-prepare
     steps:
       - uses: actions/checkout@v6
