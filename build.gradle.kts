@@ -80,11 +80,7 @@ allprojects {
 // the "dockerize" task is added to all projects that use the `shadowJar` plugin, e.g. runtimes
 subprojects {
     afterEvaluate {
-        if (project.plugins.hasPlugin("com.github.johnrengelman.shadow") &&
-            file("${project.projectDir}/src/main/docker/Dockerfile").exists()
-        ) {
-            val shadowJarTask = tasks.named("shadowJar").get()
-
+        if (project.plugins.hasPlugin(libs.plugins.shadow.get().pluginId)) {
             // this task copies some legal docs into the build folder, so we can easily copy them into the docker images
             val copyLegalDocs = tasks.register("copyLegalDocs", Copy::class) {
 
@@ -97,15 +93,28 @@ subprojects {
                     from("${projectDir}/notice.md")
 
                 }
-                mustRunAfter(shadowJarTask)
                 mustRunAfter(tasks.named(JavaPlugin.JAR_TASK_NAME))
             }
 
+            val copyDockerfile = tasks.register("copyDockerfile", Copy::class) {
+                from(rootProject.projectDir.toPath().resolve("runtimes"))
+                into(project.layout.buildDirectory.dir("resources").get().dir("docker"))
+                include("Dockerfile")
+            }
+
+            val shadowJarTask = tasks.named("shadowJar").get()
+
+            shadowJarTask
+                .dependsOn(copyDockerfile)
+                .dependsOn(copyLegalDocs)
+
             //actually apply the plugin to the (sub-)project
-            apply(plugin = "com.bmuschko.docker-remote-api")
+            apply(plugin = libs.plugins.docker.get().pluginId)
+
             // configure the "dockerize" task
-            tasks.register("dockerize", DockerBuildImage::class) {                val dockerContextDir = project.projectDir
-                dockerFile.set(file("$dockerContextDir/src/main/docker/Dockerfile"))
+            tasks.register("dockerize", DockerBuildImage::class) {
+                val dockerContextDir = project.projectDir
+                dockerFile.set(file("build/resources/docker/Dockerfile"))
                 images.add("${project.name}:${project.version}")
                 images.add("${project.name}:latest")
                 // specify platform with the -Dplatform flag:
