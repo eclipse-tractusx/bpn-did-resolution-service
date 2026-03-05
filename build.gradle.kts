@@ -80,11 +80,7 @@ allprojects {
 // the "dockerize" task is added to all projects that use the `shadowJar` plugin, e.g. runtimes
 subprojects {
     afterEvaluate {
-        if (project.plugins.hasPlugin("com.github.johnrengelman.shadow") &&
-            file("${project.projectDir}/src/main/docker/Dockerfile").exists()
-        ) {
-            val shadowJarTask = tasks.named("shadowJar").get()
-
+        if (project.plugins.hasPlugin(libs.plugins.shadow.get().pluginId)) {
             // this task copies some legal docs into the build folder, so we can easily copy them into the docker images
             val copyLegalDocs = tasks.register("copyLegalDocs", Copy::class) {
 
@@ -97,7 +93,6 @@ subprojects {
                     from("${projectDir}/notice.md")
 
                 }
-                mustRunAfter(shadowJarTask)
                 mustRunAfter(tasks.named(JavaPlugin.JAR_TASK_NAME))
             }
 
@@ -107,8 +102,15 @@ subprojects {
                 include("Dockerfile")
             }
 
+            val shadowJarTask = tasks.named("shadowJar").get()
+
+            shadowJarTask
+                .dependsOn(copyDockerfile)
+                .dependsOn(copyLegalDocs)
+
             //actually apply the plugin to the (sub-)project
-            apply(plugin = "com.bmuschko.docker-remote-api")
+            apply(plugin = libs.plugins.docker.get().pluginId)
+
             // configure the "dockerize" task
             tasks.register("dockerize", DockerBuildImage::class) {
                 val dockerContextDir = project.projectDir
