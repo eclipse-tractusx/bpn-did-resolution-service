@@ -84,7 +84,8 @@ jobs:
       fail-fast: false # continue scanning other images although if the other has been vulnerable
       matrix:
         image:
-          - server
+          - bdrs-server
+          - bdrs-server-memory
     steps:
       - uses: actions/checkout@v6
 
