@@ -1,5 +1,6 @@
 # -buster is required to have apt available
 FROM eclipse-temurin:25-jre-alpine
+RUN apk update && apk upgrade --no-cache
 
 # Optional JVM arguments, such as memory settings
 ARG JVM_ARGS=""
