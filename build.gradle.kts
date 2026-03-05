@@ -101,11 +101,18 @@ subprojects {
                 mustRunAfter(tasks.named(JavaPlugin.JAR_TASK_NAME))
             }
 
+            val copyDockerfile = tasks.register("copyDockerfile", Copy::class) {
+                from(rootProject.projectDir.toPath().resolve("runtimes"))
+                into(project.layout.buildDirectory.dir("resources").get().dir("docker"))
+                include("Dockerfile")
+            }
+
             //actually apply the plugin to the (sub-)project
             apply(plugin = "com.bmuschko.docker-remote-api")
             // configure the "dockerize" task
-            tasks.register("dockerize", DockerBuildImage::class) {                val dockerContextDir = project.projectDir
-                dockerFile.set(file("$dockerContextDir/src/main/docker/Dockerfile"))
+            tasks.register("dockerize", DockerBuildImage::class) {
+                val dockerContextDir = project.projectDir
+                dockerFile.set(file("build/resources/docker/Dockerfile"))
                 images.add("${project.name}:${project.version}")
                 images.add("${project.name}:latest")
                 // specify platform with the -Dplatform flag:
