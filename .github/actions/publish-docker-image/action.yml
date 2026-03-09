@@ -25,7 +25,7 @@ description: "Build and publish a Docker Image to DockerHub"
 inputs:
   rootDir:
     required: true
-    description: "The directory where the notice.md file and the src/main/docker directory are located"
+    description: "The directory where the Dockerfile and notice.md file are located"
   namespace:
     required: false
     default: "tractusx"
@@ -67,7 +67,7 @@ runs:
     - name: Build Controlplane
       shell: bash
       run: |-
-        ./gradlew -p ${{ inputs.rootDir }} shadowJar
+        ./gradlew -p ${{ inputs.rootDir }}/${{ inputs.imagename }} shadowJar
 
     ###############################
     # Set metadata of docker image
@@ -95,10 +95,10 @@ runs:
       uses: docker/build-push-action@v7
       with:
         context: .
-        file: ${{ inputs.rootDir }}/src/main/docker/Dockerfile
+        file: ${{ inputs.rootDir }}/Dockerfile
         build-args: |
-          JAR=${{ inputs.rootDir }}/build/libs/${{ inputs.imagename }}.jar
-          OTEL_JAR=${{ inputs.rootDir }}/opentelemetry-javaagent.jar
+          JAR=${{ inputs.rootDir }}/${{ inputs.imagename }}/build/libs/${{ inputs.imagename }}.jar
+          OTEL_JAR=${{ inputs.rootDir }}/${{ inputs.imagename }}/opentelemetry-javaagent.jar
         push: ${{ inputs.do_push == 'true' }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
