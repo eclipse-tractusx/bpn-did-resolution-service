@@ -40,7 +40,7 @@ runs:
         cd edc-tests/miw-tests/src/test/resources/docker-environment
         docker compose up -d --wait
 
-    - uses: nick-fields/retry@v3
+    - uses: nick-fields/retry@v4
       name: Wait for MIW
       with:
         timeout_minutes: 5
@@ -59,7 +59,7 @@ runs:
         docker compose up -d 
 
 
-    - uses: nick-fields/retry@v3
+    - uses: nick-fields/retry@v4
       name: Wait for TractusX EDC
       with:
         timeout_minutes: 5
