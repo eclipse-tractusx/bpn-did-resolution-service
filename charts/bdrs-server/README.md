@@ -36,7 +36,7 @@ helm install my-release tractusx-edc/bdrs-server --version 0.5.7 \
 | Repository | Name | Version |
 |------------|------|---------|
 | https://helm.releases.hashicorp.com | vault(vault) | 0.28.0 |
-| oci://registry-1.docker.io/cloudpirates | postgresql(postgres) | 0.11.0 |
+| oci://registry-1.docker.io/cloudpirates | postgresql(postgres) | 0.18.3 |
 
 ## Values
 
