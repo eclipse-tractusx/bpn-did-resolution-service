@@ -36,6 +36,7 @@ dependencies {
     implementation(libs.edc.vc) // VerifiableCredentialValidationService
     implementation(libs.edc.decentralizedclaims.service) //MultiFormatPresentationVerifier
     implementation(libs.edc.decentralizedclaims.transform) //JwtToVerifiablePresentationTransformer
+    implementation(libs.edc.decentralizedclaims.vclib) // VerifiableCredentialValidationServiceImpl
     implementation(libs.edc.lib.transform)
     implementation(libs.edc.lib.jsonld)
     implementation(libs.edc.lib.http)
