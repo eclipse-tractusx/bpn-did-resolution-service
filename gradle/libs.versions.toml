@@ -22,6 +22,7 @@ edc-decentralizedclaims-core = { module = "org.eclipse.edc:decentralized-claims-
 edc-decentralizedclaims-service = { module = "org.eclipse.edc:decentralized-claims-service", version.ref = "edc" }
 edc-decentralizedclaims-issuers = { module = "org.eclipse.edc:decentralized-claims-issuers-configuration", version.ref = "edc" }
 edc-decentralizedclaims-transform = { module = "org.eclipse.edc:decentralized-claims-transform", version.ref = "edc" }
+edc-decentralizedclaims-vclib ={ module = "org.eclipse.edc:verifiable-credentials-lib", version.ref = "edc" }
 edc-identitydidweb = { module = "org.eclipse.edc:identity-did-web", version.ref = "edc" }
 edc-spi-core = { module = "org.eclipse.edc:core-spi", version.ref = "edc" }
 edc-spi-did = { module = "org.eclipse.edc:identity-did-spi", version.ref = "edc" }
