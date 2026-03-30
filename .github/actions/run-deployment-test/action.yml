@@ -63,7 +63,7 @@ runs:
         ./gradlew -p ${{ inputs.rootDir }} dockerize
 
     - name: Setup Helm
-      uses: azure/setup-helm@v4
+      uses: azure/setup-helm@v5
       with:
         version: v4.1.1
 
