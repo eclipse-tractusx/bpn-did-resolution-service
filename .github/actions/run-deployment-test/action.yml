@@ -68,7 +68,7 @@ runs:
         version: v4.1.1
 
     - name: Setup Kubectl
-      uses: azure/setup-kubectl@v4
+      uses: azure/setup-kubectl@v5
       with:
         version: 'v1.35.2'
 
