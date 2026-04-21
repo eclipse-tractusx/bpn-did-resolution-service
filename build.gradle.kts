@@ -65,10 +65,6 @@ allprojects {
 
     configure<org.eclipse.edc.plugins.edcbuild.extensions.BuildExtension> {
         swagger {
-            title.set((project.findProperty("apiTitle") ?: "Tractus-X BDRS Server REST API") as String)
-            description =
-                (project.findProperty("apiDescription")
-                    ?: "Tractus-X REST APIs - merged by OpenApiMerger") as String
             outputFilename.set(project.name)
             outputDirectory.set(file("${rootProject.projectDir.path}/resources/openapi/yaml"))
             resourcePackages = setOf("org.eclipse.tractusx.bdrs")
