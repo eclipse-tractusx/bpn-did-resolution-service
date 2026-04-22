@@ -207,6 +207,8 @@ jobs:
     name: "Publish OpenAPI UI spec GitHub Pages"
     permissions:
       contents: write
+      packages: write
+      pages: write
     needs: [ validation ]
     uses: ./.github/workflows/publish-openapi.yaml
     secrets: inherit
