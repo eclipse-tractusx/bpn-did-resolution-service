@@ -123,7 +123,7 @@ jobs:
         name: Publish ${{ matrix.variant.img }}
         with:
           docker_tag: ${{ needs.validation.outputs.release_version }}
-          rootDir: ${{ matrix.variant.dir }}/${{ matrix.variant.img }}
+          rootDir: ${{ matrix.variant.dir }}
           imagename: ${{ matrix.variant.img }}
           docker_user: ${{ secrets.DOCKER_HUB_USER }}
           docker_token: ${{ secrets.DOCKER_HUB_TOKEN }}

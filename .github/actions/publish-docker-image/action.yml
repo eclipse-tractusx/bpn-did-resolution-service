@@ -64,7 +64,7 @@ runs:
     # Build JAR file
     #####################
     - uses: ./.github/actions/setup-java
-    - name: Build Controlplane
+    - name: Build executable
       shell: bash
       run: |-
         ./gradlew -p ${{ inputs.rootDir }}/${{ inputs.imagename }} shadowJar
