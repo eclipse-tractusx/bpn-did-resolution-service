@@ -50,6 +50,8 @@ jobs:
       update_main_branch_version: ${{ steps.update-main.outputs.update_main_branch_version }}
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - name: Output release version
         id: release-version
         run: |
