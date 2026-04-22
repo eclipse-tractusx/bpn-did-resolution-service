@@ -34,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - run: |
-          docker run -v ${{ github.workspace }}/charts:/helm-docs jnorwood/helm-docs:v1.14.1 helm-docs
+          docker run -v ${{ github.workspace }}/charts:/helm-docs jnorwood/helm-docs:v1.14.2 helm-docs
           
           if $(git diff --quiet --exit-code); then
             echo "Helm chart docs up to date"
