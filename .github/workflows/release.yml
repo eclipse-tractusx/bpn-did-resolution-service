@@ -212,9 +212,6 @@ jobs:
     needs: [ validation ]
     uses: ./.github/workflows/publish-openapi.yaml
     secrets: inherit
-    with:
-      version: ${{ needs.validation.outputs.RELEASE_VERSION }}
-      latest: ${{ inputs.latest }}
 
   main-branch-update:
     name: "Bump main branch version"
