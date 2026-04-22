@@ -24,16 +24,17 @@ name: "Release"
 
 on:
   workflow_dispatch:
-    latest:
-      description: "Latest release"
-      required: true
-      type: boolean
-      default: false
-    previous_tag:
-      description: "Generate release notes starting from tag"
-      type: string
-      required: true
-      default: ""
+    inputs:
+      latest:
+        description: "Latest release"
+        required: true
+        type: boolean
+        default: false
+      previous_tag:
+        description: "Generate release notes starting from tag"
+        type: string
+        required: true
+        default: ""
 
 jobs:
   run-all-tests:
