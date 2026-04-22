@@ -21,9 +21,6 @@ name: publish openapi ui
 
 on:
   workflow_call:
-  push:
-    branches:
-      - main
 
 permissions:
   contents: write

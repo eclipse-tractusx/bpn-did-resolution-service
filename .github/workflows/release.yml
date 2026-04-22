@@ -24,6 +24,16 @@ name: "Release"
 
 on:
   workflow_dispatch:
+    latest:
+      description: "Latest release"
+      required: true
+      type: boolean
+      default: false
+    previous_tag:
+      description: "Generate release notes starting from tag"
+      type: string
+      required: true
+      default: ""
 
 jobs:
   run-all-tests:
@@ -70,6 +80,10 @@ jobs:
             echo "This workflow can not be executed for SNAPSHOT versions."
             exit 1
           fi
+      - name: Validate previous_tag exists
+        run: |
+          git show-ref --tags --verify --quiet "refs/tags/${{ inputs.previous_tag }}" \
+            || (echo "Tag '${{ inputs.previous_tag }}' not found." && exit 1)
 
   # Release: Maven Artifacts
   maven-release:
@@ -183,9 +197,10 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           generateReleaseNotes: true
+          generateReleaseNotesPreviousTag: ${{ inputs.previous_tag }}
           tag: ${{ needs.validation.outputs.release_version }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          makeLatest: ${{ needs.validation.outputs.update_main_branch_version == 'true' }}
+          makeLatest: ${{ inputs.latest }}
           removeArtifacts: true
 
   publish-openapi-to-gh-pages:
@@ -195,6 +210,9 @@ jobs:
     needs: [ validation ]
     uses: ./.github/workflows/publish-openapi.yaml
     secrets: inherit
+    with:
+      version: ${{ needs.validation.outputs.RELEASE_VERSION }}
+      latest: ${{ inputs.latest }}
 
   main-branch-update:
     name: "Bump main branch version"
