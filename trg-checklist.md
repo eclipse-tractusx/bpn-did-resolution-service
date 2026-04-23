@@ -126,13 +126,13 @@ The checklist list the fulfillment concerning each TRG point and in which freque
 
 #### TRG 8 Security
 - [TRG 8.01](https://eclipse-tractusx.github.io/docs/release/trg-8/trg-8-01) Mitigate high and above findings in CodeQL
-  - Fulfilled, part of pr automation, check frequency, none
+  - Fulfilled, part of pr automation, check frequency, every release
 - [TRG 8.02](https://eclipse-tractusx.github.io/docs/release/trg-8/trg-8-02) Mitigate high and above findings in KICS
-  - Fulfilled, part of pr automation, check frequency, none
+  - Fulfilled, part of pr automation, check frequency, every release
 - [TRG 8.03](https://eclipse-tractusx.github.io/docs/release/trg-8/trg-8-03) No secret findings by GitGuardian or TruffleHog
-  - Fulfilled, part of pr automation, check frequency, none
+  - Fulfilled, part of pr automation, check frequency, every release
 - [TRG 8.04](https://eclipse-tractusx.github.io/docs/release/trg-8/trg-8-04) Mitigate high and above findings in Trivy
-  - Fulfilled, part of pr automation, check frequency, none
+  - Fulfilled, part of pr automation, check frequency, every release
 - [TRG 8.05](https://eclipse-tractusx.github.io/docs/release/trg-8/trg-8-05) Dependabot
   - Fulfilled, part of project automation, check frequency, none  
 
