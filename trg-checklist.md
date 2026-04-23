@@ -65,7 +65,7 @@ The checklist list the fulfillment concerning each TRG point and in which freque
   by default, but can be overwritten by the user
   - Not actually fulfilled, something for the future, not priority
 - [TRG 4.08](https://eclipse-tractusx.github.io/docs/release/trg-4/trg-4-08) multi-platform images
-  - Fulfilled, check frequency, each release, check creation of both images in docker hub
+  - Not Fulfilled, something for the future, not priority
 
 #### TRG 5 Helm
 
