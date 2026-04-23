@@ -79,17 +79,9 @@ subprojects {
         if (project.plugins.hasPlugin(libs.plugins.shadow.get().pluginId)) {
             // this task copies some legal docs into the build folder, so we can easily copy them into the docker images
             val copyLegalDocs = tasks.register("copyLegalDocs", Copy::class) {
-
-                into("${project.layout.buildDirectory.asFile.get()}")
-                into("legal") {
-                    from("${project.rootProject.projectDir}/SECURITY.md")
-                    from("${project.rootProject.projectDir}/NOTICE.md")
-                    from("${project.rootProject.projectDir}/DEPENDENCIES")
-                    from("${project.rootProject.projectDir}/LICENSE")
-                    from("${projectDir}/notice.md")
-
-                }
-                mustRunAfter(tasks.named(JavaPlugin.JAR_TASK_NAME))
+                from(rootProject.projectDir.toPath())
+                into(project.layout.buildDirectory.dir("legal"))
+                include("SECURITY.md", "NOTICE.md", "DEPENDENCIES", "LICENSE", "runtimes/notice.md")
             }
 
             val copyDockerfile = tasks.register("copyDockerfile", Copy::class) {
