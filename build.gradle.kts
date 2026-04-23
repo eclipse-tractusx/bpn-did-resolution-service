@@ -81,7 +81,7 @@ subprojects {
             val copyLegalDocs = tasks.register("copyLegalDocs", Copy::class) {
                 from(rootProject.projectDir.toPath())
                 into(project.layout.buildDirectory.dir("legal"))
-                include("SECURITY.md", "NOTICE.md", "DEPENDENCIES", "LICENSE", "runtimes/notice.md")
+                include("SECURITY.md", "NOTICE.md", "DEPENDENCIES", "LICENSE", "LICENSE_non-code", "runtimes/notice.md")
             }
 
             val copyDockerfile = tasks.register("copyDockerfile", Copy::class) {
