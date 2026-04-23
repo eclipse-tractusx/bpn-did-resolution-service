@@ -119,9 +119,9 @@ The checklist list the fulfillment concerning each TRG point and in which freque
   - Fulfilled by release automation, check frequency, on changes concerning TRG 7.1
 - [TRG 7.06](https://eclipse-tractusx.github.io/docs/release/trg-7/trg-7-06) Legal information for end user content
   - Not applicable 
-- [TRG 7.07](https://eclipse-tractusx.github.io/docs/release/trg-7/trg-7-07) TRG 7.07 - Legal notice for non-code (e.g. KITS, documentation, images, slidesets, issue content)
+- [TRG 7.07](https://eclipse-tractusx.github.io/docs/release/trg-7/trg-7-07) Legal notice for non-code (e.g. KITS, documentation, images, slidesets, issue content)
   - Not applicable
-- [TRG 7.09](https://eclipse-tractusx.github.io/docs/release/trg-7/trg-7-09) TRG 7.09 - Deprecation of Unmaintained Repositories
+- [TRG 7.09](https://eclipse-tractusx.github.io/docs/release/trg-7/trg-7-09) Deprecation of Unmaintained Repositories
   - Not applicable
 
 #### TRG 8 Security
