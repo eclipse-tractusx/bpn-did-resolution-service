@@ -66,5 +66,5 @@ swagger-annotations = { module = "io.swagger.core.v3:swagger-annotations", versi
 [plugins]
 shadow = { id = "com.gradleup.shadow", version = "9.4.1" }
 docker = { id = "com.bmuschko.docker-remote-api", version = "10.0.0" }
-swagger = { id = "io.swagger.core.v3.swagger-gradle-plugin", version = "2.2.49" }
+swagger = { id = "io.swagger.core.v3.swagger-gradle-plugin", version = "2.2.50" }
 edc-build = { id = "org.eclipse.edc.edc-build", version.ref = "edc-build" }
