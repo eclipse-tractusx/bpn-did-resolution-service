@@ -1,5 +1,5 @@
 #################################################################################
-#  Copyright (c) 2025 Cofinity-X
+#  Copyright (c) 2026 Cofinity-X GmbH
 #
 #  See the NOTICE file(s) distributed with this work for additional
 #  information regarding copyright ownership.
@@ -17,31 +17,13 @@
 #  SPDX-License-Identifier: Apache-2.0
 #################################################################################
 
+skip:
+  - rule: github_action_from_unverified_creator_used
+    path: .github/workflows/trivy.yml
+  - rule: unpinnable_action
+    path: .github/workflows/trivy.yml
+  - rule: github_action_from_unverified_creator_used
+    path: .github/actions/generate-and-check-dependencies/action.yml
+  - rule: unpinnable_action
+    path: .github/actions/generate-and-check-dependencies/action.yml
 
-name: triage opened issue
-
-on:
-  issues:
-    types:
-      - reopened
-      - opened
-
-permissions:
-  contents: read
-
-jobs:
-  label-issue:
-    runs-on: ubuntu-latest
-    permissions:
-      issues: write
-    steps:
-      - name: Harden Runner
-        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5 # v2.19.3
-        with:
-          egress-policy: audit
-      - run: gh issue edit "$NUMBER" --add-label "$LABELS"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-          NUMBER: ${{ github.event.issue.number }}
-          LABELS: triage

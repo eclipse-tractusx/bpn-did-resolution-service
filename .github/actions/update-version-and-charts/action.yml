@@ -33,39 +33,49 @@ runs:
     - name: Resolve version
       id: resolver
       shell: bash
+      env:
+        BUMP_VERSION: ${{ inputs.bump_version }}
+        INPUT_VERSION: ${{ inputs.version }}
       run: |
-        if [[ "${{ inputs.bump_version }}" == "true" ]] then
-          IFS=.- read -r MAJOR MINOR PATCH SNAPSHOT<<<"${{ inputs.version }}"  
+        if [[ "$BUMP_VERSION" == "true" ]] then
+          IFS=.- read -r MAJOR MINOR PATCH SNAPSHOT<<<"$INPUT_VERSION"
           VERSION="$MAJOR.$((MINOR+1)).0-SNAPSHOT"
         else
-          VERSION=${{ inputs.version }}
+          VERSION="$INPUT_VERSION"
         fi
         echo "version=$VERSION" >> "$GITHUB_OUTPUT"
     - name: Bump version in /charts
-      uses: mikefarah/yq@v4.53.2
+      uses: mikefarah/yq@751d8ad57b84f1794661bc70c0afb92a22ad7b3c # v4.53.2
+      env:
+        RESOLVED_VERSION: ${{ steps.resolver.outputs.version }}
       with:
         cmd: |
-          find charts -name Chart.yaml -maxdepth 3 | xargs -n1 yq -i '.appVersion = "${{ steps.resolver.outputs.version }}" 
-            | .version = "${{ steps.resolver.outputs.version }}"'
+          find charts -name Chart.yaml -maxdepth 3 | xargs -n1 yq -i '.appVersion = env(RESOLVED_VERSION) | .version = env(RESOLVED_VERSION)'
     - name: Update Chart READMEs
-      uses: addnab/docker-run-action@v3
-      with:
-        image: jnorwood/helm-docs:v1.14.2
-        options: -v ${{ github.workspace }}/charts:/helm-docs
-        run: |
+      shell: bash
+      run: |
+        docker run --rm \
+          -v "${{ github.workspace }}/charts:/helm-docs" \
+          jnorwood/helm-docs:v1.14.2 \
           helm-docs --log-level debug
     - name: Update version in gradle.properties
       shell: bash
+      env:
+        RESOLVED_VERSION: ${{ steps.resolver.outputs.version }}
       run: |-
-        sed -i  's/version=.*/version=${{ steps.resolver.outputs.version }}/g' gradle.properties
+        sed -i 's/version=.*/version='"$RESOLVED_VERSION"'/g' gradle.properties
     - name: Commit changes
       id: make-commit
       shell: bash
+      env:
+        BUMP_VERSION: ${{ inputs.bump_version }}
+        INPUT_VERSION: ${{ inputs.version }}
+        RESOLVED_VERSION: ${{ steps.resolver.outputs.version }}
       run: |
-        if [[ "${{ inputs.bump_version }}" == "true" ]] then
-          MESSAGE="Bump to version ${{ steps.resolver.outputs.version }}"
+        if [[ "$BUMP_VERSION" == "true" ]] then
+          MESSAGE="Bump to version $RESOLVED_VERSION"
         else
-          MESSAGE="Prepare release ${{ inputs.version }}"
+          MESSAGE="Prepare release $INPUT_VERSION"
         fi
         
         git add .

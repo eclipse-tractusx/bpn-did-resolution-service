@@ -28,6 +28,9 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
 
   secret-presence:
@@ -35,6 +38,10 @@ jobs:
     outputs:
       AZURE_KV_CREDS: ${{ steps.secret-presence.outputs.AZURE_KV_CREDS }}
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        with:
+          egress-policy: audit
       - name: Check whether secrets exist
         id: secret-presence
         run: |
@@ -44,8 +51,12 @@ jobs:
   test-prepare:
     runs-on: ubuntu-latest
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        with:
+          egress-policy: audit
       - name: Cache ContainerD Image Layers
-        uses: actions/cache@v5
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         with:
           path: /var/lib/containerd/io.containerd.snapshotter.v1.overlayfs
           key: ${{ runner.os }}-io.containerd.snapshotter.v1.overlayfs
@@ -65,7 +76,13 @@ jobs:
                        "v1.33.7" ]
     needs: test-prepare
     steps:
-      - uses: actions/checkout@v6
+      - name: Harden Runner
+        uses: step-security/harden-runner@fa2e9d605c4eeb9fcad4c99c224cee0c6c7f3594 # v2.16.0
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/run-deployment-test
         name: "deploy ${{ matrix.variant.chart }}"
         with:

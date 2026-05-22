@@ -30,6 +30,9 @@ updates:
       - "dependencies"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 50
+    cooldown:
+      default-days: 7
 
   # Github Actions
   -
@@ -43,6 +46,9 @@ updates:
       - "github-actions"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 50
+    cooldown:
+      default-days: 7
 
   # Docker
   -
@@ -57,3 +63,6 @@ updates:
       - "docker"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 50
+    cooldown:
+      default-days: 7
