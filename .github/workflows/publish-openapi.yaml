@@ -30,4 +30,3 @@ permissions:
 jobs:
   publish:
     uses: eclipse-edc/.github/.github/workflows/publish-openapi-ui.yml@main
-    secrets: inherit
