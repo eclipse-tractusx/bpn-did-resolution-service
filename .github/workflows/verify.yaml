@@ -27,14 +27,23 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   
   verify-helm-docs:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - name: Harden Runner
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5 # v2.19.3
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
       - run: |
-          docker run -v ${{ github.workspace }}/charts:/helm-docs jnorwood/helm-docs:v1.14.2 helm-docs
+          docker run -v "${GITHUB_WORKSPACE}/charts:/helm-docs" jnorwood/helm-docs helm-docs
           
           if $(git diff --quiet --exit-code); then
             echo "Helm chart docs up to date"
@@ -47,7 +56,13 @@ jobs:
   verify-license-headers:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - name: Harden Runner
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5 # v2.19.3
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
       - name: "Check for files without a license header"
         run: |-
           # checks all java, yaml, kts and sql files for an Apache 2.0 license header
@@ -62,7 +77,13 @@ jobs:
   verify-formatting:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - name: Harden Runner
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5 # v2.19.3
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
       - uses: ./.github/actions/setup-java
       - name: Run Checkstyle
@@ -73,7 +94,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ verify-formatting ]
     steps:
-      - uses: actions/checkout@v6
+      - name: Harden Runner
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5 # v2.19.3
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
       - uses: ./.github/actions/setup-java
 
@@ -82,7 +110,7 @@ jobs:
 
       # uploads the jacoco report as artifact
       - name: Upload JaCoCo Coverage Report
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: JaCoCo coverage-report
           path: build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml
@@ -91,25 +119,30 @@ jobs:
       # generates coverage-report.md
       - name: JaCoCo Code Coverage Report
         id: jacoco_reporter
-        uses: PavanMudigonda/jacoco-reporter@v5.1
+        uses: PavanMudigonda/jacoco-reporter@e8b54bfea6a667d1a68624dae8a06ba31670667d # v5.1
         with:
           coverage_results_path: build/reports/jacoco/testCodeCoverageReport/testCodeCoverageReport.xml
           skip_check_run: true
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
-      # Publish Coverage Job Summary
       - name: Output KPIs from JaCoCo report
+        env:
+          COVERAGE_PERCENTAGE: ${{ steps.jacoco_reporter.outputs.coverage_percentage }}
+          COVERED_LINES: ${{ steps.jacoco_reporter.outputs.covered_lines }}
+          MISSED_LINES: ${{ steps.jacoco_reporter.outputs.missed_lines }}
+          TOTAL_LINES: ${{ steps.jacoco_reporter.outputs.total_lines }}
         run: |
           echo "| Outcome | Value |" >> $GITHUB_STEP_SUMMARY
           echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
-          echo "| Code Coverage % | ${{ steps.jacoco_reporter.outputs.coverage_percentage }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| :heavy_check_mark: Number of Lines Covered | ${{ steps.jacoco_reporter.outputs.covered_lines }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| :x: Number of Lines Missed | ${{ steps.jacoco_reporter.outputs.missed_lines }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Total Number of Lines | ${{ steps.jacoco_reporter.outputs.total_lines }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Code Coverage % | $COVERAGE_PERCENTAGE |" >> $GITHUB_STEP_SUMMARY
+          echo "| :heavy_check_mark: Number of Lines Covered | $COVERED_LINES |" >> $GITHUB_STEP_SUMMARY
+          echo "| :x: Number of Lines Missed | $MISSED_LINES |" >> $GITHUB_STEP_SUMMARY
+          echo "| Total Number of Lines | $TOTAL_LINES |" >> $GITHUB_STEP_SUMMARY
+
 
       # uploads the coverage-report.md artifact
       - name: Upload Code Coverage Markdown Report
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: code-coverage-report-markdown
           path: "*/coverage-results.md"
@@ -119,7 +152,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ verify-formatting ]
     steps:
-      - uses: actions/checkout@v6
+      - name: Harden Runner
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5 # v2.19.3
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
 
       - uses: ./.github/actions/setup-java
 
@@ -132,7 +172,15 @@ jobs:
     needs: [ verify-formatting ]
 
     steps:
-      - uses: actions/checkout@v6
+      - name: Harden Runner
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5 # v2.19.3
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
       - uses: ./.github/actions/setup-java
 
       - name: Run Postgresql E2E tests

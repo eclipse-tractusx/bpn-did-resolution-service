@@ -1,5 +1,5 @@
 #################################################################################
-#  Copyright (c) 2024 Bayerische Motoren Werke Aktiengesellschaft (BMW AG)
+#  Copyright (c) 2026 Cofinity-X GmbH
 #
 #  See the NOTICE file(s) distributed with this work for additional
 #  information regarding copyright ownership.
@@ -17,16 +17,13 @@
 #  SPDX-License-Identifier: Apache-2.0
 #################################################################################
 
-name: publish openapi ui
+skip:
+  - rule: github_action_from_unverified_creator_used
+    path: .github/workflows/trivy.yml
+  - rule: unpinnable_action
+    path: .github/workflows/trivy.yml
+  - rule: github_action_from_unverified_creator_used
+    path: .github/actions/generate-and-check-dependencies/action.yml
+  - rule: unpinnable_action
+    path: .github/actions/generate-and-check-dependencies/action.yml
 
-on:
-  workflow_call:
-
-permissions:
-  contents: write
-  packages: write
-  pages: write
-
-jobs:
-  publish:
-    uses: eclipse-edc/.github/.github/workflows/publish-openapi-ui.yml@main

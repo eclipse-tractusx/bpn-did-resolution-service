@@ -49,13 +49,15 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - uses: actions/checkout@v6.0.2
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        persist-credentials: false
 
     #####################
     # Login to DockerHub
     #####################
     - name: DockerHub login
-      uses: docker/login-action@v4
+      uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
       with:
         username: ${{ inputs.docker_user }}
         password: ${{ inputs.docker_token }}
@@ -66,8 +68,11 @@ runs:
     - uses: ./.github/actions/setup-java
     - name: Build executable
       shell: bash
+      env:
+        ROOT_DIR: ${{ inputs.rootDir }}
+        IMAGE_NAME: ${{ inputs.imagename }}
       run: |-
-        ./gradlew -p ${{ inputs.rootDir }}/${{ inputs.imagename }} shadowJar
+        ./gradlew -p "$ROOT_DIR"/"$IMAGE_NAME" shadowJar
 
     ###############################
     # Set metadata of docker image
@@ -75,7 +80,7 @@ runs:
     # Create SemVer or ref tags dependent of trigger event
     - name: Docker meta
       id: meta
-      uses: docker/metadata-action@v6
+      uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
       with:
         images: |
           ${{ inputs.namespace }}/${{ inputs.imagename }}
@@ -92,13 +97,16 @@ runs:
     # Build and push the image
     ###############################
     - name: Build and push
-      uses: docker/build-push-action@v7
+      uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7.2.0
+      env:
+        ROOT_DIR: ${{ inputs.rootDir }}
+        IMAGE_NAME: ${{ inputs.imagename }}
       with:
         context: .
-        file: ${{ inputs.rootDir }}/Dockerfile
+        file: ${{ env.ROOT_DIR }}/Dockerfile
         build-args: |
-          JAR=${{ inputs.rootDir }}/${{ inputs.imagename }}/build/libs/${{ inputs.imagename }}.jar
-          OTEL_JAR=${{ inputs.rootDir }}/${{ inputs.imagename }}/opentelemetry-javaagent.jar
+          JAR=${{ env.ROOT_DIR }}/${{ env.IMAGE_NAME }}/build/libs/${{ env.IMAGE_NAME }}.jar
+          OTEL_JAR=${{ env.ROOT_DIR }}/${{ env.IMAGE_NAME }}/opentelemetry-javaagent.jar
         push: ${{ inputs.do_push == 'true' }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
@@ -108,7 +116,7 @@ runs:
     # https://github.com/peter-evans/dockerhub-description
     ###############################
     - name: Update Docker Hub description
-      uses: peter-evans/dockerhub-description@v5
+      uses: peter-evans/dockerhub-description@1b9a80c056b620d92cedb9d9b5a223409c68ddfa # v5.0.0
       with:
         readme-filepath: ${{ inputs.rootDir }}/notice.md
         username: ${{ inputs.docker_user }}

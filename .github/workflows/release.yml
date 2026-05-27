@@ -36,9 +36,14 @@ on:
         required: true
         default: ""
 
+permissions:
+  contents: read
+
 jobs:
   run-all-tests:
     name: "Run All Tests"
+    permissions:
+      contents: write
     uses: ./.github/workflows/run-all-tests.yml
 
   validation:
@@ -49,9 +54,14 @@ jobs:
       release_version: ${{ steps.release-version.outputs.release_version }}
       update_main_branch_version: ${{ steps.update-main.outputs.update_main_branch_version }}
     steps:
-      - uses: actions/checkout@v6
+      - name: Harden Runner
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5 # v2.19.3
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
+          persist-credentials: false
       - name: Output release version
         id: release-version
         run: |
@@ -59,8 +69,10 @@ jobs:
           echo "release_version=$VERSION" >> $GITHUB_OUTPUT
       - name: Output update main branch version
         id: update-main
+        env:
+          RELEASE_VERSION: ${{ steps.release-version.outputs.RELEASE_VERSION }}
         run: |
-          IFS=.- read -r MAJOR MINOR PATCH SNAPSHOT<<<"${{ steps.release-version.outputs.release_version }}" 
+          IFS=.- read -r MAJOR MINOR PATCH SNAPSHOT<<<"$RELEASE_VERSION"
           if [[ $PATCH == '0' && -z $SNAPSHOT ]]; 
           then
             echo "update_main_branch_version=true" >> $GITHUB_OUTPUT
@@ -68,25 +80,32 @@ jobs:
             echo "update_main_branch_version=false" >> $GITHUB_OUTPUT
           fi
       - name: Validations
+        env:
+          REPOSITORY: ${{ github.repository }}
+          REF_NAME: ${{ github.ref_name }}
+          RELEASE_VERSION: ${{ steps.release-version.outputs.RELEASE_VERSION }}
         run: |
-          if [[ "${{ github.repository }}" != "eclipse-tractusx/bpn-did-resolution-service" ]]; then
-            echo "This workflow can only be run on the eclipse-tractusx/bpn-did-resolution-service repository."
+          if [[ "$REPOSITORY" != "eclipse-tractusx/tractusx-edc" ]]; then
+            echo "This workflow can only be run on the eclipse-tractusx/tractusx-edc repository."
             exit 1
           fi
-          
-          if [[ ! "${{ github.ref_name }}" =~ ^release/ ]]; then
+
+          if [[ ! "$REF_NAME" =~ ^release/ ]]; then
             echo "This workflow can only be run on the branches starting with release/."
             exit 1
           fi
-          
-          if [[ "${{steps.release-version.outputs.release_version}}" =~ SNAPSHOT ]]; then
+
+          if [[ "$RELEASE_VERSION" =~ SNAPSHOT ]]; then
             echo "This workflow can not be executed for SNAPSHOT versions."
             exit 1
           fi
       - name: Validate previous_tag exists
+        env:
+          PREVIOUS_TAG: ${{ inputs.previous_tag }}
         run: |
-          git show-ref --tags --verify --quiet "refs/tags/${{ inputs.previous_tag }}" \
-            || (echo "Tag '${{ inputs.previous_tag }}' not found." && exit 1)
+          git show-ref --tags --verify --quiet "refs/tags/$PREVIOUS_TAG" \
+            || (echo "Tag '$PREVIOUS_TAG' not found." && exit 1)
+  
 
   # Release: Maven Artifacts
   maven-release:
@@ -96,7 +115,11 @@ jobs:
       contents: read
     if: needs.validation.outputs.release_version
     uses: ./.github/workflows/trigger-maven-publish.yaml
-    secrets: inherit
+    secrets:
+      ORG_GPG_PRIVATE_KEY: ${{ secrets.ORG_GPG_PRIVATE_KEY }}
+      ORG_GPG_PASSPHRASE: ${{ secrets.ORG_GPG_PASSPHRASE }}
+      CENTRAL_SONATYPE_TOKEN_USERNAME: ${{ secrets.CENTRAL_SONATYPE_TOKEN_USERNAME }}
+      CENTRAL_SONATYPE_TOKEN_PASSWORD: ${{ secrets.CENTRAL_SONATYPE_TOKEN_PASSWORD }}
     with:
       version: ${{ needs.validation.outputs.release_version }}
 
@@ -118,7 +141,13 @@ jobs:
         ]
 
     steps:
-      - uses: actions/checkout@v6
+      - name: Harden Runner
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5 # v2.19.3
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: true
       - uses: ./.github/actions/publish-docker-image
         name: Publish ${{ matrix.variant.img }}
         with:
@@ -140,14 +169,21 @@ jobs:
 
     if: needs.validation.outputs.release_version
     steps:
-      - uses: actions/checkout@v6
+      - name: Harden Runner
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5 # v2.19.3
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
+          persist-credentials: true
       - name: Install Helm
-        uses: azure/setup-helm@v5
+        uses: azure/setup-helm@dda3372f752e03dde6b3237bc9431cdc2f7a02a2 # v5.0.0
         with:
           version: v3.8.1
       - name: Package helm, update index.yaml and push to gh-pages
+        env:
+          RELEASE_VERSION: ${{ needs.validation.outputs.RELEASE_VERSION }}
         run: |
           # Prepare git env
           git config user.name "eclipse-tractusx-bot"
@@ -164,7 +200,7 @@ jobs:
 
           # Commit and push to gh-pages
           git add index.yaml helm-charts
-          git commit -s -m "Release ${{ needs.validation.outputs.release_version }}"
+          git commit -s -m "Release $RELEASE_VERSION"
 
           git push origin gh-pages
 
@@ -177,13 +213,20 @@ jobs:
       contents: write
     if: needs.validation.outputs.release_version
     steps:
-      - uses: actions/checkout@v6
+      - name: Harden Runner
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5 # v2.19.3
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           # 0 to fetch the full history due to upcoming merge of releases into main branch
           fetch-depth: 0
+          persist-credentials: true
       - name: Create Release Tag
         id: create_release_tag
         shell: bash
+        env:
+          RELEASE_VERSION: ${{ needs.validation.outputs.RELEASE_VERSION }}
         run: |
           # Prepare git env
           git config user.name "eclipse-tractusx-bot"
@@ -194,17 +237,24 @@ jobs:
           git tag
 
           # Create & push tag
-          git tag --force ${{ needs.validation.outputs.release_version }}
-          git push --force origin ${{ needs.validation.outputs.release_version }}
+          git tag "$RELEASE_VERSION"
+          git push origin "$RELEASE_VERSION"
       - name: Create GitHub Release
-        uses: ncipollo/release-action@v1
-        with:
-          generateReleaseNotes: true
-          generateReleaseNotesPreviousTag: ${{ inputs.previous_tag }}
-          tag: ${{ needs.validation.outputs.release_version }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          makeLatest: ${{ inputs.latest }}
-          removeArtifacts: true
+        env:
+          RELEASE_VERSION: ${{ needs.validation.outputs.RELEASE_VERSION }}
+          PREVIOUS_TAG: ${{ inputs.previous_tag }}
+          MAKE_LATEST: ${{ inputs.latest }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          LATEST_FLAG=""
+          if [[ "$MAKE_LATEST" == "true" ]]; then
+            LATEST_FLAG="--latest"
+          fi
+          gh release create "$RELEASE_VERSION" \
+            --generate-notes \
+            --notes-start-tag "$PREVIOUS_TAG" \
+            --verify-tag \
+            $LATEST_FLAG
 
   publish-openapi-to-gh-pages:
     name: "Publish OpenAPI UI spec GitHub Pages"
@@ -214,7 +264,6 @@ jobs:
       pages: write
     needs: [ validation ]
     uses: ./.github/workflows/publish-openapi.yaml
-    secrets: inherit
 
   main-branch-update:
     name: "Bump main branch version"
@@ -226,11 +275,15 @@ jobs:
       packages: write
       pages: write
     steps:
-      - name: Checkout main
-        uses: actions/checkout@v6
+      - name: Harden Runner
+        uses: step-security/harden-runner@ab7a9404c0f3da075243ca237b5fac12c98deaa5 # v2.19.3
+        with:
+          egress-policy: audit
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
           ref: main
+          persist-credentials: true
       - name: Version and Chart Updates
         uses: ./.github/actions/update-version-and-charts
         with:

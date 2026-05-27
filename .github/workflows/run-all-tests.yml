@@ -39,15 +39,18 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   verify:
+    permissions:
+      contents: write
     uses: ./.github/workflows/verify.yaml
-    secrets: inherit
 
   deployment-test:
     uses: ./.github/workflows/deployment-test.yaml
-    secrets: inherit
 
 # TODO: Disabled due to the postgres image change, enable again when a new release is out, there is no
 # upgradability between version 0.5.x and 0.6.x
