@@ -23,6 +23,7 @@
 name: "Manually publish Docker images to DockerHub"
 
 on:
+  workflow_call:
   workflow_dispatch:
     inputs:
       namespace:

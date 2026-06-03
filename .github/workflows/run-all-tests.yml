@@ -32,7 +32,19 @@ on:
     paths-ignore:
       - docs/**
   workflow_dispatch:
+    inputs:
+      publish:
+        description: "Publish docker image"
+        required: false
+        type: boolean
+        default: false
   workflow_call:
+    inputs:
+      publish:
+        description: "Publish docker image"
+        required: false
+        type: boolean
+        default: false
 
 concurrency:
   # cancel older running jobs on the same branch
@@ -65,4 +77,13 @@ jobs:
     steps:
       - name: 'Master test job'
         run: echo "all test jobs have run by now"
+
+  publish-docker:
+    name: "Publish docker image"
+    needs: [ summary ]
+    permissions:
+      contents: write
+      packages: write
+    if: ${{ (github.ref_name == 'main' || startsWith(github.ref_name, 'release/')) && (github.event_name == 'push' || inputs.publish == true) }}
+    uses: ./.github/workflows/publish-docker.yaml
 
