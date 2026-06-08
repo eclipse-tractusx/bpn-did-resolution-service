@@ -24,6 +24,21 @@ name: "Manually publish Docker images to DockerHub"
 
 on:
   workflow_call:
+    inputs:
+      namespace:
+        description: 'The namespace (=repo) in DockerHub'
+        required: false
+        type: string
+        default: "tractusx"
+      docker_tag:
+        description: 'Explicitly specify the Docker tag. Note that SHA and latest are added automatically.'
+        required: false
+        type: string
+    secrets:
+      DOCKER_HUB_USER:
+        required: false
+      DOCKER_HUB_TOKEN:
+        required: false
   workflow_dispatch:
     inputs:
       namespace:
