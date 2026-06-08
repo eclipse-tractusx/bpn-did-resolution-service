@@ -86,4 +86,6 @@ jobs:
       packages: write
     if: ${{ (github.ref_name == 'main' || startsWith(github.ref_name, 'release/')) && (github.event_name == 'push' || inputs.publish == true) }}
     uses: ./.github/workflows/publish-docker.yaml
-
+    secrets:
+      DOCKER_HUB_USER: ${{ secrets.DOCKER_HUB_USER }}
+      DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_TOKEN }}
