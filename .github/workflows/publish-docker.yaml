@@ -81,7 +81,7 @@ jobs:
         name: Publish ${{ matrix.variant.img }}
         with:
           docker_tag: ${{ inputs.docker_tag }}
-          rootDir: ${{ matrix.variant.dir }}/${{ matrix.variant.img }}
+          rootDir: ${{ matrix.variant.dir }}
           imagename: ${{ matrix.variant.img }}
           namespace: ${{ inputs.namespace }}
           docker_user: ${{ secrets.DOCKER_HUB_USER }}
