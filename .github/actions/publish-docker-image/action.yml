@@ -72,7 +72,7 @@ runs:
         ROOT_DIR: ${{ inputs.rootDir }}
         IMAGE_NAME: ${{ inputs.imagename }}
       run: |-
-        ./gradlew -p "$ROOT_DIR" shadowJar
+        ./gradlew -p "$ROOT_DIR"/"$IMAGE_NAME" shadowJar
 
     ###############################
     # Set metadata of docker image
