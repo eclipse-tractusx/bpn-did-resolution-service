@@ -15,12 +15,13 @@
 #  under the License.
 #
 #  SPDX-License-Identifier: Apache-2.0
+#  Assisted-By: Claude Sonnet 4.6
 #################################################################################
 
 ---
 version: 2
 updates:
-  # Maven
+  # Gradle
   -
     package-ecosystem: "gradle"
     target-branch: main
@@ -33,6 +34,19 @@ updates:
     open-pull-requests-limit: 50
     cooldown:
       default-days: 7
+    groups:
+      edc:
+        comment: "All Eclipse EDC artifacts share a single version"
+        patterns:
+          - "org.eclipse.edc*"
+      flyway:
+        comment: "Flyway core and database modules are released together"
+        patterns:
+          - "org.flywaydb*"
+      swagger:
+        comment: "Swagger annotations and Gradle plugin share the same version"
+        patterns:
+          - "io.swagger.core.v3*"
 
   # Github Actions
   -
@@ -49,6 +63,11 @@ updates:
     open-pull-requests-limit: 50
     cooldown:
       default-days: 7
+    groups:
+      github-actions:
+        comment: "Group all GitHub Actions updates to reduce PR noise"
+        patterns:
+          - "*"
 
   # Docker
   -
