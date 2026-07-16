@@ -15,7 +15,7 @@
 #  under the License.
 #
 #  SPDX-License-Identifier: Apache-2.0
-#  Assisted-By: Claude Sonnet 4.6
+#  Assisted-By: Claude Opus 4.8
 #################################################################################
 
 ---
@@ -36,17 +36,19 @@ updates:
       default-days: 7
     groups:
       edc:
-        comment: "All Eclipse EDC artifacts share a single version"
         patterns:
           - "org.eclipse.edc*"
-      flyway:
-        comment: "Flyway core and database modules are released together"
+      database:
         patterns:
           - "org.flywaydb*"
-      swagger:
-        comment: "Swagger annotations and Gradle plugin share the same version"
+          - "org.postgresql*"
+      misc:
         patterns:
           - "io.swagger.core.v3*"
+          - "com.nimbusds*"
+          - "io.rest-assured*"
+          - "com.gradleup*"
+          - "com.bmuschko*"
 
   # Github Actions
   -
