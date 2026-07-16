@@ -67,7 +67,6 @@ updates:
       default-days: 7
     groups:
       github-actions:
-        comment: "Group all GitHub Actions updates to reduce PR noise"
         patterns:
           - "*"
 
