@@ -78,7 +78,7 @@ maven/mavencentral/io.rest-assured/xml-path/6.0.1, Apache-2.0, approved, #29908
 maven/mavencentral/io.setl/rdf-urdna/1.1, Apache-2.0, approved, clearlydefined
 maven/mavencentral/io.swagger.core.v3/swagger-annotations-jakarta/2.2.42, Apache-2.0, approved, #5947
 maven/mavencentral/io.swagger.core.v3/swagger-annotations/2.2.42, Apache-2.0, approved, #11362
-maven/mavencentral/io.swagger.core.v3/swagger-annotations/2.2.52, Apache-2.0, approved, #11362
+maven/mavencentral/io.swagger.core.v3/swagger-annotations/2.2.53, Apache-2.0, approved, #11362
 maven/mavencentral/io.swagger.core.v3/swagger-core-jakarta/2.2.42, Apache-2.0, approved, #5929
 maven/mavencentral/io.swagger.core.v3/swagger-core/2.2.42, Apache-2.0, approved, #9265
 maven/mavencentral/io.swagger.core.v3/swagger-integration-jakarta/2.2.42, Apache-2.0, approved, #11475
@@ -242,8 +242,9 @@ maven/mavencentral/org.eclipse.jetty/jetty-server/12.1.6, EPL-2.0 OR Apache-2.0,
 maven/mavencentral/org.eclipse.jetty/jetty-session/12.1.6, EPL-2.0 OR Apache-2.0, approved, rt.jetty
 maven/mavencentral/org.eclipse.jetty/jetty-util/12.1.6, EPL-2.0 OR Apache-2.0, approved, rt.jetty
 maven/mavencentral/org.eclipse.parsson/parsson/1.1.7, EPL-2.0, approved, ee4j.parsson
-maven/mavencentral/org.flywaydb/flyway-core/13.1.0, , restricted, clearlydefined
-maven/mavencentral/org.flywaydb/flyway-database-postgresql/13.1.0, , restricted, clearlydefined
+maven/mavencentral/org.flywaydb/flyway-core/13.2.0, , restricted, clearlydefined
+maven/mavencentral/org.flywaydb/flyway-database-cockroachdb/13.2.0, , restricted, clearlydefined
+maven/mavencentral/org.flywaydb/flyway-database-postgresql/13.2.0, , restricted, clearlydefined
 maven/mavencentral/org.glassfish.hk2.external/aopalliance-repackaged/4.0.0-M3, EPL-2.0 OR GPL-2.0-only with Classpath-exception-2.0, approved, ee4j.glassfish
 maven/mavencentral/org.glassfish.hk2/hk2-api/4.0.0-M3, EPL-2.0 OR GPL-2.0-only with Classpath-exception-2.0, approved, ee4j.glassfish
 maven/mavencentral/org.glassfish.hk2/hk2-locator/4.0.0-M3, EPL-2.0 OR GPL-2.0-only with Classpath-exception-2.0, approved, ee4j.glassfish
