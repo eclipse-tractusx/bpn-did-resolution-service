@@ -114,6 +114,7 @@ subprojects {
 
                 dependsOn(shadowJarTask)
                 dependsOn(copyLegalDocs)
+                dependsOn(tasks.named("jar"))
             }
         }
     }
