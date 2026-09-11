@@ -210,6 +210,35 @@ server:
         issuer: ""
         # -- If preset enables certificate generation via cert-manager cluster-wide issuer
         clusterIssuer: ""
+  ## Gateway API HTTPRoute declarations to expose the network service.
+  ## Each entry mirrors an ingress above, but uses Gateway API instead of Ingress.
+  ## TLS is handled at the Gateway level, not per-route.
+  httpRoutes:
+    ## Public / Internet facing HTTPRoute for the Directory API
+    - enabled: false
+      # -- The hostname to be used to match incoming traffic
+      hostname: "bdrs-server.directory.local"
+      # -- Additional HTTPRoute annotations to add
+      annotations: {}
+      # -- BDRS endpoints exposed by this HTTPRoute resource
+      endpoints:
+        - directory
+      # -- Gateway parentRefs that this HTTPRoute attaches to
+      parentRefs: []
+      #   - name: traefik-gateway
+      #     namespace: traefik
+      #     sectionName: websecure
+    ## HTTPRoute for the Management API, should not be internet facing
+    - enabled: false
+      # -- The hostname to be used to match incoming traffic
+      hostname: "bdrs-server.mgmt.local"
+      # -- Additional HTTPRoute annotations to add
+      annotations: {}
+      # -- BDRS endpoints exposed by this HTTPRoute resource
+      endpoints:
+        - management
+      # -- Gateway parentRefs that this HTTPRoute attaches to
+      parentRefs: []
   # -- declare where to mount [volumes](https://kubernetes.io/docs/concepts/storage/volumes/) into the container
   volumeMounts: []
   # -- [volume](https://kubernetes.io/docs/concepts/storage/volumes/) directories

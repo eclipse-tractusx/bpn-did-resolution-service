@@ -1,0 +1,48 @@
+#
+#  SPDX-License-Identifier: Apache-2.0
+#################################################################################
+
+{{- $fullName := include "bdrs.fullname" . }}
+{{- $controlLabels := include "bdrs.server.labels" . }}
+{{- $controlBdrsEndpoints := .Values.server.endpoints }}
+{{- $namespace := .Release.Namespace }}
+
+{{- range .Values.server.httpRoutes }}
+{{- if and .enabled .endpoints }}
+{{- $routeName := printf "%s-%s" $fullName .hostname }}
+{{- $annotations := .annotations | default dict }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ $routeName }}
+  namespace: {{ $namespace | default "default" | quote }}
+  labels:
+    {{- $controlLabels | nindent 4 }}
+  {{- with $annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .parentRefs }}
+  parentRefs:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  hostnames:
+    - {{ .hostname }}
+  rules:
+    {{- $routeEndpoints := .endpoints }}
+    {{- range $name, $mapping := $controlBdrsEndpoints }}
+    {{- if (has $name $routeEndpoints) }}
+    - matches:
+        - path:
+            type: PathPrefix
+            value: {{ $mapping.path }}
+      backendRefs:
+        - name: {{ $fullName }}
+          port: {{ $mapping.port }}
+          weight: 1
+    {{- end }}
+    {{- end }}
+{{- end }}
+{{- end }}
