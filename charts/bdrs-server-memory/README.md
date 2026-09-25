@@ -68,6 +68,16 @@ helm install my-release tractusx-edc/bdrs-server --version 0.7.0-SNAPSHOT \
 | server.envConfigMapNames | list | `[]` |  |
 | server.envSecretNames | list | `[]` |  |
 | server.envValueFrom | object | `{}` |  |
+| server.httpRoutes[0].annotations | object | `{}` | Additional HTTPRoute annotations to add |
+| server.httpRoutes[0].enabled | bool | `false` |  |
+| server.httpRoutes[0].endpoints | list | `["directory"]` | BDRS endpoints exposed by this HTTPRoute resource |
+| server.httpRoutes[0].hostname | string | `"bdrs-server.directory.local"` | The hostname to be used to match incoming traffic |
+| server.httpRoutes[0].parentRefs | list | `[]` | Gateway parentRefs that this HTTPRoute attaches to |
+| server.httpRoutes[1].annotations | object | `{}` | Additional HTTPRoute annotations to add |
+| server.httpRoutes[1].enabled | bool | `false` |  |
+| server.httpRoutes[1].endpoints | list | `["management"]` | BDRS endpoints exposed by this HTTPRoute resource |
+| server.httpRoutes[1].hostname | string | `"bdrs-server.mgmt.local"` | The hostname to be used to match incoming traffic |
+| server.httpRoutes[1].parentRefs | list | `[]` | Gateway parentRefs that this HTTPRoute attaches to |
 | server.image.pullPolicy | string | `"IfNotPresent"` | [Kubernetes image pull policy](https://kubernetes.io/docs/concepts/containers/images/#image-pull-policy) to use |
 | server.image.repository | string | `""` |  |
 | server.image.tag | string | `""` | Overrides the image tag whose default is the chart appVersion |
