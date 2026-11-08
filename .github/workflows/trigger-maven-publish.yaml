@@ -81,7 +81,7 @@ jobs:
 
           grep version gradle.properties | (echo -n "Publishing using " && cat)
 
-      - uses: eclipse-edc/.github/.github/actions/publish-maven-artifacts@main
+      - uses: eclipse-edc/.github/.github/actions/publish-maven-artifacts@d017ef0edb5a463c24faf56427f17d8992409611 # main
         with:
           gpg-private-key: ${{ secrets.ORG_GPG_PRIVATE_KEY }}
           gpg-passphrase: ${{ secrets.ORG_GPG_PASSPHRASE }}
