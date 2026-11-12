@@ -29,4 +29,4 @@ permissions:
 
 jobs:
   publish:
-    uses: eclipse-edc/.github/.github/workflows/publish-openapi-ui.yml@d017ef0edb5a463c24faf56427f17d8992409611 # main
+    uses: eclipse-edc/.github/.github/workflows/publish-openapi-ui.yml@240268bd2b52dcedf64f4cc2b22d21fb94deb688 # main
