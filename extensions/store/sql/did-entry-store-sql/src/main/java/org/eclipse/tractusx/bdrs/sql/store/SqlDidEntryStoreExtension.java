@@ -49,10 +49,10 @@ public class SqlDidEntryStoreExtension implements ServiceExtension {
     @Setting(required = true)
     public static final String DATASOURCE_SETTING_NAME = "edc.datasource.didentry.name";
 
-    @Setting(required = false, value = "Initial delay in seconds before the periodic checking of the database starts. Defaults to a random interval [1..3] sec")
+    @Setting(required = false, description = "Initial delay in seconds before the periodic checking of the database starts. Defaults to a random interval [1..3] sec")
     public static final String INITIAL_DELAY_PROPERTY = "edc.bdrs.didentry.store.cache.initialdelay";
 
-    @Setting(value = "Period in seconds at which the database is polled for updated entries. Defaults to " + DEFAULT_PERIOD_SEC + " sec.")
+    @Setting(description = "Period in seconds at which the database is polled for updated entries. Defaults to " + DEFAULT_PERIOD_SEC + " sec.")
     public static final String PERIOD_PROPERTY = "edc.bdrs.didentry.store.cache.period";
     public static final String MONITOR_PREFIX = "SQL DidEntry Store";
 

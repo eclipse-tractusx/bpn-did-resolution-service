@@ -20,7 +20,18 @@
 package org.eclipse.tractusx.bdrs.api.directory.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.JWSAlgorithm;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.crypto.ECDSASigner;
+import com.nimbusds.jose.jwk.Curve;
+import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import org.eclipse.edc.iam.verifiablecredentials.spi.VerifiableCredentialValidationService;
+import org.eclipse.edc.iam.verifiablecredentials.spi.model.CredentialSubject;
+import org.eclipse.edc.iam.verifiablecredentials.spi.model.Issuer;
+import org.eclipse.edc.iam.verifiablecredentials.spi.model.VerifiableCredential;
 import org.eclipse.edc.iam.verifiablecredentials.spi.model.VerifiablePresentation;
 import org.eclipse.edc.iam.verifiablecredentials.spi.validation.CredentialValidationRule;
 import org.eclipse.edc.spi.monitor.Monitor;
@@ -29,6 +40,7 @@ import org.eclipse.edc.transform.spi.TypeTransformerRegistry;
 import org.eclipse.edc.web.spi.exception.AuthenticationFailedException;
 import org.junit.jupiter.api.Test;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +51,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -85,6 +98,79 @@ class CredentialBasedAuthenticationServiceTest {
 
         assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + createSerializedJwt())))).isFalse();
         verify(monitor).warning(startsWith("Error validating BDRS client VP"));
+    }
+
+    @Test
+    void isAuthenticated_vpWithEmptyCredentials() {
+        var vp = VerifiablePresentation.Builder.newInstance()
+                .type("VerifiablePresentation")
+                .credentials(List.of())
+                .build();
+        when(typeTransformerRegistry.transform(any(), eq(VerifiablePresentation.class)))
+                .thenReturn(Result.success(vp));
+
+        assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + createSerializedJwtWithAudience())))).isFalse();
+        verify(monitor).warning("Verifiable Presentation contains no credentials");
+        verify(validationService, never()).validate(anyList(), any(), any(CredentialValidationRule[].class));
+    }
+
+    @Test
+    void isAuthenticated_vpWithNullCredentials() {
+        var vp = VerifiablePresentation.Builder.newInstance()
+                .type("VerifiablePresentation")
+                .credentials(null)
+                .build();
+        when(typeTransformerRegistry.transform(any(), eq(VerifiablePresentation.class)))
+                .thenReturn(Result.success(vp));
+
+        assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + createSerializedJwtWithAudience())))).isFalse();
+        verify(monitor).warning("Verifiable Presentation contains no credentials");
+        verify(validationService, never()).validate(anyList(), any(), any(CredentialValidationRule[].class));
+    }
+
+    @Test
+    void isAuthenticated_unexpectedExceptionDuringValidation() {
+        var exception = new RuntimeException("Unexpected error");
+        when(typeTransformerRegistry.transform(any(), eq(VerifiablePresentation.class)))
+                .thenThrow(exception);
+
+        assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + createSerializedJwtWithAudience())))).isFalse();
+        verify(monitor).severe("Unexpected error during credential validation: Unexpected error", exception);
+    }
+
+    @Test
+    void isAuthenticated_validJwtWithSuccessfulValidation() {
+        var credential = VerifiableCredential.Builder.newInstance()
+                .id("credential-id")
+                .type("CredentialType")
+                .credentialSubject(CredentialSubject.Builder.newInstance()
+                        .claim("membership", "active")
+                        .build())
+                .issuer(new Issuer("did:example:issuer"))
+                .issuanceDate(Instant.parse("2024-01-01T00:00:00Z"))
+                .build();
+        var vp = VerifiablePresentation.Builder.newInstance()
+                .type("VerifiablePresentation")
+                .credentials(List.of(credential))
+                .build();
+        when(typeTransformerRegistry.transform(any(), eq(VerifiablePresentation.class)))
+                .thenReturn(Result.success(vp));
+        when(validationService.validate(anyList(), any(), any(CredentialValidationRule[].class)))
+                .thenReturn(Result.success());
+
+        assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + createSerializedJwtWithAudience())))).isTrue();
+    }
+
+    private String createSerializedJwtWithAudience() {
+        try {
+            var key = new ECKeyGenerator(Curve.P_256).generate();
+            var jwt = new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.ES256).build(),
+                    new JWTClaimsSet.Builder().subject("test-subject").audience("test-audience").build());
+            jwt.sign(new ECDSASigner(key));
+            return jwt.serialize();
+        } catch (JOSEException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String createSerializedJwt() {

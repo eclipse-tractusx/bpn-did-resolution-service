@@ -39,9 +39,9 @@ import static org.eclipse.tractusx.bdrs.api.directory.DirectoryApiExtension.NAME
 public class DirectoryApiExtension implements ServiceExtension {
     public static final String NAME = "BPN Directory API";
 
-    @Setting(value = "Port for the Directory API", required = true)
+    @Setting(description = "Port for the Directory API", required = true)
     public static final String DIRECTORY_API_PORT = "web.http.directory.port";
-    @Setting(value = "Path for the Directory API", required = true)
+    @Setting(description = "Path for the Directory API", required = true)
     public static final String DIRECTORY_API_PATH = "web.http.directory.path";
     static final String CONTEXT_NAME = "directory";
     @Inject

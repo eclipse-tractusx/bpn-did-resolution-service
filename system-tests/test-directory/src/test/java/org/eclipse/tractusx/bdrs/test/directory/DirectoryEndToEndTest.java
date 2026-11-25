@@ -50,6 +50,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -249,6 +250,71 @@ public class DirectoryEndToEndTest {
 
         // create VP-JWT (signed by the presenter) that contains the VP as a claim
         var vpJwt = JwtCreationUtils.createJwt(vpHolderKey, holderId, null, "bdrs-server-audience", Map.of("vp", asMap(VP_CONTENT_EXAMPLE.formatted(holderId, "\"" + vcJwt1 + "\""))));
+
+        seedServer(BPN1, DID1);
+        getBpnDirectory(apiRequest().header("Authorization", "Bearer " + vpJwt))
+                .statusCode(401);
+    }
+
+    @DisplayName("Reject VP with empty credentials")
+    @Test
+    void getDirectory_validPresentation_emptyCredentials() throws IOException {
+        registerDids();
+
+        var vpJwt = JwtCreationUtils.createJwt(vpHolderKey, holderId, null, "bdrs-server-audience", Map.of("vp", Map.of("credentials", List.of())));
+
+        seedServer(BPN1, DID1);
+        getBpnDirectory(apiRequest().header("Authorization", "Bearer " + vpJwt))
+                .statusCode(401);
+    }
+
+    @DisplayName("Reject VP with null credentials")
+    @Test
+    void getDirectory_validPresentation_nullCredentials() throws IOException {
+        registerDids();
+
+        var vpClaim = new HashMap<String, Object>();
+        vpClaim.put("credentials", null);
+        var vpJwt = JwtCreationUtils.createJwt(vpHolderKey, holderId, null, "bdrs-server-audience", Map.of("vp", vpClaim));
+
+        seedServer(BPN1, DID1);
+        getBpnDirectory(apiRequest().header("Authorization", "Bearer " + vpJwt))
+                .statusCode(401);
+    }
+
+    @DisplayName("Reject VP with invalid credentials")
+    @Test
+    void getDirectory_validPresentation_invalidCredentials() throws IOException {
+        registerDids();
+
+        var vpJwt = JwtCreationUtils.createJwt(vpHolderKey, holderId, null, "bdrs-server-audience", Map.of("vp", Map.of("credentials", List.of("invalid-credential"))));
+
+        seedServer(BPN1, DID1);
+        getBpnDirectory(apiRequest().header("Authorization", "Bearer " + vpJwt))
+                .statusCode(401);
+    }
+
+    @DisplayName("Reject a valid VP with an empty verifiableCredential array")
+    @Test
+    void getDirectory_validPresentation_emptyVerifiableCredentialArray() throws IOException {
+        registerDids();
+
+        // VP-JWT signed by the presenter with "verifiableCredential": []
+        var vpJwt = JwtCreationUtils.createJwt(vpHolderKey, holderId, null, "bdrs-server-audience", Map.of("vp", asMap(VP_CONTENT_EXAMPLE.formatted(holderId, ""))));
+
+        seedServer(BPN1, DID1);
+        getBpnDirectory(apiRequest().header("Authorization", "Bearer " + vpJwt))
+                .statusCode(401);
+    }
+
+    @DisplayName("Reject a spoofed VP with an empty verifiableCredential array")
+    @Test
+    void getDirectory_spoofedPresentation_emptyVerifiableCredentialArray() throws Exception {
+        registerDids();
+
+        var spoofedKey = new ECKeyGenerator(Curve.P_256).keyID(holderId + "#key-1").generate();
+        // VP-JWT signed with a key that does not belong to the holder, with "verifiableCredential": []
+        var vpJwt = JwtCreationUtils.createJwt(spoofedKey, holderId, null, "bdrs-server-audience", Map.of("vp", asMap(VP_CONTENT_EXAMPLE.formatted(holderId, ""))));
 
         seedServer(BPN1, DID1);
         getBpnDirectory(apiRequest().header("Authorization", "Bearer " + vpJwt))

@@ -2,8 +2,8 @@
 format.version = "1.1"
 
 [versions]
-edc = "0.16.1"
-edc-build = "1.5.4"
+edc = "0.18.2"
+edc-build = "1.5.5"
 nimbus = "10.10"
 restAssured = "6.3.0"
 postgres = "42.7.14"
@@ -30,10 +30,12 @@ edc-spi-web = { module = "org.eclipse.edc:web-spi", version.ref = "edc" }
 edc-spi-transaction = { module = "org.eclipse.edc:transaction-spi", version.ref = "edc" }
 edc-spi-transaction-datasource = { module = "org.eclipse.edc:transaction-datasource-spi", version.ref = "edc" }
 edc-core-participant-context-config = { module = "org.eclipse.edc:participant-context-config-core", version.ref = "edc" }
-edc-core-participant-context-single = { module = "org.eclipse.edc:participant-context-single-core", version.ref = "edc" }
+edc-core-participant-context = { module = "org.eclipse.edc:participant-context-core", version.ref = "edc" }
+edc-core-participant-context-classic = { module = "org.eclipse.edc:participant-context-connector-classic-core", version.ref = "edc" }
 edc-connector-core = { module = "org.eclipse.edc:connector-core", version.ref = "edc" }
 edc-spi-token = { module = "org.eclipse.edc:token-spi", version.ref = "edc" }
 edc-spi-vc = { module = "org.eclipse.edc:verifiable-credentials-spi", version.ref = "edc" }
+edc-spi-protocol = { module = "org.eclipse.edc:protocol-spi", version.ref = "edc" }
 edc-spi-auth = { module = "org.eclipse.edc:auth-spi", version.ref = "edc" }
 edc-auth-tokenbased = { module = "org.eclipse.edc:auth-tokenbased", version.ref = "edc" }
 edc-auth-configuration = { module = "org.eclipse.edc:auth-configuration", version.ref = "edc"}

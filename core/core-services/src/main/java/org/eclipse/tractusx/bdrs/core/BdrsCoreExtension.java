@@ -19,11 +19,13 @@
 
 package org.eclipse.tractusx.bdrs.core;
 
+import org.eclipse.edc.protocol.spi.discovery.DiscoveryService;
 import org.eclipse.edc.runtime.metamodel.annotation.Extension;
 import org.eclipse.edc.runtime.metamodel.annotation.Inject;
 import org.eclipse.edc.runtime.metamodel.annotation.Provider;
 import org.eclipse.edc.spi.system.ServiceExtension;
 import org.eclipse.edc.spi.types.TypeManager;
+import org.eclipse.tractusx.bdrs.core.discovery.NoopDiscoveryService;
 import org.eclipse.tractusx.bdrs.core.store.InMemoryDidEntryStore;
 import org.eclipse.tractusx.bdrs.spi.store.DidEntryStore;
 
@@ -49,4 +51,13 @@ public class BdrsCoreExtension implements ServiceExtension {
         return new InMemoryDidEntryStore(typeManager.getMapper());
     }
 
+    /**
+     * Since EDC 0.17, the DCP core extension requires a {@link DiscoveryService} (it only registers a DID-based
+     * DSP discovery URL resolver). The only implementation lives in the connector control plane, which BDRS does
+     * not ship. BDRS does not perform DSP protocol discovery, so a no-op default is provided instead.
+     */
+    @Provider(isDefault = true)
+    public DiscoveryService defaultDiscoveryService() {
+        return new NoopDiscoveryService();
+    }
 }
