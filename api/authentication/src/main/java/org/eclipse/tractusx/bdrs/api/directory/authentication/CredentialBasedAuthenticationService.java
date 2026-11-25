@@ -64,12 +64,11 @@ public class CredentialBasedAuthenticationService implements AuthenticationServi
             throw new AuthenticationFailedException(msg);
         }
 
-        var authHeaders = headers.keySet().stream()
+        var authHeaderName = headers.keySet().stream()
                 .filter(k -> k.equalsIgnoreCase(AUTHORIZATION))
-                .map(headers::get)
                 .findFirst();
 
-        return authHeaders.map(this::performCredentialValidation).orElseThrow(() -> {
+        return authHeaderName.map(name -> performCredentialValidation(headers.get(name))).orElseThrow(() -> {
             var msg = "Header '%s' not present";
             monitor.warning(msg);
             return new AuthenticationFailedException(msg.formatted(AUTHORIZATION));

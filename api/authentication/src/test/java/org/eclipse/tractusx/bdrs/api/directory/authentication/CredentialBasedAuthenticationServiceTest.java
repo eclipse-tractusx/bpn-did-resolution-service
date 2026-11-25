@@ -40,7 +40,11 @@ import org.eclipse.edc.transform.spi.TypeTransformerRegistry;
 import org.eclipse.edc.web.spi.exception.AuthenticationFailedException;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -159,6 +163,101 @@ class CredentialBasedAuthenticationServiceTest {
                 .thenReturn(Result.success());
 
         assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + createSerializedJwtWithAudience())))).isTrue();
+    }
+
+    @Test
+    void isAuthenticated_authHeaderWithNullValues() {
+        var headers = new HashMap<String, List<String>>();
+        headers.put("Authorization", null);
+
+        assertThat(service.isAuthenticated(headers)).isFalse();
+        verify(monitor).warning("Authorization headers are null or empty");
+    }
+
+    @Test
+    void isAuthenticated_authHeaderWithEmptyValues() {
+        assertThat(service.isAuthenticated(Map.of("Authorization", List.of()))).isFalse();
+        verify(monitor).warning("Authorization headers are null or empty");
+    }
+
+    @Test
+    void isAuthenticated_authHeaderValueIsNull() {
+        assertThat(service.isAuthenticated(Map.of("Authorization", Arrays.asList((String) null)))).isFalse();
+        verify(monitor).warning(startsWith("Error validating BDRS client VP"));
+        verify(validationService, never()).validate(anyList(), any(), any(CredentialValidationRule[].class));
+    }
+
+    @Test
+    void isAuthenticated_lowerCaseBearerPrefix() throws JOSEException {
+        when(typeTransformerRegistry.transform(any(), eq(VerifiablePresentation.class)))
+                .thenReturn(Result.success(presentationWithCredential()));
+        when(validationService.validate(anyList(), eq("test-audience"), any(CredentialValidationRule[].class)))
+                .thenReturn(Result.success());
+
+        assertThat(service.isAuthenticated(Map.of("authorization", List.of("bearer " + signedJwt(List.of("test-audience")))))).isTrue();
+    }
+
+    @Test
+    void isAuthenticated_tokenWithMultipleAudiences() throws JOSEException {
+        assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + signedJwt(List.of("aud-1", "aud-2")))))).isFalse();
+        verify(monitor).warning(startsWith("Error validating BDRS client VP"));
+        verify(validationService, never()).validate(anyList(), any(), any(CredentialValidationRule[].class));
+    }
+
+    @Test
+    void isAuthenticated_tokenNotParseableAsSignedJwt() {
+        var encoder = Base64.getUrlEncoder().withoutPadding();
+        // header and payload are valid JSON, but the header misses the mandatory "alg" parameter
+        var token = encoder.encodeToString("{\"typ\":\"JWT\"}".getBytes(StandardCharsets.UTF_8)) + "." +
+                encoder.encodeToString("{\"aud\":\"test-audience\"}".getBytes(StandardCharsets.UTF_8)) + ".c2lnbmF0dXJl";
+
+        assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + token)))).isFalse();
+        verify(monitor).warning(startsWith("Error validating BDRS client VP"));
+        verify(validationService, never()).validate(anyList(), any(), any(CredentialValidationRule[].class));
+    }
+
+    @Test
+    void isAuthenticated_transformationFails() {
+        when(typeTransformerRegistry.transform(any(), eq(VerifiablePresentation.class)))
+                .thenReturn(Result.failure("transformation failed"));
+
+        assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + createSerializedJwtWithAudience())))).isFalse();
+        verify(monitor).warning("Error validating BDRS client VP: transformation failed");
+        verify(validationService, never()).validate(anyList(), any(), any(CredentialValidationRule[].class));
+    }
+
+    @Test
+    void isAuthenticated_validationFailsForPresentationWithCredentials() {
+        when(typeTransformerRegistry.transform(any(), eq(VerifiablePresentation.class)))
+                .thenReturn(Result.success(presentationWithCredential()));
+        when(validationService.validate(anyList(), eq("test-audience"), any(CredentialValidationRule[].class)))
+                .thenReturn(Result.failure("no membership credential"));
+
+        assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + createSerializedJwtWithAudience())))).isFalse();
+        verify(monitor).warning("Error validating BDRS client VP: no membership credential");
+    }
+
+    private VerifiablePresentation presentationWithCredential() {
+        var credential = VerifiableCredential.Builder.newInstance()
+                .id("credential-id")
+                .type("MembershipCredential")
+                .credentialSubject(CredentialSubject.Builder.newInstance()
+                        .claim("holderIdentifier", "BPNL000000000001")
+                        .build())
+                .issuer(new Issuer("did:example:issuer"))
+                .issuanceDate(Instant.parse("2024-01-01T00:00:00Z"))
+                .build();
+        return VerifiablePresentation.Builder.newInstance()
+                .type("VerifiablePresentation")
+                .credentials(List.of(credential))
+                .build();
+    }
+
+    private String signedJwt(List<String> audience) throws JOSEException {
+        var jwt = new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.ES256).build(),
+                new JWTClaimsSet.Builder().subject("test-subject").audience(audience).build());
+        jwt.sign(new ECDSASigner(new ECKeyGenerator(Curve.P_256).generate()));
+        return jwt.serialize();
     }
 
     private String createSerializedJwtWithAudience() {
