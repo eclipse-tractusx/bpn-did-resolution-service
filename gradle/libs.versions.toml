@@ -7,7 +7,7 @@ edc-build = "1.5.4"
 nimbus = "10.10"
 restAssured = "6.3.0"
 postgres = "42.7.14"
-flyway = "13.12.1"
+flyway = "13.13.0"
 
 
 [libraries]
