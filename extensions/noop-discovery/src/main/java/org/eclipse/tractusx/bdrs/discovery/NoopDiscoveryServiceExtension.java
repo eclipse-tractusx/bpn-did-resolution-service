@@ -24,7 +24,7 @@ import org.eclipse.edc.runtime.metamodel.annotation.Extension;
 import org.eclipse.edc.runtime.metamodel.annotation.Provider;
 import org.eclipse.edc.spi.system.ServiceExtension;
 
-import static org.eclipse.tractusx.bdrs.discovery.NoopDiscoveryServiceExtension.NAME;
+import static org.eclipse.tractusx.bdrs.discovery.NoopDiscoveryServiceExtension.EXTENSION_NAME;
 
 /**
  * Provides a default {@link DiscoveryService} for BDRS runtimes.
@@ -34,13 +34,13 @@ import static org.eclipse.tractusx.bdrs.discovery.NoopDiscoveryServiceExtension.
  * not ship. BDRS never performs DSP protocol discovery, so a no-op default is provided. It is kept in its own module
  * so that BDRS core stays free of connector/DSP concepts.
  */
-@Extension(NAME)
+@Extension(EXTENSION_NAME)
 public class NoopDiscoveryServiceExtension implements ServiceExtension {
-    public static final String NAME = "BDRS No-op Discovery Service";
+    public static final String EXTENSION_NAME = "BDRS No-op Discovery Service";
 
     @Override
     public String name() {
-        return NAME;
+        return EXTENSION_NAME;
     }
 
     @Provider(isDefault = true)

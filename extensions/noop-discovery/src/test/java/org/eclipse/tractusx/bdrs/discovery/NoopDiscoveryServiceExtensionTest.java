@@ -30,7 +30,7 @@ class NoopDiscoveryServiceExtensionTest {
 
     @Test
     void name(NoopDiscoveryServiceExtension extension) {
-        assertThat(extension.name()).isEqualTo(NoopDiscoveryServiceExtension.NAME);
+        assertThat(extension.name()).isEqualTo(NoopDiscoveryServiceExtension.EXTENSION_NAME);
     }
 
     @Test
