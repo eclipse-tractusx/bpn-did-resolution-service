@@ -17,7 +17,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package org.eclipse.tractusx.bdrs.core.discovery;
+package org.eclipse.tractusx.bdrs.discovery;
 
 import org.eclipse.edc.protocol.spi.discovery.DiscoveryRequest;
 import org.eclipse.edc.protocol.spi.discovery.DiscoveryUrlResolver;
@@ -34,14 +34,14 @@ class NoopDiscoveryServiceTest {
 
     @Test
     void discover_alwaysFails() {
-        var request = mock(DiscoveryRequest.class);
+        // DiscoveryRequest is a final record and cannot be mocked on every JDK, so a real instance is used
+        var request = new DiscoveryRequest("did:web:counter-party", "https://counter-party.example.com");
 
         var result = service.discover("did:web:counter-party", request);
 
         assertThat(result.failed()).isTrue();
         assertThat(result.reason()).isEqualTo(ServiceFailure.Reason.UNEXPECTED);
         assertThat(result.getFailureDetail()).contains("not supported");
-        verifyNoInteractions(request);
     }
 
     @Test

@@ -28,6 +28,7 @@ dependencies {
     runtimeOnly(project(":api:directory-api"))
     runtimeOnly(project(":api:management-api"))
     runtimeOnly(project(":api:authentication"))
+    runtimeOnly(project(":extensions:noop-discovery"))
 
     runtimeOnly(libs.edc.api.core)
     runtimeOnly(libs.edc.api.observability)

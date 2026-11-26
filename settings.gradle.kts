@@ -42,6 +42,7 @@ include(":runtimes:bdrs-server-memory")
 // extension modules
 include(":extensions:store:sql:sql-lib")
 include(":extensions:store:sql:did-entry-store-sql")
+include(":extensions:noop-discovery")
 
 // test modules
 include(":system-tests:test-directory")

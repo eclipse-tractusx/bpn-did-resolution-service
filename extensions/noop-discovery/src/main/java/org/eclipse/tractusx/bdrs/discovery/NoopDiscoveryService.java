@@ -17,7 +17,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package org.eclipse.tractusx.bdrs.core.discovery;
+package org.eclipse.tractusx.bdrs.discovery;
 
 import org.eclipse.edc.protocol.spi.discovery.DiscoveryRequest;
 import org.eclipse.edc.protocol.spi.discovery.DiscoveryResponse;
@@ -31,7 +31,7 @@ import java.util.List;
  * {@link DiscoveryService} that does not support protocol discovery.
  * <p>
  * BDRS is not a dataspace connector and never discovers counter-party DSP endpoints. This implementation only exists
- * to satisfy the injection point of the EDC DCP core extension. Registered resolvers are ignored and every discovery
+ * to satisfy the injection point of the EDC DCP core extension (see {@link NoopDiscoveryServiceExtension}). Registered resolvers are ignored and every discovery
  * attempt fails explicitly.
  */
 public class NoopDiscoveryService implements DiscoveryService {

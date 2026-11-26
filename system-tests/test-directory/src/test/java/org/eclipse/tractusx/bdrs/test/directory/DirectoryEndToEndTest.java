@@ -89,8 +89,8 @@ public class DirectoryEndToEndTest {
                             "web.http.management.path", String.valueOf(MANAGEMENT_ENDPOINT.getPath()),
                             "web.http.directory.port", String.valueOf(DIRECTORY_ENDPOINT.getPort()),
                             "web.http.directory.path", String.valueOf(DIRECTORY_ENDPOINT.getPath()),
-                            "edc.iam.issuer.id", "any",
-                            "edc.iam.trusted-issuer.test.id", "did:web:some-issuer",
+                            "edc.participant.did", "any",
+                            "edc.iam.trustedissuer.test.id", "did:web:some-issuer",
                             "web.http.management.auth.key.alias", AUTH_KEY,
                             "web.http.management.auth.type", "tokenbased",
                             "web.http.management.auth.key", AUTH_KEY))
@@ -261,7 +261,7 @@ public class DirectoryEndToEndTest {
     void getDirectory_validPresentation_emptyCredentials() throws IOException {
         registerDids();
 
-        var vpJwt = JwtCreationUtils.createJwt(vpHolderKey, holderId, null, "bdrs-server-audience", Map.of("vp", Map.of("credentials", List.of())));
+        var vpJwt = JwtCreationUtils.createJwt(vpHolderKey, holderId, null, "bdrs-server-audience", Map.of("vp", vpClaim(List.of())));
 
         seedServer(BPN1, DID1);
         getBpnDirectory(apiRequest().header("Authorization", "Bearer " + vpJwt))
@@ -273,9 +273,7 @@ public class DirectoryEndToEndTest {
     void getDirectory_validPresentation_nullCredentials() throws IOException {
         registerDids();
 
-        var vpClaim = new HashMap<String, Object>();
-        vpClaim.put("credentials", null);
-        var vpJwt = JwtCreationUtils.createJwt(vpHolderKey, holderId, null, "bdrs-server-audience", Map.of("vp", vpClaim));
+        var vpJwt = JwtCreationUtils.createJwt(vpHolderKey, holderId, null, "bdrs-server-audience", Map.of("vp", vpClaim(null)));
 
         seedServer(BPN1, DID1);
         getBpnDirectory(apiRequest().header("Authorization", "Bearer " + vpJwt))
@@ -287,7 +285,7 @@ public class DirectoryEndToEndTest {
     void getDirectory_validPresentation_invalidCredentials() throws IOException {
         registerDids();
 
-        var vpJwt = JwtCreationUtils.createJwt(vpHolderKey, holderId, null, "bdrs-server-audience", Map.of("vp", Map.of("credentials", List.of("invalid-credential"))));
+        var vpJwt = JwtCreationUtils.createJwt(vpHolderKey, holderId, null, "bdrs-server-audience", Map.of("vp", vpClaim(List.of("invalid-credential"))));
 
         seedServer(BPN1, DID1);
         getBpnDirectory(apiRequest().header("Authorization", "Bearer " + vpJwt))
@@ -384,6 +382,16 @@ public class DirectoryEndToEndTest {
         var decompressed = stream.readAllBytes();
         //noinspection unchecked
         return mapper.readValue(decompressed, Map.class);
+    }
+
+    // builds a VCDM 1.1 "vp" claim with the given "verifiableCredential" value (which may be null)
+    private Map<String, Object> vpClaim(List<String> verifiableCredential) {
+        var vp = new HashMap<String, Object>();
+        vp.put("@context", List.of("https://www.w3.org/2018/credentials/v1"));
+        vp.put("type", List.of("VerifiablePresentation"));
+        vp.put("holder", holderId);
+        vp.put("verifiableCredential", verifiableCredential);
+        return vp;
     }
 
     private Map<String, Object> asMap(String rawContent) {

@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.edc.junit.extensions.DependencyInjectionExtension;
 import org.eclipse.edc.spi.system.ServiceExtensionContext;
 import org.eclipse.edc.spi.types.TypeManager;
-import org.eclipse.tractusx.bdrs.core.discovery.NoopDiscoveryService;
 import org.eclipse.tractusx.bdrs.core.store.InMemoryDidEntryStore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,10 +50,5 @@ class BdrsCoreExtensionTest {
     @Test
     void defaultDidEntryStore(BdrsCoreExtension extension) {
         assertThat(extension.defaultDidEntryStore()).isInstanceOf(InMemoryDidEntryStore.class);
-    }
-
-    @Test
-    void defaultDiscoveryService(BdrsCoreExtension extension) {
-        assertThat(extension.defaultDiscoveryService()).isInstanceOf(NoopDiscoveryService.class);
     }
 }
