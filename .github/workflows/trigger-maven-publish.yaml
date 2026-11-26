@@ -59,7 +59,7 @@ jobs:
       contents: read
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+        uses: step-security/harden-runner@aebdcf6156ab6691adf63218240e476564a1ed4c # v2.23.0
         with:
           egress-policy: audit
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -81,7 +81,7 @@ jobs:
 
           grep version gradle.properties | (echo -n "Publishing using " && cat)
 
-      - uses: eclipse-edc/.github/.github/actions/publish-maven-artifacts@47fde37a7dc164774c7ff8c6dd2b0e7c4a48141e # main
+      - uses: eclipse-edc/.github/.github/actions/publish-maven-artifacts@0e51e06eb61b10789c52dca0d0f61a28263d0bdb # main
         with:
           gpg-private-key: ${{ secrets.ORG_GPG_PRIVATE_KEY }}
           gpg-passphrase: ${{ secrets.ORG_GPG_PASSPHRASE }}
