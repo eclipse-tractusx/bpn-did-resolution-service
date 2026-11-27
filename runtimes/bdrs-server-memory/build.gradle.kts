@@ -28,6 +28,7 @@ dependencies {
     runtimeOnly(project(":api:directory-api"))
     runtimeOnly(project(":api:management-api"))
     runtimeOnly(project(":api:authentication"))
+    runtimeOnly(project(":extensions:noop-discovery"))
 
     runtimeOnly(libs.edc.api.core)
     runtimeOnly(libs.edc.api.observability)
@@ -44,7 +45,8 @@ dependencies {
         exclude("org.eclipse.edc","decentralized-claims-sts-remote-client")
     }
     runtimeOnly(libs.edc.core.participant.context.config)
-    runtimeOnly(libs.edc.core.participant.context.single)
+    runtimeOnly(libs.edc.core.participant.context)
+    runtimeOnly(libs.edc.core.participant.context.classic)
     runtimeOnly(libs.edc.auth.configuration)
     runtimeOnly(libs.edc.decentralizedclaims.issuers)
 }

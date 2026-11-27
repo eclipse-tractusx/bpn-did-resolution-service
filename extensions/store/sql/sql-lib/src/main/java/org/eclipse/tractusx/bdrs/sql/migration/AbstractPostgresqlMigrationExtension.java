@@ -43,10 +43,10 @@ abstract class AbstractPostgresqlMigrationExtension implements ServiceExtension 
 
     private static final String EDC_DATASOURCE_PREFIX = "edc.datasource";
     private static final String DEFAULT_MIGRATION_ENABLED_TEMPLATE = "true";
-    @Setting(value = "Enable/disables subsystem schema migration", defaultValue = DEFAULT_MIGRATION_ENABLED_TEMPLATE, type = "boolean")
+    @Setting(description = "Enable/disables subsystem schema migration", defaultValue = DEFAULT_MIGRATION_ENABLED_TEMPLATE)
     private static final String MIGRATION_ENABLED_TEMPLATE = "org.eclipse.tractusx.edc.postgresql.migration.%s.enabled";
     private static final String DEFAULT_MIGRATION_SCHEMA = "public";
-    @Setting(value = "Schema used for the migration", defaultValue = DEFAULT_MIGRATION_SCHEMA)
+    @Setting(description = "Schema used for the migration", defaultValue = DEFAULT_MIGRATION_SCHEMA)
     private static final String MIGRATION_SCHEMA = "org.eclipse.tractusx.edc.postgresql.migration.schema";
     private static final String PASSWORD = "password";
     private static final String USER = "user";

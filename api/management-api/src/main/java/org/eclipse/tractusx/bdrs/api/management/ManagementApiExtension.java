@@ -40,9 +40,9 @@ import static org.eclipse.tractusx.bdrs.api.management.ManagementApiExtension.NA
 @Extension(NAME)
 public class ManagementApiExtension implements ServiceExtension {
     public static final String NAME = "Management API";
-    @Setting(value = "Port for the Management API", required = true)
+    @Setting(description = "Port for the Management API", required = true)
     public static final String MGMT_API_PORT = "web.http.management.port";
-    @Setting(value = "Path for the Management API", required = true)
+    @Setting(description = "Path for the Management API", required = true)
     public static final String MGMT_API_PATH = "web.http.management.path";
     static final String CONTEXT_NAME = "management";
     @Inject

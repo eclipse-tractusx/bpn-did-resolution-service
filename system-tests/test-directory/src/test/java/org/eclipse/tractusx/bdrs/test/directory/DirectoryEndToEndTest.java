@@ -50,6 +50,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -88,8 +89,8 @@ public class DirectoryEndToEndTest {
                             "web.http.management.path", String.valueOf(MANAGEMENT_ENDPOINT.getPath()),
                             "web.http.directory.port", String.valueOf(DIRECTORY_ENDPOINT.getPort()),
                             "web.http.directory.path", String.valueOf(DIRECTORY_ENDPOINT.getPath()),
-                            "edc.iam.issuer.id", "any",
-                            "edc.iam.trusted-issuer.test.id", "did:web:some-issuer",
+                            "edc.participant.did", "any",
+                            "edc.iam.trustedissuer.test.id", "did:web:some-issuer",
                             "web.http.management.auth.key.alias", AUTH_KEY,
                             "web.http.management.auth.type", "tokenbased",
                             "web.http.management.auth.key", AUTH_KEY))
@@ -255,6 +256,57 @@ public class DirectoryEndToEndTest {
                 .statusCode(401);
     }
 
+    @DisplayName("Reject VP with null credentials")
+    @Test
+    void getDirectory_validPresentation_nullCredentials() throws IOException {
+        registerDids();
+
+        var vpJwt = JwtCreationUtils.createJwt(vpHolderKey, holderId, null, "bdrs-server-audience", Map.of("vp", vpClaim(null)));
+
+        seedServer(BPN1, DID1);
+        getBpnDirectory(apiRequest().header("Authorization", "Bearer " + vpJwt))
+                .statusCode(401);
+    }
+
+    @DisplayName("Reject VP with invalid credentials")
+    @Test
+    void getDirectory_validPresentation_invalidCredentials() throws IOException {
+        registerDids();
+
+        var vpJwt = JwtCreationUtils.createJwt(vpHolderKey, holderId, null, "bdrs-server-audience", Map.of("vp", vpClaim(List.of("invalid-credential"))));
+
+        seedServer(BPN1, DID1);
+        getBpnDirectory(apiRequest().header("Authorization", "Bearer " + vpJwt))
+                .statusCode(401);
+    }
+
+    @DisplayName("Reject a valid VP with an empty verifiableCredential array")
+    @Test
+    void getDirectory_validPresentation_emptyVerifiableCredentialArray() throws IOException {
+        registerDids();
+
+        // VP-JWT signed by the presenter with "verifiableCredential": []
+        var vpJwt = JwtCreationUtils.createJwt(vpHolderKey, holderId, null, "bdrs-server-audience", Map.of("vp", asMap(VP_CONTENT_EXAMPLE.formatted(holderId, ""))));
+
+        seedServer(BPN1, DID1);
+        getBpnDirectory(apiRequest().header("Authorization", "Bearer " + vpJwt))
+                .statusCode(401);
+    }
+
+    @DisplayName("Reject a spoofed VP with an empty verifiableCredential array")
+    @Test
+    void getDirectory_spoofedPresentation_emptyVerifiableCredentialArray() throws Exception {
+        registerDids();
+
+        var spoofedKey = new ECKeyGenerator(Curve.P_256).keyID(holderId + "#key-1").generate();
+        // VP-JWT signed with a key that does not belong to the holder, with "verifiableCredential": []
+        var vpJwt = JwtCreationUtils.createJwt(spoofedKey, holderId, null, "bdrs-server-audience", Map.of("vp", asMap(VP_CONTENT_EXAMPLE.formatted(holderId, ""))));
+
+        seedServer(BPN1, DID1);
+        getBpnDirectory(apiRequest().header("Authorization", "Bearer " + vpJwt))
+                .statusCode(401);
+    }
+
     // registers a DidResolver for the "web" method. this method has to be called from a test method!
     private void registerDids() {
         runtime.getService(DidResolverRegistry.class)
@@ -318,6 +370,16 @@ public class DirectoryEndToEndTest {
         var decompressed = stream.readAllBytes();
         //noinspection unchecked
         return mapper.readValue(decompressed, Map.class);
+    }
+
+    // builds a VCDM 1.1 "vp" claim with the given "verifiableCredential" value (which may be null)
+    private Map<String, Object> vpClaim(List<String> verifiableCredential) {
+        var vp = new HashMap<String, Object>();
+        vp.put("@context", List.of("https://www.w3.org/2018/credentials/v1"));
+        vp.put("type", List.of("VerifiablePresentation"));
+        vp.put("holder", holderId);
+        vp.put("verifiableCredential", verifiableCredential);
+        return vp;
     }
 
     private Map<String, Object> asMap(String rawContent) {

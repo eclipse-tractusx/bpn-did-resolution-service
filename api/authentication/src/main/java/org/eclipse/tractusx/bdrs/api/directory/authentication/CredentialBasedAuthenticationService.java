@@ -28,6 +28,7 @@ import org.eclipse.edc.iam.verifiablecredentials.spi.model.VerifiablePresentatio
 import org.eclipse.edc.iam.verifiablecredentials.spi.model.VerifiablePresentationContainer;
 import org.eclipse.edc.spi.EdcException;
 import org.eclipse.edc.spi.monitor.Monitor;
+import org.eclipse.edc.spi.result.Result;
 import org.eclipse.edc.transform.spi.TypeTransformerRegistry;
 import org.eclipse.edc.web.spi.exception.AuthenticationFailedException;
 
@@ -63,12 +64,11 @@ public class CredentialBasedAuthenticationService implements AuthenticationServi
             throw new AuthenticationFailedException(msg);
         }
 
-        var authHeaders = headers.keySet().stream()
+        var authHeaderName = headers.keySet().stream()
                 .filter(k -> k.equalsIgnoreCase(AUTHORIZATION))
-                .map(headers::get)
                 .findFirst();
 
-        return authHeaders.map(this::performCredentialValidation).orElseThrow(() -> {
+        return authHeaderName.map(name -> performCredentialValidation(headers.get(name))).orElseThrow(() -> {
             var msg = "Header '%s' not present";
             monitor.warning(msg);
             return new AuthenticationFailedException(msg.formatted(AUTHORIZATION));
@@ -76,13 +76,17 @@ public class CredentialBasedAuthenticationService implements AuthenticationServi
     }
 
     private boolean performCredentialValidation(List<String> authHeaders) {
+        if (authHeaders == null || authHeaders.isEmpty()) {
+            monitor.warning("Authorization headers are null or empty");
+            return false;
+        }
         if (authHeaders.size() != 1) {
             monitor.warning("Expected exactly 1 Authorization header, found %d".formatted(authHeaders.size()));
             return false;
         }
         try {
             String token = authHeaders.stream()
-                    .filter(t -> t.toLowerCase().startsWith("bearer "))
+                    .filter(t -> t != null && t.toLowerCase().startsWith("bearer "))
                     .map(t -> t.substring(6).trim())
                     .findFirst()
                     .orElseThrow(() -> new EdcException("Authorization header must start with 'bearer '"));
@@ -90,14 +94,23 @@ public class CredentialBasedAuthenticationService implements AuthenticationServi
             String audience = getAudienceFromToken(token);
 
             return typeTransformerRegistry.transform(token, VerifiablePresentation.class)
-                    .compose(pres -> verifiableCredentialValidationService.validate(
-                            List.of(new VerifiablePresentationContainer(token, CredentialFormat.VC1_0_JWT, pres)),
-                            audience,
-                            new MustHaveMemberhipCredentialRule()))
+                    .compose(pres -> {
+                        if (pres.getCredentials() == null || pres.getCredentials().isEmpty()) {
+                            monitor.warning("Verifiable Presentation contains no credentials");
+                            return Result.failure("No credentials in Verifiable Presentation");
+                        }
+                        return verifiableCredentialValidationService.validate(
+                                List.of(new VerifiablePresentationContainer(token, CredentialFormat.VC1_0_JWT, pres)),
+                                audience,
+                                new MustHaveMemberhipCredentialRule());
+                    })
                     .onFailure(f -> monitor.warning("Error validating BDRS client VP: %s".formatted(f.getFailureDetail())))
                     .succeeded();
         } catch (EdcException e) {
             monitor.warning("Error validating BDRS client VP: %s".formatted(e.getLocalizedMessage()));
+            return false;
+        } catch (Exception e) {
+            monitor.severe("Unexpected error during credential validation: %s".formatted(e.getMessage()), e);
             return false;
         }
     }
