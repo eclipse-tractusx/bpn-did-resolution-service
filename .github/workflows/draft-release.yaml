@@ -135,7 +135,7 @@ jobs:
       - name: Check dependencies before release
         uses: ./.github/actions/generate-and-check-dependencies
         with:
-          run: ${{ needs.validate-and-prepare.outputs.is_official_release == true && 'strict' || 'standard' }}
+          run: ${{ needs.validate-and-prepare.outputs.is_official_release == 'true' && 'strict' || 'standard' }}
       - name: Replace published DEPENDENCIES file link in NOTICE with the one just created
         run: sed -i "s#\[DEPENDENCIES\]\(.*\)#\[DEPENDENCIES\]\(DEPENDENCIES\)#g" NOTICE.md
       - name: Version and Chart Updates
