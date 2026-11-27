@@ -5,7 +5,7 @@ info:
   license:
     name: "The Apache License, Version 2.0"
     url: http://www.apache.org/licenses/LICENSE-2.0.txt
-  version: 0.6.0
+  version: 0.6.1-rc1
 servers:
 - url: /
 paths:
@@ -55,8 +55,3 @@ components:
           type: string
         type:
           type: string
-      example:
-        path: path
-        message: message
-        type: type
-        invalidValue: "{}"
