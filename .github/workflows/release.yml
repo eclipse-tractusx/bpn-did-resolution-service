@@ -44,6 +44,7 @@ jobs:
     name: "Run All Tests"
     permissions:
       contents: write
+      packages: write
     uses: ./.github/workflows/run-all-tests.yml
 
   validation:
