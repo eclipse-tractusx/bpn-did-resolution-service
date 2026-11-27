@@ -113,7 +113,7 @@ class CredentialBasedAuthenticationServiceTest {
         when(typeTransformerRegistry.transform(any(), eq(VerifiablePresentation.class)))
                 .thenReturn(Result.success(vp));
 
-        assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + createSerializedJwtWithAudience())))).isFalse();
+        assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + signedJwt("test-audience"))))).isFalse();
         verify(monitor).warning("Verifiable Presentation contains no credentials");
         verify(validationService, never()).validate(anyList(), any(), any(CredentialValidationRule[].class));
     }
@@ -127,7 +127,7 @@ class CredentialBasedAuthenticationServiceTest {
         when(typeTransformerRegistry.transform(any(), eq(VerifiablePresentation.class)))
                 .thenReturn(Result.success(vp));
 
-        assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + createSerializedJwtWithAudience())))).isFalse();
+        assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + signedJwt("test-audience"))))).isFalse();
         verify(monitor).warning("Verifiable Presentation contains no credentials");
         verify(validationService, never()).validate(anyList(), any(), any(CredentialValidationRule[].class));
     }
@@ -138,7 +138,7 @@ class CredentialBasedAuthenticationServiceTest {
         when(typeTransformerRegistry.transform(any(), eq(VerifiablePresentation.class)))
                 .thenThrow(exception);
 
-        assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + createSerializedJwtWithAudience())))).isFalse();
+        assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + signedJwt("test-audience"))))).isFalse();
         verify(monitor).severe("Unexpected error during credential validation: Unexpected error", exception);
     }
 
@@ -162,7 +162,7 @@ class CredentialBasedAuthenticationServiceTest {
         when(validationService.validate(anyList(), any(), any(CredentialValidationRule[].class)))
                 .thenReturn(Result.success());
 
-        assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + createSerializedJwtWithAudience())))).isTrue();
+        assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + signedJwt("test-audience"))))).isTrue();
     }
 
     @Test
@@ -188,18 +188,18 @@ class CredentialBasedAuthenticationServiceTest {
     }
 
     @Test
-    void isAuthenticated_lowerCaseBearerPrefix() throws JOSEException {
+    void isAuthenticated_lowerCaseBearerPrefix() {
         when(typeTransformerRegistry.transform(any(), eq(VerifiablePresentation.class)))
                 .thenReturn(Result.success(presentationWithCredential()));
         when(validationService.validate(anyList(), eq("test-audience"), any(CredentialValidationRule[].class)))
                 .thenReturn(Result.success());
 
-        assertThat(service.isAuthenticated(Map.of("authorization", List.of("bearer " + signedJwt(List.of("test-audience")))))).isTrue();
+        assertThat(service.isAuthenticated(Map.of("authorization", List.of("bearer " + signedJwt("test-audience"))))).isTrue();
     }
 
     @Test
-    void isAuthenticated_tokenWithMultipleAudiences() throws JOSEException {
-        assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + signedJwt(List.of("aud-1", "aud-2")))))).isFalse();
+    void isAuthenticated_tokenWithMultipleAudiences() {
+        assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + signedJwt("aud-1", "aud-2"))))).isFalse();
         verify(monitor).warning(startsWith("Error validating BDRS client VP"));
         verify(validationService, never()).validate(anyList(), any(), any(CredentialValidationRule[].class));
     }
@@ -221,7 +221,7 @@ class CredentialBasedAuthenticationServiceTest {
         when(typeTransformerRegistry.transform(any(), eq(VerifiablePresentation.class)))
                 .thenReturn(Result.failure("transformation failed"));
 
-        assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + createSerializedJwtWithAudience())))).isFalse();
+        assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + signedJwt("test-audience"))))).isFalse();
         verify(monitor).warning("Error validating BDRS client VP: transformation failed");
         verify(validationService, never()).validate(anyList(), any(), any(CredentialValidationRule[].class));
     }
@@ -233,7 +233,7 @@ class CredentialBasedAuthenticationServiceTest {
         when(validationService.validate(anyList(), eq("test-audience"), any(CredentialValidationRule[].class)))
                 .thenReturn(Result.failure("no membership credential"));
 
-        assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + createSerializedJwtWithAudience())))).isFalse();
+        assertThat(service.isAuthenticated(Map.of("Authorization", List.of("Bearer " + signedJwt("test-audience"))))).isFalse();
         verify(monitor).warning("Error validating BDRS client VP: no membership credential");
     }
 
@@ -253,19 +253,11 @@ class CredentialBasedAuthenticationServiceTest {
                 .build();
     }
 
-    private String signedJwt(List<String> audience) throws JOSEException {
-        var jwt = new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.ES256).build(),
-                new JWTClaimsSet.Builder().subject("test-subject").audience(audience).build());
-        jwt.sign(new ECDSASigner(new ECKeyGenerator(Curve.P_256).generate()));
-        return jwt.serialize();
-    }
-
-    private String createSerializedJwtWithAudience() {
+    private String signedJwt(String... audience) {
         try {
-            var key = new ECKeyGenerator(Curve.P_256).generate();
             var jwt = new SignedJWT(new JWSHeader.Builder(JWSAlgorithm.ES256).build(),
-                    new JWTClaimsSet.Builder().subject("test-subject").audience("test-audience").build());
-            jwt.sign(new ECDSASigner(key));
+                    new JWTClaimsSet.Builder().subject("test-subject").audience(List.of(audience)).build());
+            jwt.sign(new ECDSASigner(new ECKeyGenerator(Curve.P_256).generate()));
             return jwt.serialize();
         } catch (JOSEException e) {
             throw new RuntimeException(e);

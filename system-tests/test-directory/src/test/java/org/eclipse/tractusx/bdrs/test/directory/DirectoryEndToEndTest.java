@@ -256,18 +256,6 @@ public class DirectoryEndToEndTest {
                 .statusCode(401);
     }
 
-    @DisplayName("Reject VP with empty credentials")
-    @Test
-    void getDirectory_validPresentation_emptyCredentials() throws IOException {
-        registerDids();
-
-        var vpJwt = JwtCreationUtils.createJwt(vpHolderKey, holderId, null, "bdrs-server-audience", Map.of("vp", vpClaim(List.of())));
-
-        seedServer(BPN1, DID1);
-        getBpnDirectory(apiRequest().header("Authorization", "Bearer " + vpJwt))
-                .statusCode(401);
-    }
-
     @DisplayName("Reject VP with null credentials")
     @Test
     void getDirectory_validPresentation_nullCredentials() throws IOException {
